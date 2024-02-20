@@ -27,12 +27,12 @@ class BePDashboardController extends Controller
 {
     public function home_ui(){
         $municipality = array();
-        $provinces = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+        $provinces = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                     ->select('province')
                     ->groupBy('province')
                     ->pluck('province');
         foreach($provinces as $province){
-            $municipalities = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+            $municipalities = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                     ->select('municipality')
                     ->where('province', "LIKE", $province)
                     ->groupBy('municipality')
@@ -43,28 +43,28 @@ class BePDashboardController extends Controller
             
         }
 
-        $targetBeneficiaries = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+        $targetBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                             ->select(DB::raw('COUNT(DISTINCT(paymaya_code)) as beneficiaries'))
                             ->get();
                             $beneficiariesCount = $targetBeneficiaries[0]->beneficiaries;
         
-        $targetBags = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+        $targetBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
         ->select(DB::raw('SUM(bags) as bags'))
         ->get();
         $bagsCount = $targetBags[0]->bags;
 
-        $targetArea = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+        $targetArea = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
         ->select(DB::raw('SUM(area) as area'))
         ->get();
         $areaCount = $targetArea[0]->area;
 
-        $actualBeneficiaries = DB::table('ds2024_rcep_paymaya.paymaya_total_beneficiaries')
+        $actualBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.paymaya_total_beneficiaries')
                             ->sum("total_beneficiaries");
 
-        $actualBags = DB::table('ds2024_rcep_paymaya.paymaya_total_bags')
+        $actualBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.paymaya_total_bags')
                     ->sum("total_bags");
 
-        $actualArea = DB::table('ds2024_rcep_paymaya.paymaya_claim_area')
+        $actualArea = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.paymaya_claim_area')
                     ->sum("sum(area)");
 
         $beneficiariesCount = number_format($beneficiariesCount);
@@ -99,24 +99,24 @@ class BePDashboardController extends Controller
         $provTgt = array();          
         foreach($provinces as $row)
         {
-            $provTarget = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+            $provTarget = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                             ->select('province','municipality',DB::raw('COUNT(DISTINCT(paymaya_code)) as beneficiaries'),DB::raw('SUM(area) as area'),DB::raw('SUM(bags) as bags'))
                             ->where("province",$row)
                             ->get();
 
-            $provTgtBeneficiaries = DB::table('ds2024_rcep_paymaya.paymaya_total_beneficiaries')
+            $provTgtBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.paymaya_total_beneficiaries')
                                         ->where("province",$row)
                                         ->sum("total_beneficiaries");
 
             $provTgtBeneficiaries = $provTgtBeneficiaries !== null ? $provTgtBeneficiaries : 0;
 
-            $provTgtBags = DB::table('ds2024_rcep_paymaya.paymaya_total_bags')
+            $provTgtBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.paymaya_total_bags')
                                         ->where("province",$row)
                                         ->sum("total_bags");
 
             $provTgtBags = $provTgtBags !== null ? $provTgtBags : 0;
 
-            $provTgtArea = DB::table('ds2024_rcep_paymaya.paymaya_claim_area')
+            $provTgtArea = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.paymaya_claim_area')
                                         ->where("province",$row)
                                         ->sum("sum(area)");
 
@@ -153,7 +153,7 @@ class BePDashboardController extends Controller
     public function getMunicipalData(Request $request)
     {   
         $munTgt = array();
-        $municipalities = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+        $municipalities = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
         ->select('municipality')
         ->where('province',$request->province)
         ->groupBy('municipality')
@@ -162,13 +162,13 @@ class BePDashboardController extends Controller
         foreach($municipalities as $row)
         {
             
-            $munTarget = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+            $munTarget = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                             ->select('province','municipality',DB::raw('COUNT(DISTINCT(paymaya_code)) as beneficiaries'),DB::raw('SUM(area) as area'),DB::raw('SUM(bags) as bags'))
                             ->where("municipality",$row->municipality)
                             ->get();
 
 
-            $munTgtBeneficiaries = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $munTgtBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                         ->select(DB::raw(('COUNT(DISTINCT(paymaya_code)) as beneficiaries')))
                                         ->where("municipality",$row->municipality)
                                         // ->whereBetween('date_created', [$date1, $date2])
@@ -176,7 +176,7 @@ class BePDashboardController extends Controller
             
             $munTgtBeneficiaries = $munTgtBeneficiaries !== null ? $munTgtBeneficiaries : 0;
 
-            $munTgtBags = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $munTgtBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                         ->select(DB::raw(('COUNT(qr_code) as bags')))
                                         ->where("municipality",$row->municipality)
                                         // ->whereBetween('date_created', [$date1, $date2])
@@ -184,16 +184,16 @@ class BePDashboardController extends Controller
             
             $munTgtBags = $munTgtBags !== null ? $munTgtBags : 0;
 
-            $query = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
-                    ->select('ds2024_rcep_paymaya.tbl_beneficiaries.province as province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality as municipality')
-                    ->selectRaw('SUM(ds2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
-                    ->whereIn('ds2024_rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
-                        $subquery->select('ds2024_rcep_paymaya.tbl_claim.paymaya_code')
-                            ->from('ds2024_rcep_paymaya.tbl_claim');
+            $query = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
+                    ->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province as province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality as municipality')
+                    ->selectRaw('SUM(ws2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
+                    ->whereIn($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
+                        $subquery->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                            ->from($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim');
                     })
                     ->where('tbl_beneficiaries.municipality', $row->municipality)
                     // ->whereBetween(DB::raw("DATE_FORMAT(tbl_beneficiaries.schedule_start, '%m/%d/%Y')"), [$date1, $date2])
-                    ->groupBy('ds2024_rcep_paymaya.tbl_beneficiaries.province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality')
+                    ->groupBy($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality')
                     ->get();
 
             $munTgtArea2 = 0;
@@ -240,7 +240,7 @@ class BePDashboardController extends Controller
         $date2 = Carbon::createFromFormat('m/d/Y', $request->date2)->format('Y-m-d');
         if($request->selectedView == 'provincial'){
             $munTgt = array();
-            $municipalities = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+            $municipalities = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
             ->select('municipality')
             ->where('province',$request->province)
             ->groupBy('municipality')
@@ -250,13 +250,13 @@ class BePDashboardController extends Controller
             foreach($municipalities as $row)
             {   
     
-                $munTarget = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+                $munTarget = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                                 ->select('province','municipality',DB::raw('COUNT(DISTINCT(paymaya_code)) as beneficiaries'),DB::raw('SUM(area) as area'),DB::raw('SUM(bags) as bags'))
                                 ->where("municipality",$row)
                                 ->get();
                 
                
-                $munTgtBeneficiaries = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $munTgtBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(DISTINCT(paymaya_code)) as beneficiaries')))
                                             ->where("municipality",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -264,7 +264,7 @@ class BePDashboardController extends Controller
                 
                 $munTgtBeneficiaries = $munTgtBeneficiaries !== null ? $munTgtBeneficiaries : 0;
     
-                $munTgtBags = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $munTgtBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(qr_code) as bags')))
                                             ->where("municipality",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -272,16 +272,16 @@ class BePDashboardController extends Controller
                 
                 $munTgtBags = $munTgtBags !== null ? $munTgtBags : 0;
     
-                $query = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
-                        ->select('ds2024_rcep_paymaya.tbl_beneficiaries.province as province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality as municipality')
-                        ->selectRaw('SUM(ds2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
-                        ->whereIn('ds2024_rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
-                            $subquery->select('ds2024_rcep_paymaya.tbl_claim.paymaya_code')
-                                ->from('ds2024_rcep_paymaya.tbl_claim');
+                $query = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
+                        ->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province as province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality as municipality')
+                        ->selectRaw('SUM(ws2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
+                        ->whereIn($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
+                            $subquery->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                                ->from($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim');
                         })
                         ->where('tbl_beneficiaries.municipality', $row)
                         ->whereBetween(DB::raw("DATE_FORMAT(tbl_beneficiaries.schedule_start, '%m/%d/%Y')"), [$date1, $date2])
-                        ->groupBy('ds2024_rcep_paymaya.tbl_beneficiaries.province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality')
+                        ->groupBy($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality')
                         ->get();
     
                 $munTgtArea2 = 0;
@@ -328,7 +328,7 @@ class BePDashboardController extends Controller
         else if($request->selectedView == 'coop'){
             $coop = $request->province;
         
-            $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+            $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                     ->select('accreditation_no')
                     ->where('coopName','=', $coop)
                     ->get();
@@ -336,7 +336,7 @@ class BePDashboardController extends Controller
             $coop = $getCoop[0]->accreditation_no;
         
             $munTgt = array();
-            $municipalities = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $municipalities = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
             ->select('municipality')
             ->where('coopAccreditation',$coop)
             ->whereBetween('date_created', [$date1, $date2])
@@ -347,13 +347,13 @@ class BePDashboardController extends Controller
             foreach($municipalities as $row)
             {   
         
-                $munTarget = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+                $munTarget = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                                 ->select('coop_accreditation','municipality',DB::raw('COUNT(DISTINCT(paymaya_code)) as beneficiaries'),DB::raw('SUM(area) as area'),DB::raw('SUM(bags) as bags'))
                                 ->where("municipality",$row)
                                 ->get();
                 
             
-                $munTgtBeneficiaries = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $munTgtBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(DISTINCT(paymaya_code)) as beneficiaries')))
                                             ->where("municipality",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -361,7 +361,7 @@ class BePDashboardController extends Controller
                 
                 $munTgtBeneficiaries = $munTgtBeneficiaries !== null ? $munTgtBeneficiaries : 0;
         
-                $munTgtBags = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $munTgtBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(qr_code) as bags')))
                                             ->where("municipality",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -369,7 +369,7 @@ class BePDashboardController extends Controller
                 
                 $munTgtBags = $munTgtBags !== null ? $munTgtBags : 0;
 
-                $paymaya_codes = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $paymaya_codes = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('DISTINCT(paymaya_code) as beneficiaries')))
                                             ->where("municipality",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -381,7 +381,7 @@ class BePDashboardController extends Controller
 
                 foreach($paymaya_codes as $code)
                 {
-                    $getArea = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+                    $getArea = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                     ->select('area')
                     ->where("municipality",$row)
                     ->where('paymaya_code',$code->beneficiaries)
@@ -390,16 +390,16 @@ class BePDashboardController extends Controller
         
                 }
         
-                // $query = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
-                //         ->select('ds2024_rcep_paymaya.tbl_beneficiaries.province as province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality as municipality')
-                //         ->selectRaw('SUM(ds2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
-                //         ->whereIn('ds2024_rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
-                //             $subquery->select('ds2024_rcep_paymaya.tbl_claim.paymaya_code')
-                //                 ->from('ds2024_rcep_paymaya.tbl_claim');
+                // $query = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
+                //         ->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province as province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality as municipality')
+                //         ->selectRaw('SUM(ws2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
+                //         ->whereIn($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
+                //             $subquery->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                //                 ->from($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim');
                 //         })
                 //         ->where('tbl_beneficiaries.municipality', $row)
                 //         ->whereBetween(DB::raw("DATE_FORMAT(tbl_beneficiaries.schedule_start, '%m/%d/%Y')"), [$date1, $date2])
-                //         ->groupBy('ds2024_rcep_paymaya.tbl_beneficiaries.province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality')
+                //         ->groupBy($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality')
                 //         ->get();
         
                 // $munTgtArea2 = 0;
@@ -415,7 +415,7 @@ class BePDashboardController extends Controller
                 //     if($munTgtArea2!=0){
                         $amount = $munTgtBags[0]->bags * 760;
 
-                        $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+                        $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                         ->select('coopName')
                         ->where('accreditation_no','=', $munTarget[0]->coop_accreditation)
                         ->get();
@@ -467,7 +467,7 @@ class BePDashboardController extends Controller
         // dd($date1,$date2);
         if($request->selectedView == 'provincial'){
             $provTgt = array();
-            $provinces = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+            $provinces = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
             ->select('province')
             ->groupBy('province')
             ->pluck('province');
@@ -475,13 +475,13 @@ class BePDashboardController extends Controller
             
             foreach($provinces as $row)
             {
-                $provTarget = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+                $provTarget = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                                 ->select('province','municipality',DB::raw('COUNT(DISTINCT(paymaya_code)) as beneficiaries'),DB::raw('SUM(area) as area'),DB::raw('SUM(bags) as bags'))
                                 ->where("province",$row)
                                 ->get();
     
     
-                $provTgtBeneficiaries = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $provTgtBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(DISTINCT(paymaya_code)) as beneficiaries')))
                                             ->where("province",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -489,7 +489,7 @@ class BePDashboardController extends Controller
                 
                 $provTgtBeneficiaries = $provTgtBeneficiaries !== null ? $provTgtBeneficiaries : 0;
     
-                $provTgtBags = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $provTgtBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(qr_code) as bags')))
                                             ->where("province",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -497,16 +497,16 @@ class BePDashboardController extends Controller
                 
                 $provTgtBags = $provTgtBags !== null ? $provTgtBags : 0;
     
-                $query = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
-                        ->select('ds2024_rcep_paymaya.tbl_beneficiaries.province as province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality as municipality')
-                        ->selectRaw('SUM(ds2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
-                        ->whereIn('ds2024_rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
-                            $subquery->select('ds2024_rcep_paymaya.tbl_claim.paymaya_code')
-                                ->from('ds2024_rcep_paymaya.tbl_claim');
+                $query = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
+                        ->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province as province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality as municipality')
+                        ->selectRaw('SUM(ws2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
+                        ->whereIn($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
+                            $subquery->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                                ->from($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim');
                         })
                         ->where('tbl_beneficiaries.province', $row)
                         ->whereBetween(DB::raw("DATE_FORMAT(tbl_beneficiaries.schedule_start, '%m/%d/%Y')"), [$date1, $date2])
-                        ->groupBy('ds2024_rcep_paymaya.tbl_beneficiaries.province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality')
+                        ->groupBy($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality')
                         ->get();
     
                 $provTgtArea2 = 0;
@@ -552,7 +552,7 @@ class BePDashboardController extends Controller
             // dd($request->selectedView);
             // dd($date1, $date2);
             $provTgt = array();
-            $coops = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $coops = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
             ->select('coopAccreditation')
             ->whereBetween('date_created', [$date1, $date2])
             ->groupBy('coopAccreditation')
@@ -562,13 +562,13 @@ class BePDashboardController extends Controller
             foreach($coops as $row)
             {
                 
-                $provTarget = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+                $provTarget = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                                 ->select('coop_accreditation',DB::raw('COUNT(DISTINCT(paymaya_code)) as beneficiaries'),DB::raw('SUM(area) as area'),DB::raw('SUM(bags) as bags'))
                                 ->where("coop_accreditation",$row)
                                 ->get();
     
                 // dd($provTarget);
-                $provTgtBeneficiaries = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $provTgtBeneficiaries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(DISTINCT(paymaya_code)) as beneficiaries')))
                                             ->where("coopAccreditation",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -576,7 +576,7 @@ class BePDashboardController extends Controller
                 
                 $provTgtBeneficiaries = $provTgtBeneficiaries !== null ? $provTgtBeneficiaries : 0;
     
-                $provTgtBags = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $provTgtBags = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('COUNT(qr_code) as bags')))
                                             ->where("coopAccreditation",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -584,7 +584,7 @@ class BePDashboardController extends Controller
                 
                 $provTgtBags = $provTgtBags !== null ? $provTgtBags : 0;
                 
-                $paymaya_codes = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $paymaya_codes = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                                             ->select(DB::raw(('DISTINCT(paymaya_code) as beneficiaries')))
                                             ->where("coopAccreditation",$row)
                                             ->whereBetween('date_created', [$date1, $date2])
@@ -596,7 +596,7 @@ class BePDashboardController extends Controller
 
                 foreach($paymaya_codes as $code)
                 {
-                    $getArea = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
+                    $getArea = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
                     ->select('area')
                     ->where("coop_accreditation",$row)
                     ->where('paymaya_code',$code->beneficiaries)
@@ -607,17 +607,17 @@ class BePDashboardController extends Controller
         
                 }
                 // dd($actualArea, $test);
-                // $query = DB::table('ds2024_rcep_paymaya.tbl_beneficiaries')
-                //         ->select('ds2024_rcep_paymaya.tbl_beneficiaries.province as province', 'ds2024_rcep_paymaya.tbl_beneficiaries.municipality as municipality','ds2024_rcep_paymaya.tbl_beneficiaries.coop_accreditation as coop')
-                //         ->selectRaw('SUM(ds2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
-                //         ->whereIn('ds2024_rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
-                //             $subquery->select('ds2024_rcep_paymaya.tbl_claim.paymaya_code')
-                //                 ->from('ds2024_rcep_paymaya.tbl_claim');
+                // $query = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries')
+                //         ->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.province as province', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.municipality as municipality',$GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.coop_accreditation as coop')
+                //         ->selectRaw('SUM(ws2024_rcep_paymaya.tbl_beneficiaries.area) as `area`')
+                //         ->whereIn($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.paymaya_code', function ($subquery) {
+                //             $subquery->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                //                 ->from($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim');
                 //         })
                 //         ->where('tbl_beneficiaries.coop_accreditation', $row)
                 //         ->whereBetween(DB::raw("DATE_FORMAT(tbl_beneficiaries.schedule_start, '%m/%d/%Y')"), [$date1, $date2])
                 //         ->orWhereBetween(DB::raw("DATE_FORMAT(tbl_beneficiaries.schedule_end, '%m/%d/%Y')"), [$date1, $date2])
-                //         ->groupBy('ds2024_rcep_paymaya.tbl_beneficiaries.coop_accreditation')
+                //         ->groupBy($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries.coop_accreditation')
                 //         ->get();
 
                 // // dd($query);
@@ -641,7 +641,7 @@ class BePDashboardController extends Controller
                     // if($provTgtArea2!=0){
                         $amount = $provTgtBags[0]->bags * 760;
 
-                        $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+                        $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                         ->select('coopName')
                         ->where('accreditation_no','=', $provTarget[0]->coop_accreditation)
                         ->get();
@@ -678,21 +678,21 @@ class BePDashboardController extends Controller
     public function downloadData(Request $request)
     {
         
-        $getInfo = DB::table('ds2024_rcep_paymaya.tbl_claim')
+        $getInfo = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"), 'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 ->where('tbl_claim.province', '=', $request->province)
                 ->where('tbl_claim.municipality', '=', $request->municipality)
                 ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') >= '16:00:00'")
                 ->get();
                 
-        $getInfo2 = DB::table('ds2024_rcep_paymaya.tbl_claim')
+        $getInfo2 = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"), 'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 ->where('tbl_claim.province', '=', $request->province)
                 ->where('tbl_claim.municipality', '=', $request->municipality)
                 ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') < '16:00:00'")
@@ -703,7 +703,7 @@ class BePDashboardController extends Controller
         foreach($getInfo as $row)
         {
 
-            $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+            $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
             ->select('coopName')
             ->where('accreditation_no','=', $row->Cooperative_Name)
             ->get();
@@ -748,20 +748,20 @@ class BePDashboardController extends Controller
     public function downloadPrvData(Request $request)
     {
 
-        $getInfo = DB::table('ds2024_rcep_paymaya.tbl_claim')
+        $getInfo = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 ->where('tbl_claim.province', '=', $request->province)
                 ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') >= '16:00:00'")
                 ->get();
                 
-        $getInfo2 = DB::table('ds2024_rcep_paymaya.tbl_claim')
+        $getInfo2 = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 ->where('tbl_claim.province', '=', $request->province)
                 ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') < '16:00:00'")
                 ->get();
@@ -771,7 +771,7 @@ class BePDashboardController extends Controller
         foreach($getInfo as $row)
         {
 
-            $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+            $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
             ->select('coopName')
             ->where('accreditation_no','=', $row->Cooperative_Name)
             ->get();
@@ -820,24 +820,24 @@ class BePDashboardController extends Controller
             $date1 = str_replace('-', '/', $request->date1);
             $date2 = str_replace('-', '/', $request->date2);
             
-            $getInfo = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $getInfo = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                     ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
                     'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                     'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                     'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                    ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                    ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                     ->where('tbl_claim.province', '=', $request->province)
                     ->where('tbl_claim.municipality', '=', $request->municipality)
                     ->whereBetween(DB::raw("DATE_FORMAT(tbl_claim.date_created, '%m/%d/%Y')"), [$date1, $date2])
                     ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') >= '16:00:00'")
                     ->get();
     
-            $getInfo2 = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $getInfo2 = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
             ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
             'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
             'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
             'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-            ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+            ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
             ->where('tbl_claim.province', '=', $request->province)
             ->where('tbl_claim.municipality', '=', $request->municipality)
             ->whereBetween(DB::raw("DATE_FORMAT(tbl_claim.date_created, '%m/%d/%Y')"), [$date1, $date2])
@@ -849,7 +849,7 @@ class BePDashboardController extends Controller
             foreach($getInfo as $row)
             {
     
-                $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+                $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                 ->select('coopName')
                 ->where('accreditation_no','=', $row->Cooperative_Name)
                 ->get();
@@ -892,7 +892,7 @@ class BePDashboardController extends Controller
         else if($request->selectedView == 'coop'){
             $coop = $request->province;
         
-            $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+            $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                     ->select('accreditation_no')
                     ->where('coopName','=', $coop)
                     ->get();
@@ -902,24 +902,24 @@ class BePDashboardController extends Controller
             $date1 = str_replace('-', '/', $request->date1);
             $date2 = str_replace('-', '/', $request->date2);
             
-            $getInfo = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $getInfo = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                     ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
                     'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                     'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                     'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                    ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                    ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                     ->where('tbl_claim.coopAccreditation', '=', $coop)
                     ->where('tbl_claim.municipality', '=', $request->municipality)
                     ->whereBetween(DB::raw("DATE_FORMAT(tbl_claim.date_created, '%m/%d/%Y')"), [$date1, $date2])
                     ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') >= '16:00:00'")
                     ->get();    
     
-            $getInfo2 = DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $getInfo2 = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
             ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
             'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
             'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
             'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-            ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+            ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
             ->where('tbl_claim.coopAccreditation', '=', $coop)
             ->where('tbl_claim.municipality', '=', $request->municipality)
             ->whereBetween(DB::raw("DATE_FORMAT(tbl_claim.date_created, '%m/%d/%Y')"), [$date1, $date2])
@@ -931,7 +931,7 @@ class BePDashboardController extends Controller
             foreach($getInfo as $row)
             {
     
-                $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+                $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                 ->select('coopName')
                 ->where('accreditation_no','=', $row->Cooperative_Name)
                 ->get();
@@ -978,23 +978,23 @@ class BePDashboardController extends Controller
         $date1 = str_replace('-', '/', $request->date1);
         $date2 = str_replace('-', '/', $request->date2);
         
-        $getInfo = DB::table('ds2024_rcep_paymaya.tbl_claim')
+        $getInfo = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
                 'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 ->where('tbl_claim.province', '=', $request->province)
                 ->whereBetween(DB::raw("DATE_FORMAT(tbl_claim.date_created, '%m/%d/%Y')"), [$date1, $date2])
                 ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') >= '16:00:00'")
                 ->get();
 
-                $getInfo2 = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                $getInfo2 = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
                 'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 ->where('tbl_claim.province', '=', $request->province)
                 ->whereBetween(DB::raw("DATE_FORMAT(tbl_claim.date_created, '%m/%d/%Y')"), [$date1, $date2])
                 ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') < '16:00:00'")
@@ -1005,7 +1005,7 @@ class BePDashboardController extends Controller
         foreach($getInfo as $row)
         {
 
-            $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+            $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
             ->select('coopName')
             ->where('accreditation_no','=', $row->Cooperative_Name)
             ->get();
@@ -1057,30 +1057,30 @@ class BePDashboardController extends Controller
             $date2 = Carbon::createFromFormat('Y-m-d H:i:s', $date2)->endOfDay()->format('Y-m-d H:i:s');
         }
         
-        $getCoopAccred = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+        $getCoopAccred = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
             ->select('accreditation_no')
             ->where('coopName','=', $coop)
             ->first();
         $coopAccred = $getCoopAccred->accreditation_no;
         // dd($coopAccred);
-        $getInfo = DB::table('ds2024_rcep_paymaya.tbl_claim')
+        $getInfo = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
                 'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as eBinhiCode', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', DB::raw('0 as Bags'), 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 ->where('tbl_claim.coopAccreditation', '=', $coopAccred)
                 ->whereBetween('date_created', [$date1, $date2])
                 // ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') >= '16:00:00'")
                 ->groupBy('tbl_claim.paymaya_code')
                 ->get();
 
-                // $getInfo2 = DB::table('ds2024_rcep_paymaya.tbl_claim')
+                // $getInfo2 = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 // ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
                 // 'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
                 // 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as e-Binhi_Code', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 // 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', 'tbl_beneficiaries.bags as Bags', 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
-                // ->join('ds2024_rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
+                // ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
                 // ->where('tbl_claim.coopAccreditation', '=', $coopAccred)
                 // ->whereBetween('date_created', [$date1, $date2])
                 // ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') < '16:00:00'")
@@ -1091,13 +1091,13 @@ class BePDashboardController extends Controller
         // $getInfo = array_merge($getInfo,$getInfo2);
         foreach($getInfo as $row)
         {
-            $getBags = count(DB::table('ds2024_rcep_paymaya.tbl_claim')
+            $getBags = count(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
             ->where('paymaya_code',$row->eBinhiCode)
             ->where('coopAccreditation','=', $row->Cooperative_Name)
             ->get());
 
 
-            $getCoop = DB::table('ds2024_rcep_seed_cooperatives.tbl_cooperatives')
+            $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
             ->select('coopName')
             ->where('accreditation_no','=', $row->Cooperative_Name)
             ->get();

@@ -37,7 +37,7 @@ class ReplacementsController extends Controller
         // dd($getRegions);
         
         foreach($getRegions as $reg){
-            $regions = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $regions = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                                 ->select('regCode')
                                 ->where('regionName', $reg->region)
                                 ->limit(1)

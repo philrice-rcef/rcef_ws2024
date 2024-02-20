@@ -60,19 +60,19 @@ class paymentsController extends Controller {
                     $status_name = 'Cancelled';
                 }
 
-            $actual_delivery = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+            $actual_delivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
                 ->select('dateCreated', 'qrStart','qrEnd', DB::raw('SUM(tbl_actual_delivery.totalBagCount) as actualBags'))
                 ->where('batchTicketNumber', $batch->batchTicketNumber)
                 ->where('region', $deliveryData->region)
             ->groupBy('batchTicketNumber')
             ->first();
 
-            $paymentStatus = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $paymentStatus = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->select('paymentStatus')
                 ->where('batchTicketNumber', $batch->batchTicketNumber)
                 ->first();
 
-            $dr_number = DB::table('ds2024_rcep_delivery_inspection.tbl_inspection')
+            $dr_number = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_inspection')
             ->select('dr_number')
             ->where('batchTicketNumber', $batch->batchTicketNumber)
             ->first();
@@ -127,12 +127,12 @@ class paymentsController extends Controller {
 
     public function getParticulars(Request $request){
         $IARdata = [];
-        $getParticularBatch = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $getParticularBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->select('particularsBatch')
         ->where('iar_number', $request->content)
         ->get();
 
-        $getIARgroup = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $getIARgroup = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->where('particularsBatch', $getParticularBatch[0]->particularsBatch)
         ->get();
 
@@ -165,7 +165,7 @@ class paymentsController extends Controller {
 
         if($checkStatus){
             if($checkStatus->status == 'received'||$checkStatus->status == 'to_prp'){
-            $checkIAR = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $checkIAR = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->select('iar_number')
             ->where('iar_number', $content)
             ->get();
@@ -225,12 +225,12 @@ class paymentsController extends Controller {
                 ->first();
                 array_push($iarArray, $IAR);
 
-                $dr_number = DB::table('ds2024_rcep_delivery_inspection.tbl_inspection')
+                $dr_number = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_inspection')
                 ->select('dr_number')
                 ->where('batchTicketNumber', $batch)
                 ->first();
 
-                $paymentStatus = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $paymentStatus = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->select('paymentStatus')
                 ->where('batchTicketNumber', $batch)
                 ->first();
@@ -252,7 +252,7 @@ class paymentsController extends Controller {
                     $deliveryType = 'Binhi e-Padala';
                 }
                     
-                DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->insert([
                 'coopAccreditation' => $tbl_delivery_data->coopAccreditation,
                 'region' => $tbl_delivery_data->region,
@@ -315,7 +315,7 @@ class paymentsController extends Controller {
 
         $DRs = [];
         foreach($sortedDates as $date){
-            $dateDR = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $dateDR = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->select('deliveryReceipt', 'delivery_date')
             ->where('delivery_date', '=', $date)
             ->get();
@@ -336,7 +336,7 @@ class paymentsController extends Controller {
         $particulars = "Payment for ".number_format($sumTotalBags)." bags of CS for 2024DS to ".$tbl_delivery_data->province." as per DR# ".$outputDates." less 1% ret fee | Attached IAR #: ".$outputIAR;
 
         foreach($batchTickets as $batch){
-            DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('batchTicketNumber','=',$batch)
                 ->update([
                 'particulars' => $particulars,
@@ -352,7 +352,7 @@ class paymentsController extends Controller {
     }
 
     public function getGeneratedParticulars(Request $request){
-        $viewParticulars = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $viewParticulars = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->select('particulars')
             ->where('iar_number', $request->generatedCode)
             ->first();
@@ -363,23 +363,23 @@ class paymentsController extends Controller {
 
 
     public function addDVnumber(Request $request){
-        $checkDV = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $checkDV = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->where('dv_control_number','=',$request->dv)
         ->get();
 
         if(!$checkDV){
-            $updateDV = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $updateDV = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('particularsBatch','=',$request->particularsBatch)
                 ->update([
                 'dv_control_number' => $request->dv,
                 ]);
-            $getIAR = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $getIAR = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->select('iar_number')
             ->where('particularsBatch','LIKE',$request->particularsBatch)
             ->get();
             if($getIAR){
                 foreach($getIAR as $IAR){
-                    DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+                    DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
                     ->where('iar_no','=',$IAR->iar_number)
                     ->update([
                     'status' => 'to_prp',
@@ -399,25 +399,25 @@ class paymentsController extends Controller {
 
     public function addDVnumber2(Request $request){
         // dd($request->dv2,$request->generatedCode);
-        $checkDV = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $checkDV = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->where('dv_control_number','=',$request->dv2)
         ->get();
 
-        $particularsBatch = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $particularsBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->select('particularsBatch')
         ->where('iar_number','=',$request->generatedCode)
         ->first();
 
 
         if(!$checkDV){
-            $updateDV = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $updateDV = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('particularsBatch','=',$particularsBatch->particularsBatch)
                 ->update([
                 'dv_control_number' => $request->dv2,
                 ]);
 
             // dd($updateDV);
-            $getIAR = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $getIAR = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->select('iar_number')
             ->where('particularsBatch','LIKE',$request->particularsBatch)
             ->get();
@@ -425,7 +425,7 @@ class paymentsController extends Controller {
             // dd($request->particularsBatch,$getIAR);
             if($getIAR){
                 foreach($getIAR as $IAR){
-                    DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+                    DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
                     ->where('iar_no','=',$IAR->iar_number)
                     ->update([
                     'status' => 'to_prp',
@@ -442,7 +442,7 @@ class paymentsController extends Controller {
     }
 
     public function hasDVnumber(Request $request){
-        $particularsBatch = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $particularsBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->select('particularsBatch')
         ->where('iar_number','=',$request->generatedCode)
         ->first();
@@ -450,7 +450,7 @@ class paymentsController extends Controller {
         // dd($particularsBatch);
 
         if($particularsBatch){
-            $hasDV = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $hasDV = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('particularsBatch','=',$particularsBatch->particularsBatch)
                 ->whereRaw('LENGTH(dv_control_number) > 0')
                 ->get();
@@ -472,12 +472,12 @@ class paymentsController extends Controller {
         // dd($request->generatedCode);
         $transpoArray = [];
 
-        $particularsBatch = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $particularsBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->select('particularsBatch')
         ->where('iar_number','=',$request->generatedCode)
         ->first();
 
-        $getBatchNo = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $getBatchNo = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->select('batchTicketNumber')
         ->where('particularsBatch','=',$particularsBatch->particularsBatch)
         ->get();
@@ -489,26 +489,26 @@ class paymentsController extends Controller {
             ->groupBy('batchTicketNumber')
             ->first();
 
-            $actual_delivery = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+            $actual_delivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
             ->select('dateCreated', 'qrStart','qrEnd', DB::raw('SUM(tbl_actual_delivery.totalBagCount) as actualBags'))
             ->where('batchTicketNumber', $batch->batchTicketNumber)
             ->where('region', $deliveryData->region)
             ->groupBy('batchTicketNumber')
             ->first();
 
-            $getTranspo = DB::table('ds2024_rcep_delivery_inspection.tbl_delivery')
+            $getTranspo = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
             ->select('batchTicketNumber','transpo_cost_per_bag')
             ->where('batchTicketNumber', '=', $batch->batchTicketNumber)
             ->groupBy('batchTicketNumber')
             ->first();
 
-            $getIAR = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $getIAR = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->select('iar_number')
             ->where('batchTicketNumber', '=', $batch->batchTicketNumber)
             ->first();
 
             if($getTranspo){
-                DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('batchTicketNumber','=',$batch->batchTicketNumber)
                 ->update([
                 'transpo_cost_per_bag' => $getTranspo->transpo_cost_per_bag,
@@ -536,14 +536,14 @@ class paymentsController extends Controller {
         $totalTranspo = 0;
         foreach($allData as $data){
             // dd($data);
-            $particularsTranspoCost = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $particularsTranspoCost = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('iar_number','=',$data["iar_number"])
                 ->where('batchTicketNumber','=',$data["batchTicketNumber"])
                 ->update([
                 'transpo_cost_per_bag' => $data["transpo_cost_per_bag"],
                 ]);
             
-            $deliveryTranspoCost = DB::table('ds2024_rcep_delivery_inspection.tbl_delivery')
+            $deliveryTranspoCost = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
             ->where('batchTicketNumber','=',$data["batchTicketNumber"])
             ->update([
             'transpo_cost_per_bag' => $data["transpo_cost_per_bag"],
@@ -552,13 +552,13 @@ class paymentsController extends Controller {
             $totalTranspo += $data["transpo_cost_per_bag"];
         }
 
-        $checkParticulars = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+        $checkParticulars = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
         ->where('iar_number','=',$allData[0]["iar_number"])
         ->where('particulars','LIKE','%with transpo cost%')
         ->first();
 
         if(!$checkParticulars){
-            $getParticularBatch = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $getParticularBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->where('iar_number','=',$allData[0]["iar_number"])
             ->first();
             
@@ -571,14 +571,14 @@ class paymentsController extends Controller {
             $newParticulars = $parts[0].$transpoCost.'as per DR#'.$parts[1];
 
             if($totalTranspo != 0){
-                $updateParticulars = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $updateParticulars = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                     ->where('particularsBatch','LIKE',$getParticularBatch->particularsBatch)
                     ->update([
                     'particulars' => $newParticulars,
                     ]);
             }
             else if($totalTranspo == 0){
-                $updateParticulars = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $updateParticulars = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('particularsBatch','LIKE',$getParticularBatch->particularsBatch)
                 ->update([
                 'particulars' => $particulars,
@@ -587,7 +587,7 @@ class paymentsController extends Controller {
             }
         }
         else{
-            $getParticularBatch = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+            $getParticularBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
             ->where('iar_number','=',$allData[0]["iar_number"])
             ->first();
             
@@ -604,7 +604,7 @@ class paymentsController extends Controller {
             $newParticulars = $parts[0].$transpoCost.'as per DR#'.$parts2[1];
 
             if($totalTranspo != 0){
-                $updateParticulars = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $updateParticulars = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                     ->where('particularsBatch','LIKE',$getParticularBatch->particularsBatch)
                     ->update([
                     'particulars' => $newParticulars,
@@ -614,7 +614,7 @@ class paymentsController extends Controller {
                 $parts3 = explode("with transpo cost of P", $newParticulars);
                 $parts4 = explode("as per DR#", $parts3[1]);
                 $newParticulars2 = $parts3[0].'as per DR#'.$parts4[1];
-                $updateParticulars = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $updateParticulars = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('particularsBatch','LIKE',$getParticularBatch->particularsBatch)
                 ->update([
                 'particulars' => $newParticulars2,
@@ -659,7 +659,7 @@ class paymentsController extends Controller {
         $data = $response->dv;
 
         if($response){
-            $validate = DB::table('ds2024_rcep_delivery_inspection.iar_fmis_data')
+            $validate = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_fmis_data')
             ->where('DVControlNo', $data->DVControlNo)
             ->where('DVNo', $data->DVNo)
             ->where('Amount', $data->Amount)
@@ -668,7 +668,7 @@ class paymentsController extends Controller {
             ->get();
 
             if(!$validate){
-                DB::table('ds2024_rcep_delivery_inspection.iar_fmis_data')
+                DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_fmis_data')
                     ->insert([
                     'DVControlNo' => $data->DVControlNo,
                     'DVNo' => $data->DVNo,

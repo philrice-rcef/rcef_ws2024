@@ -92,7 +92,7 @@ class KPDistributionController extends Controller
         // dd($countProvinces, $countMunicipalities);
         
         foreach($regionsArray as $reg){
-            $regions = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $regions = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                                 ->select('regCode')
                                 ->where('regionName', $reg)
                                 ->limit(1)
@@ -130,7 +130,7 @@ class KPDistributionController extends Controller
         //                 $total_KPKits = $KPKits[0]->total_kp_kit_count;
 
         //                 if($newReleasedCount > 0 && $total_KPKits!=='null' && $total_KPKits!=0){
-        //                     $regions = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        //                     $regions = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         //                     ->select(DB::raw('regionName as reg'), DB::raw('regCode as regC'))
         //                     ->where('regCode', $regionCode)
         //                     ->limit(1)
@@ -227,7 +227,7 @@ class KPDistributionController extends Controller
         $regionsArray = array_unique($regionsArray);
         // dd($regionsArray);
         foreach($regionsArray as $reg){
-            $regions = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $regions = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                                 ->select('regionName','regCode')
                                 ->where('regionName', $reg)
                                 ->limit(1)
@@ -264,7 +264,7 @@ class KPDistributionController extends Controller
                             $total_KPKits = $KPKits[0]->total_kp_kit_count;
     
                             if($newReleasedCount > 0 && $total_KPKits!=='null' && $total_KPKits!=0){
-                                $regions = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+                                $regions = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                                 ->select(DB::raw('regionName as reg'), DB::raw('regCode as regC'))
                                 ->where('regCode', $regionCode)
                                 ->where('regCode', '!=','99')
@@ -296,7 +296,7 @@ class KPDistributionController extends Controller
         
         $locations = array();
         $provinceNames = array();
-        $provinces = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        $provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province', 'prv_code')
             ->where('regCode', $request->reg)
             ->groupBy('province')
@@ -324,7 +324,7 @@ class KPDistributionController extends Controller
         $provinceNames = array_unique($provinceNames);
         $finalProv = array();
         foreach($provinceNames as $prov){
-            $raw = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $raw = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                 ->select('province', 'prv_code')
                 ->where('province', $prov)
                 ->groupBy('province')
@@ -343,7 +343,7 @@ class KPDistributionController extends Controller
 
     public function getKPProvinces_old(Request $request){
         $returns = array();
-        $raw = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        $raw = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province', 'prv_code')
             ->where('regCode', $request->reg)
             ->groupBy('province')
@@ -379,7 +379,7 @@ class KPDistributionController extends Controller
         // dd($request->prov);
         $locations = array();
         $municipalityNames = array();
-        $municipalities = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        $municipalities = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province','municipality', 'prv')
             ->where('prv_code', $request->prov)
             ->groupBy('municipality')
@@ -410,7 +410,7 @@ class KPDistributionController extends Controller
         // dd($municipalityNames);
         $finalMuni = array();
         foreach($municipalityNames as $muni){
-            $raw = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $raw = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                 ->select('municipality', 'prv')
                 ->where('municipality', $muni)
                 ->where('prv_code', $request->prov)
@@ -506,7 +506,7 @@ class KPDistributionController extends Controller
         if($request->reg!="default"&&$request->prv=="default"&&$request->mun=="default"&&$check_season>=2023)
         {
             $prvs = array();
-            $raw = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $raw = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province', 'prv_code')
             ->where('regCode', $request->reg)
             ->groupBy('province')
@@ -1300,13 +1300,12 @@ class KPDistributionController extends Controller
             DB::raw("SUM(testimonials) as testimonials"),
             DB::raw("SUM(services) as services"),
             DB::raw("SUM(apps) as apps"),
-            DB::raw("SUM(yunpalayun) as yunpalayun"),
-            DB::raw("SUM(brochure) as brochure")
+            DB::raw("SUM(yunpalayun) as yunpalayun")
             )
             ->where('season','LIKE', $request->ssn)
             ->first();
          
-            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun + $getTotalKp->brochure;
+            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun;
 
             $sum_KPKits_distributed = $totalKP;
             $sum_farmer_beneficiaries = count($getData);
@@ -1324,7 +1323,7 @@ class KPDistributionController extends Controller
         else if($request->reg!="default"&&$request->prv=="default"&&$request->mun=="default")
         {
             
-            $getRegion = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $getRegion = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('regionName')
             ->where('regCode', $request->reg)
             ->first();
@@ -1344,14 +1343,13 @@ class KPDistributionController extends Controller
             DB::raw("SUM(testimonials) as testimonials"),
             DB::raw("SUM(services) as services"),
             DB::raw("SUM(apps) as apps"),
-            DB::raw("SUM(yunpalayun) as yunpalayun"),
-            DB::raw("SUM(brochure) as brochure")
+            DB::raw("SUM(yunpalayun) as yunpalayun")
             )
             ->where('season','LIKE', $request->ssn)
             ->where('location','LIKE','%'.$region.'%')
             ->first();
          
-            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun + $getTotalKp->brochure;
+            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun;
 
             $sum_KPKits_distributed = $totalKP;
             $sum_farmer_beneficiaries = count($getData);
@@ -1371,7 +1369,7 @@ class KPDistributionController extends Controller
         else if($request->reg!="default"&&$request->prv!="default"&&$request->mun=="default")
         {
             
-            $getProvince = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $getProvince = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province')
             ->where('prv_code', $request->prv)
             ->first();
@@ -1391,14 +1389,14 @@ class KPDistributionController extends Controller
             DB::raw("SUM(testimonials) as testimonials"),
             DB::raw("SUM(services) as services"),
             DB::raw("SUM(apps) as apps"),
-            DB::raw("SUM(yunpalayun) as yunpalayun"),
-            DB::raw("SUM(brochure) as brochure")
+            DB::raw("SUM(yunpalayun) as yunpalayun")
+            
             )
             ->where('season','LIKE', $request->ssn)
             ->where('location','LIKE','%'.$province.'%')
             ->first();
          
-            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun + $getTotalKp->brochure;
+            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun;
 
             $sum_KPKits_distributed = $totalKP;
             $sum_farmer_beneficiaries = count($getData);
@@ -1420,7 +1418,7 @@ class KPDistributionController extends Controller
             $requestData = $request->all();
             // dd($requestData);
 
-            $getMunicipality = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $getMunicipality = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province','municipality')
             ->where('prv', $request->mun)
             ->first();
@@ -1444,14 +1442,14 @@ class KPDistributionController extends Controller
             DB::raw("SUM(testimonials) as testimonials"),
             DB::raw("SUM(services) as services"),
             DB::raw("SUM(apps) as apps"),
-            DB::raw("SUM(yunpalayun) as yunpalayun"),
-            DB::raw("SUM(brochure) as brochure")
+            DB::raw("SUM(yunpalayun) as yunpalayun")
+            
             )
             ->where('season','LIKE', $request->ssn)
             ->where('location','LIKE','%'.$municipality.'%'.'%'.$province.'%')
             ->first();
          
-            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun + $getTotalKp->brochure;
+            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun;
 
             $sum_KPKits_distributed = $totalKP;
             $sum_farmer_beneficiaries = count($getData);
@@ -1956,7 +1954,7 @@ class KPDistributionController extends Controller
         if($request->reg!="default"&&$request->prv!="default"&&$request->mun=="default")
         {
             
-            $getProvince = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $getProvince = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province')
             ->where('prv_code', $request->prv)
             ->first();
@@ -1977,14 +1975,14 @@ class KPDistributionController extends Controller
             DB::raw("SUM(testimonials) as testimonials"),
             DB::raw("SUM(services) as services"),
             DB::raw("SUM(apps) as apps"),
-            DB::raw("SUM(yunpalayun) as yunpalayun"),
-            DB::raw("SUM(brochure) as brochure")
+            DB::raw("SUM(yunpalayun) as yunpalayun")
+            
             )
             ->where('season','LIKE', $request->ssn)
             ->where('location','LIKE','%'.$province.'%')
             ->first();
          
-            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun + $getTotalKp->brochure;
+            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun;
 
             $sum_KPKits_distributed = $totalKP;
             $sum_farmer_beneficiaries = count($getData);
@@ -2006,7 +2004,7 @@ class KPDistributionController extends Controller
             $requestData = $request->all();
             // dd($requestData);
 
-            $getMunicipality = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $getMunicipality = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province','municipality')
             ->where('prv', $request->mun)
             ->first();
@@ -2031,14 +2029,13 @@ class KPDistributionController extends Controller
             DB::raw("SUM(testimonials) as testimonials"),
             DB::raw("SUM(services) as services"),
             DB::raw("SUM(apps) as apps"),
-            DB::raw("SUM(yunpalayun) as yunpalayun"),
-            DB::raw("SUM(brochure) as brochure")
+            DB::raw("SUM(yunpalayun) as yunpalayun")
             )
             ->where('season','LIKE', $request->ssn)
             ->where('location','LIKE','%'.$municipality.'%'.'%'.$province.'%')
             ->first();
          
-            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun + $getTotalKp->brochure;
+            $totalKP = $getTotalKp->kpKits + $getTotalKp->calendars + $getTotalKp->testimonials + $getTotalKp->services + $getTotalKp->apps + $getTotalKp->yunpalayun;
 
             $sum_KPKits_distributed = $totalKP;
             $sum_farmer_beneficiaries = count($getData);
@@ -2177,7 +2174,7 @@ class KPDistributionController extends Controller
             $province = $location[1];
             $municipality = $location[0];
 
-            $getPSGcode = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $getPSGcode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('psa_code')
             ->where('province','LIKE',$province)
             ->where('municipality','LIKE',$municipality)
@@ -2189,14 +2186,14 @@ class KPDistributionController extends Controller
             DB::raw("SUM(testimonials) as testimonials"),
             DB::raw("SUM(services) as services"),
             DB::raw("SUM(apps) as apps"),
-            DB::raw("SUM(yunpalayun) as yunpalayun"),
-            DB::raw("SUM(brochure) as brochure")
+            DB::raw("SUM(yunpalayun) as yunpalayun")
+            
             )
             ->where('id','LIKE', $data->id)
             ->first();
 
             
-            $totalKPreceived = $totalReceived->kpKits + $totalReceived->calendars + $totalReceived->testimonials + $totalReceived->services + $totalReceived->apps + $totalReceived->yunpalayun + $totalReceived->brochure;
+            $totalKPreceived = $totalReceived->kpKits + $totalReceived->calendars + $totalReceived->testimonials + $totalReceived->services + $totalReceived->apps + $totalReceived->yunpalayun;
             // dd($totalKPreceived);
 
             $age = '';

@@ -29,7 +29,7 @@ class fcaTaggingController extends Controller
         $munArray = array();
         $provArray = array();
 
-        $getRegions = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        $getRegions = DB::table(ws2024$GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('regCode','regionName')
         ->groupBy('regCode')
         ->where('regCode','!=',99)
@@ -60,7 +60,7 @@ class fcaTaggingController extends Controller
 
     public function getFCAProvinces(Request $request)
     {
-        $getProvinces = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        $getProvinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('province')
         ->where('regionName',$request->reg)
         ->groupBy('province')
@@ -71,7 +71,7 @@ class fcaTaggingController extends Controller
 
     public function getFCAMunicipalities(Request $request)
     {
-        $getMunicipalities = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        $getMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('municipality')
         ->where('province',$request->prov)
         ->groupBy('municipality')

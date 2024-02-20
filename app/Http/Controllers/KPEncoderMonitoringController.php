@@ -32,7 +32,7 @@ class KPEncoderMonitoringController extends Controller
 
         foreach($encoded as $encode)
         {
-            $getName1 = DB::table('ds2024_sdms_db_dev.users')
+            $getName1 = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
                 ->where('username',$encode->Encoder)
                 ->first();
             $fullName1 = $getName1->firstName.' '.$getName1->middleName.' '.$getName1->lastName.' '.$getName1->extName;
@@ -108,7 +108,7 @@ class KPEncoderMonitoringController extends Controller
             }
 
             foreach ($getCount as $count){
-                $getName = DB::table('ds2024_sdms_db_dev.users')
+                $getName = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
                 ->where('username',$count->Encoder)
                 ->first();
                 
@@ -195,7 +195,7 @@ class KPEncoderMonitoringController extends Controller
 
         foreach($getEncoders as $encoder)
         {
-            $getName = DB::table('ds2024_sdms_db_dev.users')
+            $getName = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
                 ->where('username',$encoder->encodedBy)
                 ->first();
 
@@ -247,7 +247,7 @@ class KPEncoderMonitoringController extends Controller
             $province = $location[1];
             $municipality = $location[0];
 
-            $getPSGcode = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $getPSGcode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('psa_code')
             ->where('province','LIKE',$province)
             ->where('municipality','LIKE',$municipality)

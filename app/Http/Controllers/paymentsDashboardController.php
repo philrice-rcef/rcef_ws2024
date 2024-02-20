@@ -35,7 +35,7 @@ class paymentsDashboardController extends Controller {
         $formattedDateTime = $currentDateTime->format('Y-m-d H:i:s');
         // dd($formattedDateTime);
 
-        $getAllData = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $getAllData = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->get();
 
         $idleTransactions = [];
@@ -50,11 +50,11 @@ class paymentsDashboardController extends Controller {
             }, $currentDateTime);
         
             if ($differenceInDays >= 3) {
-                $getLocation = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $getLocation = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->where('iar_number', 'LIKE', $record->iar_no)
                 ->first();
 
-                $getVolume = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $getVolume = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->select(DB::raw('SUM(delivery_volume) as totalVolume'))
                 ->where('iar_number', 'LIKE', $record->iar_no)
                 ->first();
@@ -129,7 +129,7 @@ class paymentsDashboardController extends Controller {
         $totalDisbursedLosBanos = 0;
         $totalDisbursedNegros = 0;
         
-        $getAccomplished = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $getAccomplished = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->select('iar_no')
         ->where('status', '=', 'accomplished')
         ->get();
@@ -141,7 +141,7 @@ class paymentsDashboardController extends Controller {
         {
             foreach($getAccomplished as $paidIAR)
             {
-                $getDVctrlNo = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $getDVctrlNo = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->select('dv_control_number')
                 ->where('iar_number', 'LIKE', $paidIAR->iar_no)
                 ->get();
@@ -153,7 +153,7 @@ class paymentsDashboardController extends Controller {
             
             foreach($uniqueDVctrlNo as $DVctrlNo)
             {
-                $getAmount = DB::table('ds2024_rcep_delivery_inspection.iar_fmis_data')
+                $getAmount = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_fmis_data')
                 ->where('DVControlNo','LIKE',$DVctrlNo)
                 ->groupBy('DVControlNo')
                 ->get();
@@ -161,7 +161,7 @@ class paymentsDashboardController extends Controller {
 
                 foreach($getAmount as $amount)
                 {
-                    $getIARno = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                    $getIARno = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                     ->where('dv_control_number','LIKE',$DVctrlNo)
                     ->first();
 
@@ -170,7 +170,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $confirmAccomplishedIAR = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+                    $confirmAccomplishedIAR = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
                     ->where('iar_no','LIKE',$getIARno->iar_number)
                     ->where('status', '=', 'accomplished')
                     ->first();
@@ -180,7 +180,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $getIARbatch = DB::table('ds2024_rcep_delivery_inspection.iar_print_logs')
+                    $getIARbatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
                     ->where('iarCode',$confirmAccomplishedIAR->iar_no)
                     ->first();
 
@@ -189,7 +189,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $getIARregion = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+                    $getIARregion = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
                     ->where('batchTicketNumber',$getIARbatch->batchTicketNumber)
                     ->first();
 
@@ -198,7 +198,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $getIARstation = DB::table('ds2024_sdms_db_dev.lib_station')
+                    $getIARstation = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
                     ->select('station')
                     ->where('region',$getIARregion->region)
                     ->first();
@@ -252,24 +252,24 @@ class paymentsDashboardController extends Controller {
         
 
         //Overall Status
-        $forTransmit = count(DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $forTransmit = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->where('status', '=', 'to_rcv')
         ->orWhere('status', '=', 'returned')
         ->get());
-        $receivedCES = count(DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $receivedCES = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->where('status', '=', 'received')
         ->get());
-        $forPreparation = count(DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $forPreparation = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->where('status', '=', 'to_prp')
         ->get());
-        $forProcessing = count(DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $forProcessing = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->where('status', '=', 'to_prc')
         ->orWhere('status', '=', 'to_pay')
         ->get());
-        $paidDeliveries = count(DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $paidDeliveries = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->where('status', '=', 'accomplished')
         ->get());
-        $onHold = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $onHold = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->select('status_before_hold')
         ->where('status', '=', 'on_hold')
         ->get();
@@ -300,7 +300,7 @@ class paymentsDashboardController extends Controller {
             }
         }
 
-        $actualDeliveries = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+        $actualDeliveries = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
         ->get();
         
 
@@ -316,7 +316,7 @@ class paymentsDashboardController extends Controller {
         //Total Seed Deliveries
         foreach($actualDeliveries as $delivery){
            
-            $station = DB::table('ds2024_sdms_db_dev.lib_station')
+            $station = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
             ->select('station')
             ->where('region',$delivery->region)
             ->first();
@@ -362,29 +362,49 @@ class paymentsDashboardController extends Controller {
         $deliveriesNegros = number_format($deliveriesNegros);
 
         //Total Seeds Delivered
-        $totalDelivered = count(DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+        $totalDelivered = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
         ->groupBy('batchTicketNumber')
         ->get());
 
-        $getLatestMonth = DB::table('ds2024_rcep_delivery_inspection.tbl_delivery_sum')
+        $getLatestMonth = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery_sum')
         ->select('targetMonthTo')
         ->orderBy('targetMonthTo','DESC')
         ->first();
-        $totalTarget= DB::table('ds2024_rcep_delivery_inspection.tbl_delivery_sum')
+        if($getLatestMonth){
+            $latestMonth = $getLatestMonth->targetMonthTo;
+        }
+        else{
+            $latestMonth = '';
+        }
+
+        $totalTarget= DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery_sum')
         ->selectRaw('SUM(targetVolume) as target')
-        ->where('targetMonthTo', 'LIKE', $getLatestMonth->targetMonthTo)
+        ->where('targetMonthTo', 'LIKE', $latestMonth)
         ->first();
-        // $totalTarget=count(DB::table('ds2024_rcep_delivery_inspection.tbl_delivery')
+        // $totalTarget=count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
         // ->groupBy('batchTicketNumber')
         // ->get());
 
         //Total Paid Deliveries
-        $totalPaidDeliveries = count(DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $totalPaidDeliveries = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->where('status', '=', 'accomplished')
         ->groupBy('iar_no')
         ->get());
-        $totalDeliveredPercentage = number_format(($totalDelivered/$totalTarget->target)*100,2);
-        $totalPaidPercentage = number_format(($totalPaidDeliveries/$totalDelivered)*100,2);
+        
+        if($totalTarget->target){
+            $totalDeliveredPercentage = number_format(($totalDelivered/$totalTarget->target)*100,2);
+        }
+        else{
+            $totalDeliveredPercentage = 0;
+        }
+
+        if($totalDelivered){
+            $totalPaidPercentage = number_format(($totalPaidDeliveries/$totalDelivered)*100,2);
+        }
+        else{
+            $totalPaidPercentage = 0;
+        }
+        
         $totalDelivered = number_format($totalDelivered);
         $totalPaidDeliveries = number_format($totalPaidDeliveries);
         
@@ -398,7 +418,7 @@ class paymentsDashboardController extends Controller {
         $paidLosBanos = 0;
         $paidNegros = 0;
 
-        $overallPaid = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $overallPaid = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->select('iar_no')
         ->where('status', '=', 'accomplished')
         ->groupBy('iar_no')
@@ -406,7 +426,7 @@ class paymentsDashboardController extends Controller {
 
         foreach($overallPaid as $paidIAR)
         {
-            $getPaidBatch = DB::table('ds2024_rcep_delivery_inspection.iar_print_logs')
+            $getPaidBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
             ->where('iarCode',$paidIAR->iar_no)
             ->first();
 
@@ -415,7 +435,7 @@ class paymentsDashboardController extends Controller {
                 continue;
             }
 
-            $paidDeliveryData = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+            $paidDeliveryData = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
             ->where('batchTicketNumber',$getPaidBatch->batchTicketNumber)
             ->first();
 
@@ -424,7 +444,7 @@ class paymentsDashboardController extends Controller {
                 continue;
             }
             
-            $getPaidStation = DB::table('ds2024_sdms_db_dev.lib_station')
+            $getPaidStation = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
             ->select('station')
             ->where('region',$paidDeliveryData->region)
             ->first();
@@ -484,7 +504,7 @@ class paymentsDashboardController extends Controller {
         $forTransmitLosBanos = 0;
         $forTransmitNegros = 0;
 
-        $overallForTransmit = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $overallForTransmit = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->select('iar_no')
         ->where('status', '=', 'to_rcv')
         ->orWhere('status', '=', 'returned')
@@ -492,7 +512,7 @@ class paymentsDashboardController extends Controller {
 
         foreach($overallForTransmit as $transmitIAR)
         {
-            $getBatch = DB::table('ds2024_rcep_delivery_inspection.iar_print_logs')
+            $getBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
             ->where('iarCode',$transmitIAR->iar_no)
             ->first();
 
@@ -500,7 +520,7 @@ class paymentsDashboardController extends Controller {
                 continue;
              }
 
-            $deliveryData = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+            $deliveryData = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
             ->where('batchTicketNumber',$getBatch->batchTicketNumber)
             ->first();
 
@@ -508,7 +528,7 @@ class paymentsDashboardController extends Controller {
                 continue;
              }
             
-            $getStation = DB::table('ds2024_sdms_db_dev.lib_station')
+            $getStation = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
             ->select('station')
             ->where('region',$deliveryData->region)
             ->first();
@@ -605,7 +625,7 @@ class paymentsDashboardController extends Controller {
 
     public function getDatedData(Request $request){
 
-        $actualDeliveries = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+        $actualDeliveries = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
         ->whereBetween(DB::raw("DATE_FORMAT(dateCreated, '%m/%d/%Y')"), [$request->startDate, $request->endDate])
         ->get();
 
@@ -621,7 +641,7 @@ class paymentsDashboardController extends Controller {
         //Total Seed Deliveries
         foreach($actualDeliveries as $delivery){
            
-            $station = DB::table('ds2024_sdms_db_dev.lib_station')
+            $station = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
             ->select('station')
             ->where('region',$delivery->region)
             ->first();
@@ -677,7 +697,7 @@ class paymentsDashboardController extends Controller {
         $paidLosBanos = 0;
         $paidNegros = 0;
 
-        $overallPaid = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $overallPaid = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->select('iar_no')
         ->where('status', '=', 'accomplished')
         ->groupBy('iar_no')
@@ -685,7 +705,7 @@ class paymentsDashboardController extends Controller {
 
         foreach($overallPaid as $paidIAR)
         {
-            $getPaidBatch = DB::table('ds2024_rcep_delivery_inspection.iar_print_logs')
+            $getPaidBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
             ->where('iarCode',$paidIAR->iar_no)
             ->first();
 
@@ -694,7 +714,7 @@ class paymentsDashboardController extends Controller {
                 continue;
             }
 
-            $paidDeliveryData = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+            $paidDeliveryData = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
             ->where('batchTicketNumber',$getPaidBatch->batchTicketNumber)
             ->whereBetween(DB::raw("DATE_FORMAT(dateCreated, '%m/%d/%Y')"), [$request->startDate, $request->endDate])
             ->first();
@@ -704,7 +724,7 @@ class paymentsDashboardController extends Controller {
                 continue;
             }
             
-            $getPaidStation = DB::table('ds2024_sdms_db_dev.lib_station')
+            $getPaidStation = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
             ->select('station')
             ->where('region',$paidDeliveryData->region)
             ->first();
@@ -763,7 +783,7 @@ class paymentsDashboardController extends Controller {
         $forTransmitLosBanos = 0;
         $forTransmitNegros = 0;
 
-        $overallForTransmit = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $overallForTransmit = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->select('iar_no')
         ->where('status', '=', 'to_rcv')
         ->orWhere('status', '=', 'returned')
@@ -771,7 +791,7 @@ class paymentsDashboardController extends Controller {
 
         foreach($overallForTransmit as $transmitIAR)
         {
-            $getBatch = DB::table('ds2024_rcep_delivery_inspection.iar_print_logs')
+            $getBatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
             ->where('iarCode',$transmitIAR->iar_no)
             ->first();
 
@@ -779,7 +799,7 @@ class paymentsDashboardController extends Controller {
                 continue;
              }
 
-            $deliveryData = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+            $deliveryData = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
             ->where('batchTicketNumber',$getBatch->batchTicketNumber)
             ->whereBetween(DB::raw("DATE_FORMAT(dateCreated, '%m/%d/%Y')"), [$request->startDate, $request->endDate])
             ->first();
@@ -788,7 +808,7 @@ class paymentsDashboardController extends Controller {
                 continue;
              }
             
-            $getStation = DB::table('ds2024_sdms_db_dev.lib_station')
+            $getStation = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
             ->select('station')
             ->where('region',$deliveryData->region)
             ->first();
@@ -836,7 +856,7 @@ class paymentsDashboardController extends Controller {
         $totalDisbursedLosBanos = 0;
         $totalDisbursedNegros = 0;
         
-        $getAccomplished = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $getAccomplished = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->select('iar_no')
         ->where('status', '=', 'accomplished')
         ->get();
@@ -848,7 +868,7 @@ class paymentsDashboardController extends Controller {
         {
             foreach($getAccomplished as $paidIAR)
             {
-                $getDVctrlNo = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                $getDVctrlNo = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                 ->select('dv_control_number')
                 ->where('iar_number', 'LIKE', $paidIAR->iar_no)
                 ->get();
@@ -860,7 +880,7 @@ class paymentsDashboardController extends Controller {
             
             foreach($uniqueDVctrlNo as $DVctrlNo)
             {
-                $getAmount = DB::table('ds2024_rcep_delivery_inspection.iar_fmis_data')
+                $getAmount = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_fmis_data')
                 ->where('DVControlNo','LIKE',$DVctrlNo)
                 ->groupBy('DVControlNo')
                 ->get();
@@ -868,7 +888,7 @@ class paymentsDashboardController extends Controller {
 
                 foreach($getAmount as $amount)
                 {
-                    $getIARno = DB::table('ds2024_rcep_delivery_inspection.iar_particulars')
+                    $getIARno = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_particulars')
                     ->where('dv_control_number','LIKE',$DVctrlNo)
                     ->first();
 
@@ -877,7 +897,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $confirmAccomplishedIAR = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+                    $confirmAccomplishedIAR = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
                     ->where('iar_no','LIKE',$getIARno->iar_number)
                     ->where('status', '=', 'accomplished')
                     ->first();
@@ -887,7 +907,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $getIARbatch = DB::table('ds2024_rcep_delivery_inspection.iar_print_logs')
+                    $getIARbatch = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
                     ->where('iarCode',$confirmAccomplishedIAR->iar_no)
                     ->first();
 
@@ -896,7 +916,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $getIARregion = DB::table('ds2024_rcep_delivery_inspection.tbl_actual_delivery')
+                    $getIARregion = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
                     ->whereBetween(DB::raw("DATE_FORMAT(dateCreated, '%m/%d/%Y')"), [$request->startDate, $request->endDate])
                     ->where('batchTicketNumber',$getIARbatch->batchTicketNumber)
                     ->first();
@@ -906,7 +926,7 @@ class paymentsDashboardController extends Controller {
                         continue;
                     }
 
-                    $getIARstation = DB::table('ds2024_sdms_db_dev.lib_station')
+                    $getIARstation = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
                     ->select('station')
                     ->where('region',$getIARregion->region)
                     ->first();
@@ -1002,13 +1022,13 @@ class paymentsDashboardController extends Controller {
         $currentDateTime = Carbon::now();
         $formattedDateTime = $currentDateTime->format('Y-m-d H:i:s');
         
-        $getAllData = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+        $getAllData = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
         ->get();
         // dd($getAllData);
-        $getSmsSettings = DB::table('ds2024_rcep_delivery_inspection.iar_notifications')
+        $getSmsSettings = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_notifications')
         ->where('notification','LIKE','sms')
         ->first();
-        $getEmailSettings = DB::table('ds2024_rcep_delivery_inspection.iar_notifications')
+        $getEmailSettings = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_notifications')
         ->where('notification','LIKE','email')
         ->first();
         $toContact =[];
@@ -1121,11 +1141,11 @@ class paymentsDashboardController extends Controller {
         //DROs and Coordinators
         foreach($toContact as $dro){
             $idleIARs = [];
-            $getIARs = DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+            $getIARs = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
             ->where('dro_id', 'LIKE', $dro)
             ->get();
 
-            $countIARs = count(DB::table('ds2024_rcep_delivery_inspection.iar_confirmation')
+            $countIARs = count(DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_confirmation')
             ->where('dro_id', 'LIKE', $dro)
             ->get());
             foreach($getIARs as $IAR){
@@ -1136,7 +1156,7 @@ class paymentsDashboardController extends Controller {
 
             if($getSmsSettings->status==1 || $getSmsSettings->status=='1'){
                 //DRO
-                $getContactNo = DB::table('ds2024_rcep_delivery_inspection.lib_dro')
+                $getContactNo = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_dro')
                 ->where('stationId', 'LIKE', $dro)
                 ->first();
                 
@@ -1164,7 +1184,7 @@ class paymentsDashboardController extends Controller {
                 curl_close($ch);
 
                 //Coordinators
-                $getContactNo2 = DB::table('ds2024_rcep_delivery_inspection.lib_coordinators')
+                $getContactNo2 = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_coordinators')
                 ->where('stationId', 'LIKE', $dro)
                 ->first();
                 
@@ -1197,7 +1217,7 @@ class paymentsDashboardController extends Controller {
     
             if($getEmailSettings->status==1 || $getEmailSettings->status=='1'){
                 //DROs
-                $getEmail = DB::table('ds2024_rcep_delivery_inspection.lib_dro')
+                $getEmail = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_dro')
                         ->where('stationId', 'LIKE', $dro)
                         ->first();
     
@@ -1257,7 +1277,7 @@ class paymentsDashboardController extends Controller {
                 config(['mail' => $originalConfig]);
 
                 //Coordinators
-                $getEmail2 = DB::table('ds2024_rcep_delivery_inspection.lib_coordinators')
+                $getEmail2 = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_coordinators')
                         ->where('stationId', 'LIKE', $dro)
                         ->first();
     
@@ -1323,7 +1343,7 @@ class paymentsDashboardController extends Controller {
     }
 
     public function checkNotifSetting(){
-        $getSettings = DB::table('ds2024_rcep_delivery_inspection.iar_notifications')
+        $getSettings = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_notifications')
         ->get();
 
         return ($getSettings);
@@ -1350,13 +1370,13 @@ class paymentsDashboardController extends Controller {
                     $sms = 0;
                     break;
                 }
-        DB::table('ds2024_rcep_delivery_inspection.iar_notifications')
+        DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_notifications')
         ->where('notification','LIKE','email')
         ->update([
             'status' => $email,
             ]);
             
-        DB::table('ds2024_rcep_delivery_inspection.iar_notifications')
+        DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_notifications')
         ->where('notification','LIKE','sms')
         ->update([
             'status' => $sms,

@@ -37,7 +37,7 @@ class PlantingCalendarController extends Controller
             ->groupBy('regions')
             ->get();
         foreach($tryRaw as $row){
-            $regions = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $regions = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                 ->select(DB::raw('regionName as reg'), DB::raw('regCode as regC'))
                 ->where('regCode', $row->regions)
                 ->limit(1)
@@ -82,7 +82,7 @@ class PlantingCalendarController extends Controller
     public function getProvinces(Request $request){
         $returns = array();
 
-        $raw = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+        $raw = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('province', 'prv_code')
             ->where('regCode', $request->reg)
             ->groupBy('province')
@@ -127,7 +127,7 @@ class PlantingCalendarController extends Controller
         {
             $results = array();
             $checker = array();
-            $prvs = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $prvs = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('prv_code')
             ->where('regCode',"LIKE", $request->reg)
             ->groupBy('prv_code')
@@ -304,7 +304,7 @@ class PlantingCalendarController extends Controller
         {
             $results = array();
             $checker = array();
-            $prvs = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $prvs = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('prv_code')
             ->groupBy('prv_code')
             ->get();
@@ -377,7 +377,7 @@ class PlantingCalendarController extends Controller
         {
             $results = array();
             $checker = array();
-            $prvs = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $prvs = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('prv_code')
             ->where('regCode',"LIKE", $request->reg)
             ->groupBy('prv_code')
@@ -564,7 +564,7 @@ class PlantingCalendarController extends Controller
         {
             $results = array();
             $checker = array();
-            $prvs = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+            $prvs = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('prv_code')
             ->groupBy('prv_code')
             ->get();
