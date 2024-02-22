@@ -61,7 +61,7 @@
                         <p style="">
                             <b> Important Notice</b> <br>
                            
-                            This Farmer Acknowledgement Receipt is intended for farmers who cannot be found in the RSMS as of June 30, 2023 but are verified in the RSBSA Finder <strong>(<u>https://finder-rsbsa.da.gov.ph/</u>)</strong>.
+                            This Farmer Acknowledgement Receipt is intended for farmers who cannot be found in the RSMS as of June 30, 2023 but are verified in the RSBSA Verification Mobile Application.
 
                         </p>
                     </div>
@@ -143,7 +143,7 @@
 
 
                     <th style="font-size: 10px;" style="width:20px;" rowspan="2"><center> Data Sharing Consent <br> (<img src="{{ public_path('images/far_check.jpg')}}" style="height: 12px; width: auto;">/ X)</center></th>
-                    <th style="" colspan="5"><center>2023 WS YIELD <br> Major Seed and Variety Planted</center></th> 
+                    <th style="" colspan="5"><center>2024 DS YIELD <br> Major Seed and Variety Planted</center></th> 
 
 
 
