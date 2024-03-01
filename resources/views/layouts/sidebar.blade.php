@@ -707,9 +707,9 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 								</li>
 								@if(Auth::user()->roles->first()->name == "rcef-programmer" ||  Auth::user()->username == "jpalileo")
 									<li><a href="{{route('encoding_vs')}}">Online Encoding (from Verifier)</a></li>
-									<li><a href="{{route('encoding_vs_fca')}}">Online Encoding (FCA Member)</a></li>
+									<!-- <li><a href="{{route('encoding_vs_fca')}}">Online Encoding (FCA Member)</a></li> -->
 									<li><a href="{{route('encoding_vs_lowland')}}">Online Encoding (Small Landholding)</a></li>
-									<li><a href="{{route('encoding_vs_homeAddressClaim')}}">Online Encoding (Home Address Claims)</a></li>
+									<!-- <li><a href="{{route('encoding_vs_homeAddressClaim')}}">Online Encoding (Home Address Claims)</a></li> -->
 									{{-- <li><a href="{{route('new_farmer_vs')}}">New Farmer Encoded</a></li> --}}
 									
 								@endif
@@ -1190,9 +1190,9 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 						<li><a><i class="fa fa-tasks"></i> Distribution Monitoring<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								<li><a href="{{route('encoding_vs')}}">Online Encoding (from Verifier)</a></li>
-								<li><a href="{{route('encoding_vs_fca')}}">Online Encoding (FCA Member)</a></li>
+								<!-- <li><a href="{{route('encoding_vs_fca')}}">Online Encoding (FCA Member)</a></li> -->
 								<li><a href="{{route('encoding_vs_lowland')}}">Online Encoding (Small Landholding)</a></li>
-								<li><a href="{{route('encoding_vs_homeAddressClaim')}}">Online Encoding (Home Address Claims)</a></li>
+								<!-- <li><a href="{{route('encoding_vs_homeAddressClaim')}}">Online Encoding (Home Address Claims)</a></li> -->
 								{{-- <li><a href="{{route('new_farmer_vs')}}">New Farmer Encoded</a></li> --}}
 								
 
@@ -1339,20 +1339,20 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 							<ul class="nav child_menu">
 							@if(Auth::user()->roles->first()->name == "seed-inspector" || Auth::user()->username == "J.Baldonado" || Auth::user()->username == "L.Padua" || Auth::user()->username == "R.Millena" || Auth::user()->roles->first()->name == "administrator" || Auth::user()->username == "A.Rivera" )
 								<li><a href="{{route('encoding_vs')}}">Online Encoding (from Verifier)</a></li>
-								<li><a href="{{route('encoding_vs_fca')}}">Online Encoding (FCA Member)</a></li>
+								<!-- <li><a href="{{route('encoding_vs_fca')}}">Online Encoding (FCA Member)</a></li> -->
 								<li><a href="{{route('encoding_vs_lowland')}}">Online Encoding (Small Landholding)</a></li>
-								<li><a href="{{route('encoding_vs_homeAddressClaim')}}">Online Encoding (Home Address Claims)</a></li>
-								<li><a href="{{route('onlineEncodingNew')}}">Online Encoding for New Farmers</a></li>
+								<!-- <li><a href="{{route('encoding_vs_homeAddressClaim')}}">Online Encoding (Home Address Claims)</a></li> -->
+								<!-- <li><a href="{{route('onlineEncodingNew')}}">Online Encoding for New Farmers</a></li> -->
 								{{-- <li><a href="{{route('new_farmer_vs')}}">New Farmer Encoded</a></li> --}}
 							@endif
 							  @if(Auth::user()->roles->first()->name == "rcef-programmer" ||  Auth::user()->username == "mt.garcia" ||  Auth::user()->username == "jpalileo" || Auth::user()->username == "aquino.rr" || Auth::user()->username == "jragos_pc" || Auth::user()->username == "p.landasan")
 							  <li><a>Encoding <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li><a href="{{route('encoding_vs')}}">From Verifier</a></li>
-										<li><a href="{{route('encoding_vs_fca')}}">FCA Member</a></li>
+										<!-- <li><a href="{{route('encoding_vs_fca')}}">FCA Member</a></li> -->
 										<li><a href="{{route('encoding_vs_lowland')}}">Small Landholding</a></li>
-										<li><a href="{{route('encoding_vs_homeAddressClaim')}}">Home Address Claims</a></li>
-										<li><a href="{{route('onlineEncodingNew')}}">New Farmers</a></li>
+										<!-- <li><a href="{{route('encoding_vs_homeAddressClaim')}}">Home Address Claims</a></li> -->
+										<!-- <li><a href="{{route('onlineEncodingNew')}}">New Farmers</a></li> -->
 										{{-- <li><a href="{{route('new_farmer_vs')}}">New Farmer Encoded</a></li> --}}
 									</ul>
 								</li>
