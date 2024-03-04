@@ -170,6 +170,7 @@ class InspectionBufferController extends Controller
                                ->groupBy("region")
                                ->get();
 
+                            //    dd($buffer_data);
         $inspector_details = DB::connection('mysql')->table('users')
             ->select('users.userId', 'firstName', 'middleName', 'lastName', 'extName', 'username')
             ->join('role_user', 'users.userId', '=', 'role_user.userId')
