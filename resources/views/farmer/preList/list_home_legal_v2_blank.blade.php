@@ -61,7 +61,7 @@
                         <p style="">
                             <b> Important Notice</b> <br>
                            
-                            Pursuant to DA Memo No. 30 s. 2023, only farmers cultivating <strong>at least 1,000 m&sup2; (0.1 ha)</strong> are eligible to receive seeds from the program. Those who are cultivating more than 5 ha are only allowed to receive seed support equivalent to a <strong>maximum of 5 ha.</strong> Farmers who are part of farm clusters endorsed by DA-RFOs will still receive their full allocation.
+                            This Farmer Acknowledgement Receipt is intended for farmers who cannot be found in the RSMS as of June 30, 2023 but are verified in the RSBSA Finder <strong>(<u>https://finder-rsbsa.da.gov.ph/</u>)</strong>.
 
                         </p>
                     </div>
@@ -72,9 +72,9 @@
                         
                         
                         <img src="{{ public_path('images/da_philrice.jpg')}}" 
-                        style="width: auto; height: 110px; margin-top:25px;margin-left: 1%; z-index: -50; position: absolute;top:0px; ">
+                        style="width: auto; height: 110px; margin-top:0px;margin-left: 1%; z-index: -50; position: absolute; top:10px;">
                        
-                        <div style="margin-top:-27px; margin-left: 11%; margin-bottom: 35px; width:100%; text-align:left;">
+                        <div style="margin-top:10px; margin-left: 11%;">
                             <left><span style="font-size: 20px;"> <br>Farmer  Acknowledgement  Receipt </span></left>
                             <left><span style="font-size: 20px;"></span></left>
                         </div>
@@ -82,7 +82,7 @@
                         
 
                         <img src="{{ public_path('images/rcef_seed_program.jpg')}}" 
-                        style="width: auto; height: 120px; margin-top:25px;margin-left: 86%; z-index: -50; position: absolute; top:0px;">
+                        style="width: auto; height: 120px; margin-top:15px;margin-left: 88%; z-index: -50; position: absolute; top:0px;">
 
                     
                     {{-- <div style="margin-top:10px; border: 1px dotted black; width: 20%; margin-left: 260px;">
@@ -102,29 +102,21 @@
 
 
                    
-                    <div style="position: fixed; text-align: left; margin-right: width:100%; 10px;  top:0px;left:0px;">Privacy Notice: All collected information will be handled by DA-PhilRice in accordance with Republic Act No. 10173 (Data Privacy Act of 2012).</div>
+                    <div style="position: fixed; text-align: left; margin-right: 10px;  top:0px;right:0px;">Privacy Notice: All collected information will be handled by DA-PhilRice in accordance with Republic Act No. 10173 (Data Privacy Act of 2012).</div>
                    
-                    <div style="position: fixed; text-align: right; margin-right: 10px;  top:0px;right:0px;"> FAR V8.0</div>
+                    <div style="position: fixed; text-align: right; margin-right: 10px;  top:0px;right:0px;"> FAR V7.1B</div>
                    
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <div style="position: fixed; text-align:left; top:40px ; margin-top: 15px;margin-left: 11%; margin-bottom:25px; width:40%; height:10%;">
+                  
+
+
+                    <div style="margin-top: 15px;margin-left: 11%; margin-bottom:25px;">
                         <span>Year/Season: _______________</span><br>
-                            <span>Drop-off Point (City/Municipality, Province) _______________________________</span><br>
-                            <span>RSBSA Code: Region:____, Province:____, Municipality:____</u>
-                            _, Barangay:________
-                            
-                            </span>
-                        <div style="color: red; font-weight:700; align-items: center; gap: 1em;">
-                            
-                            <strong><span style="font-size: 20px;">*</span></strong> - Farmers whose names are shaded are not eligible to avail seeds this 2024 WS<br> as they have claimed seeds more than their total farm parcel in 2024 DS.
-                        </div>
-                    </div> 
-                    
+                        <span>Drop-off Point (City/Municipality, Province) _______________________________</span><br>
+                        <span>RSBSA Code: Region:____, Province:____, Municipality:____</u>
+                        _, Barangay:________
+                        
+                        </span>
+                    </div>
                         
                     </th>
                 </tr>
@@ -299,7 +291,7 @@
                         {{-- <img src="{{ public_path('images/iso.jpg')}}" 
                             style="width: auto; height: 75px;"> --}}
                     </div>
-                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V8.0  Rev 00 Effectivity Date: 07 Aug 2023</div>
+                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V7.1B  Rev 00 Effectivity Date: 07 Aug 2023</div>
 
                     
                 </th>
