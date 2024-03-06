@@ -263,7 +263,7 @@ class FarGenerationController extends Controller
                 $list = json_decode(json_encode($list), true); 
                 // dd($list);
                 
-                    $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ds24', 
+                    $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ws24', 
                     ['list' => $list, 'region_code' => $prv_data->regCode, 
                     "province_code" => $prv_data->provCode, "municipality_code" => $prv_data->munCode,
                     "title" => $title, "province"=>$province, "municipality"=> $municipality, "mark" => "unmark"])

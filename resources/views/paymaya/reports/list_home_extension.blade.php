@@ -124,7 +124,7 @@
                         
 
                         <div style="margin-top: 30px;margin-left: 10px;">
-                            <span>Year/Season: __<u>Dry Season 2023</u>___</span><br>
+                            <span>Year/Season: __<u>Wet Season 2024</u>___</span><br>
                             <span>Drop-off Point (City/Municipality, Province) __<u>{{strtoupper($municipality_name)}}, {{strtoupper($province_name)}}</u>__</span><br>
                             <span>RSBSA Code: Region_<u>{{$region_code}}</u>_, Province:_<u>{{$province_code}}</u>_, Municipality:_<u>{{$municipality_code}}</u>
 							_, Barangay:_<u>{{$brgy}}</u>_

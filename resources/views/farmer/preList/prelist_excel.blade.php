@@ -19,7 +19,7 @@
         <div class="row">
             <div class="alert alert-success alert-dismissible fade in" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <strong><i class="fa fa-info-circle"></i> Notice!</strong> Farmer list data as of  <b><u>[ June 2023 ]</u></b> 
+                <strong><i class="fa fa-info-circle"></i> Notice!</strong> Farmer list data as of  <b><u>[ December 2023 ]</u></b> 
             </div>
         </div> 
 
