@@ -61,7 +61,7 @@
                         <p style="">
                             <b> Important Notice</b> <br>
                            
-                            This Farmer Acknowledgement Receipt is intended for farmers who cannot be found in the RSMS as of June 30, 2023 but are verified in the RSBSA Verification Mobile Application.
+                            Pursuant to DA Memo No. 30 s. 2023, only farmers cultivating <strong>at least 1,000 m&sup2; (0.1 ha)</strong> are eligible to receive seeds from the program. Those who are cultivating more than 5 ha are only allowed to receive seed support equivalent to a <strong>maximum of 5 ha.</strong> Farmers who are part of farm clusters endorsed by DA-RFOs will still receive their full allocation.
 
                         </p>
                     </div>
@@ -104,7 +104,7 @@
                    
                     <div style="position: fixed; text-align: left; margin-right: 10px;  top:0px;right:0px;">Privacy Notice: All collected information will be handled by DA-PhilRice in accordance with Republic Act No. 10173 (Data Privacy Act of 2012).</div>
                    
-                    <div style="position: fixed; text-align: right; margin-right: 10px;  top:0px;right:0px;"> FAR V7.1B</div>
+                    <div style="position: fixed; text-align: right; margin-right: 10px;  top:0px;right:0px;"> FAR V8.0B</div>
                    
                   
 
@@ -291,7 +291,7 @@
                         {{-- <img src="{{ public_path('images/iso.jpg')}}" 
                             style="width: auto; height: 75px;"> --}}
                     </div>
-                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V7.1B  Rev 00 Effectivity Date: 07 Aug 2023</div>
+                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V8.0B  Rev 00 Effectivity Date: 07 Aug 2023</div>
 
                     
                 </th>
