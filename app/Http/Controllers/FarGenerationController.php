@@ -95,6 +95,12 @@ class FarGenerationController extends Controller
 
     public function ebinhiIndex()
     {
+
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
            $provinces_list =  DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified') 
                                     ->orderBy('province_name','ASC')
                                     ->groupBy('province_name')
@@ -422,7 +428,11 @@ class FarGenerationController extends Controller
 
 
         public function indexPreReg(){
-            
+            if(Auth::user()->roles->first()->name != "rcef-programmer"){
+                $mss = "Under Development";
+                    return view("utility.pageClosed")
+                ->with("mss",$mss);
+            }
                     // $pre_reg_province = array("PAMPANGA");
 
                     $provinces_list = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
@@ -468,6 +478,11 @@ class FarGenerationController extends Controller
         //VALIDATED DS
         public function indexValidatedData()
         {
+            if(Auth::user()->roles->first()->name != "rcef-programmer"){
+                $mss = "Under Development";
+                    return view("utility.pageClosed")
+                ->with("mss",$mss);
+            }
                $provinces_list = DB::table($GLOBALS['season_prefix'].'rcep_reports_view.rcef_provinces')
                 ->groupBy('province')
                 ->orderBy('region_sort', 'ASC')
@@ -564,7 +579,11 @@ class FarGenerationController extends Controller
          public function indexPs()
         {
 
-          
+            if(Auth::user()->roles->first()->name != "rcef-programmer"){
+                $mss = "Under Development";
+                    return view("utility.pageClosed")
+                ->with("mss",$mss);
+            }
                 // $arr_station = array("Negros", "Los Banos", "Central Experiment Station", "Agusan", "Batac", "Midsayap", "Bicol", "Isabela");
                 // $allowed_stations = DB::table($GLOBALS['season_prefix']."sdms_db_dev.lib_station")
                 //     ->select("province")
@@ -1766,6 +1785,12 @@ class FarGenerationController extends Controller
 	
     public function index()
     {
+
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
     	
         $provinces = new Provinces();
         // Get provinces assigned
