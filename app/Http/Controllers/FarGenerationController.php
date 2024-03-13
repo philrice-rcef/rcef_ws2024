@@ -579,11 +579,11 @@ class FarGenerationController extends Controller
          public function indexPs()
         {
 
-            if(Auth::user()->roles->first()->name != "rcef-programmer"){
-                $mss = "Under Development";
-                    return view("utility.pageClosed")
-                ->with("mss",$mss);
-            }
+            // if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            //     $mss = "Under Development";
+            //         return view("utility.pageClosed")
+            //     ->with("mss",$mss);
+            // }
                 // $arr_station = array("Negros", "Los Banos", "Central Experiment Station", "Agusan", "Batac", "Midsayap", "Bicol", "Isabela");
                 // $allowed_stations = DB::table($GLOBALS['season_prefix']."sdms_db_dev.lib_station")
                 //     ->select("province")
