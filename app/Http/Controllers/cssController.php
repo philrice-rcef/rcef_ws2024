@@ -11,6 +11,7 @@ class cssController extends Controller
 {
 
     public function insertCss(Request $request){
+        dd('Try again later.');
         $request = json_decode(request()->getContent(), true);
 
        if($request["api"] == "1q988uN743w0diRjbc3%6IBzOloUUSc1"){
