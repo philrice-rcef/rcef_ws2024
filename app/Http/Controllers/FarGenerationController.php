@@ -603,6 +603,7 @@ class FarGenerationController extends Controller
                 $provinces_list = DB::table($GLOBALS['season_prefix'].'rcep_reports_view.rcef_nrp_provinces')
                     // ->whereIn("province", $allowed_stations)
                 //    ->whereIn("prv_code", $allowed_array)
+                    ->whereIn('regCode_int',[6,9,12,15])
                     ->groupBy('province')
                     ->orderBy('region_sort', 'ASC')
                     ->get();
