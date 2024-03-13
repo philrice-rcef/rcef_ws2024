@@ -1671,14 +1671,14 @@ class FarGenerationController extends Controller
 
               
                     if($pre_reg == 1){
-                        $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ds24_non', 
+                        $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ws24_non', 
                         ['list' => $list, 'region_code' => $region_code, 
                         "province_code" => $province_code, "municipality_code" => $municipality_code,
                         "title" => $title, "province"=>$province_name, "municipality"=> $municipality_name, "mark" => $mark])
                         ->setPaper('LEGAL', 'landscape');
     
                     }else{
-                        $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ds24', 
+                        $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ws24', 
                         ['list' => $list, 'region_code' => $region_code, 
                         "province_code" => $province_code, "municipality_code" => $municipality_code,
                         "title" => $title, "province"=>$province_name, "municipality"=> $municipality_name, "mark" => $mark])
@@ -1694,7 +1694,7 @@ class FarGenerationController extends Controller
                     // "title" => $title, "province"=>$province_name, "municipality"=> $municipality_name, "mark" => $mark])
                     // ->setPaper('LEGAL', 'landscape');
 
-                    $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ds24', 
+                    $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ws24', 
                     ['list' => $list, 'region_code' => $region_code, 
                     "province_code" => $province_code, "municipality_code" => $municipality_code,
                     "title" => $title, "province"=>$province_name, "municipality"=> $municipality_name, "mark" => $mark])
@@ -1705,13 +1705,13 @@ class FarGenerationController extends Controller
         
 
            }elseif($size == "DS24"){
-                $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ds24', 
+                $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ws24', 
                         ['list' => $list, 'region_code' => $region_code, 
                         "province_code" => $province_code, "municipality_code" => $municipality_code,
                         "title" => $title, "province"=>$province_name, "municipality"=> $municipality_name, "mark" => $mark])
                         ->setPaper('LEGAL', 'landscape');
            }elseif($size == "DS24_NON"){
-            $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ds24_non', 
+            $pdf = PDFTIM::loadView('farmer.preList.list_home_legal_ws24_non', 
                     ['list' => $list, 'region_code' => $region_code, 
                     "province_code" => $province_code, "municipality_code" => $municipality_code,
                     "title" => $title, "province"=>$province_name, "municipality"=> $municipality_name, "mark" => $mark])

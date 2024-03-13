@@ -733,33 +733,33 @@ document.getElementById("download_flsar_a3").addEventListener("click", function(
      
     // }
 
-    // is_transfer = 2;
+    is_transfer = 2;
 
-    // // if(is_transfer){
-    // //     is_transfer = 1;
-    // // }else{
-    // //     is_transfer = 0;
-    // // }
-
-    // var check = 1;
-
-
-    // var maxRow = document.getElementById("num_to").max;
-
-    // var rowFrom = $('input[name="num_from"]').val();
-    // var rowTo = $('input[name="num_to"]').val();
-
-    // if( parseInt(rowTo) >= parseInt(rowFrom)){
-    
-    //     if(mark_ebinhi){
-    //         window.open("prev/pdf" + "/" +"mark"+"/"+provName + "/" + municipalName + "/" + brgyCode + "/" + rowFrom + "/" + rowTo+ "/" + size + "/" + pre_reg + "/" + is_transfer, "_blank"); 
-    //     }else {
-    //         window.open("prev/pdf" + "/"+ "unmark"+"/"+provName + "/" + municipalName + "/" + brgyCode + "/" + rowFrom + "/" + rowTo+ "/" + size + "/" + pre_reg + "/" + is_transfer , "_blank"); 
-    //     }
-
+    // if(is_transfer){
+    //     is_transfer = 1;
     // }else{
-    // alert("Row From should be greater than Row To");
-    // }    
+    //     is_transfer = 0;
+    // }
+
+    var check = 1;
+
+
+    var maxRow = document.getElementById("num_to").max;
+
+    var rowFrom = $('input[name="num_from"]').val();
+    var rowTo = $('input[name="num_to"]').val();
+
+    if( parseInt(rowTo) >= parseInt(rowFrom)){
+    
+        if(mark_ebinhi){
+            window.open("prev/pdf" + "/" +"mark"+"/"+provName + "/" + municipalName + "/" + brgyCode + "/" + rowFrom + "/" + rowTo+ "/" + size + "/" + pre_reg + "/" + is_transfer, "_blank"); 
+        }else {
+            window.open("prev/pdf" + "/"+ "unmark"+"/"+provName + "/" + municipalName + "/" + brgyCode + "/" + rowFrom + "/" + rowTo+ "/" + size + "/" + pre_reg + "/" + is_transfer , "_blank"); 
+        }
+
+    }else{
+    alert("Row From should be greater than Row To");
+    }    
 
     HoldOn.close();
 });  
