@@ -61,7 +61,7 @@
                         <p style="">
                             <b> Important Notice</b> <br>
                            
-                            This Farmer Acknowledgement Receipt is intended for farmers who cannot be found in the RSMS as of June 30, 2023 but are verified in the RSBSA Finder <strong>(<u>https://finder-rsbsa.da.gov.ph/</u>)</strong>.
+                            This Farmer Acknowledgement Receipt is intended for farmers who cannot be found in the RSMS as of December 31, 2023 but are verified in the RSBSA Finder <strong>(<u>https://finder-rsbsa.da.gov.ph/</u>)</strong>.
 
                         </p>
                     </div>
