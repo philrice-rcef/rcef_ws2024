@@ -44,7 +44,7 @@ class pre_regController extends Controller {
             $prv_db = $GLOBALS['season_prefix']."prv_".substr($claimant,0,4);
 
                 $check_farmer = DB::table($prv_db.".farmer_information_final")
-                    ->where("rsbsa_control_no", $rcef_id)
+                    ->where("rcef_id", $rcef_id)
                     ->where("claiming_prv", $request['claiming_prv'])
                     ->first();
 
