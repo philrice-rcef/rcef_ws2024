@@ -34,7 +34,7 @@ class KPEncoderMonitoringController extends Controller
         foreach($encoded as $encode)
         {
             
-            $getName1 = DB::table('ws2024_sdms_db_dev.users')
+            $getName1 = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
                 ->where('username',$encode->Encoder)
                 ->first();
 
@@ -93,7 +93,47 @@ class KPEncoderMonitoringController extends Controller
         'overallData'
         ));    
     }
+    
 
+
+    public function getOverallData(){
+
+        $overallData = DB::table('kp_distribution.kp_distribution_app')
+            ->select(DB::raw('Season, count(encodedBy) as Total_Encoded'))
+            ->groupBy('season')
+            ->orderBy('Total_Encoded', 'desc')
+            ->get();
+
+        $sortedData = collect($overallData)->sortByDesc(function ($item) {
+            // Extract the year and season type (DS/WS)
+            preg_match('/(\d+)$/', $item->Season, $matches);
+            $year = $matches[0];
+            $seasonType = substr($item->Season, 0, -strlen($year));
+        
+            // Assigning a custom sorting weight based on season type
+            $weight = ($seasonType === 'DS') ? 0 : 1;
+        
+            // Sorting first by year in descending order and then by season type weight
+            return [$year, $weight];
+        })->toArray();
+
+        $total = 0;
+        foreach ($sortedData as $data) {
+            $total += $data->Total_Encoded;
+        }
+
+        $sortedData[] = [
+            'Season' => 'OVERALL TOTAL',
+            'Total_Encoded' => $total
+        ];
+        // dd($overallData,$sortedData);
+
+        $sortedData = collect($sortedData);
+
+        return Datatables::of($sortedData)
+        ->make(true);
+
+    }
     public function loadKpEncoderBreakdown(){
         $getMonths = DB::table('kp_distribution.kp_distribution_app')
         ->select(DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(time_stamp, ' ', 2), ' ', -1) AS month_name"), DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(time_stamp, ' ', 4), ' ', -1) AS year"))
@@ -149,7 +189,7 @@ class KPEncoderMonitoringController extends Controller
             }
 
             foreach ($getCount as $count){
-                $getName = DB::table('ws2024_sdms_db_dev.users')
+                $getName = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
                 ->where('username',$count->Encoder)
                 ->first();
 
@@ -245,7 +285,7 @@ class KPEncoderMonitoringController extends Controller
 
         foreach($getEncoders as $encoder)
         {
-            $getName = DB::table('ws2024_sdms_db_dev.users')
+            $getName = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
                 ->where('username',$encoder->encodedBy)
                 ->first();
 
@@ -297,7 +337,7 @@ class KPEncoderMonitoringController extends Controller
             $province = $location[1];
             $municipality = $location[0];
 
-            $getPSGcode = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+            $getPSGcode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('psa_code')
             ->where('province','LIKE',$province)
             ->where('municipality','LIKE',$municipality)

@@ -2144,6 +2144,7 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
 
     //KP-IEC Encoder Monitoring
     Route::get('/KPEncoderMonitoring/home', ['as' => 'KPEncoderMonitoring_index', 'uses' => 'KPEncoderMonitoringController@home_ui']);
+    Route::post('/KPEncoderMonitoring/getOverallData', ['as' => 'getOverallData', 'uses' => 'KPEncoderMonitoringController@getOverallData']);
     Route::post('/KPEncoderMonitoring/loadKpEncoderBreakdown', ['as' => 'loadKpEncoderBreakdown', 'uses' => 'KPEncoderMonitoringController@loadKpEncoderBreakdown']);
     Route::get('/KPEncoderMonitoring/exportStatistics/{season}/{encoder}/{date1}/{date2}', ['as' => 'exportStatistics', 'uses' => 'KPEncoderMonitoringController@exportStatistics']);
     Route::get('/KPEncoderMonitoring/getSeasons', ['as' => 'getSeasons', 'uses' => 'KPEncoderMonitoringController@getSeasons']);

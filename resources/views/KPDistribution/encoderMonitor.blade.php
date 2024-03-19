@@ -144,6 +144,25 @@
             </div>
             <div class="x_content">
                 <div>
+
+                <div id="overallData">
+                        <div>
+                            <h2>Overall Data</h2>
+                            <table
+                            class="table table-hover table-striped table-bordered"
+                            id="overallData_tbl"
+                            style="background-color: white">            
+                                <thead style="background-color: white">
+                                    <th>Season</th>
+                                    <th>Total Encoded</th>
+                                </thead>
+                                <tbody>
+                              
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <div id="overallStats">
                         <div>
                             <div>
@@ -273,6 +292,29 @@
 
 
         window.onload = function () {
+            $("#overallData_tbl").DataTable().clear();
+            $("#overallData_tbl").DataTable({
+            bDestroy: true,
+            autoWidth: false,
+            searchHighlight: true,
+            processing: true,
+            serverSide: true,
+            orderMulti: true,
+            order: [],
+            ajax: {
+                url: "{{ route('getOverallData') }}",
+                dataType: "json",
+                type: "POST",
+                data: {
+                _token: "{{ csrf_token() }}",
+                },
+            },
+            columns: [
+                { data: "Season" },
+                { data: "Total_Encoded" }
+            ],
+            });
+
             $("#breakdown_tbl").DataTable().clear();
             $("#breakdown_tbl").DataTable({
             bDestroy: true,
