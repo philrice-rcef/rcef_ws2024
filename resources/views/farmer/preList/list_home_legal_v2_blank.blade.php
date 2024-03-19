@@ -291,7 +291,7 @@
                         {{-- <img src="{{ public_path('images/iso.jpg')}}" 
                             style="width: auto; height: 75px;"> --}}
                     </div>
-                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V7.1B  Rev 01 Effectivity Date: 07 Aug 2023</div>
+                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V7.1B  Rev 01 Effectivity Date: 19 Mar 2024</div>
 
                     
                 </th>
