@@ -120,6 +120,11 @@
             color: black !important;
         }
 
+        #overallData_tbl tbody tr:last-child {
+            background-color: #CCCCCC;
+            font-weight: bold;
+        }
+
         @media screen and (max-width: 760px) {
             .grid-container {
                 grid-template-areas:
