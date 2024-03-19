@@ -61,7 +61,7 @@
                         <p style="">
                             <b> Important Notice</b> <br>
                            
-                            This Farmer Acknowledgement Receipt is intended for farmers who cannot be found in the RSMS as of December 31, 2023 but are verified in the RSBSA Finder <strong>(<u>https://finder-rsbsa.da.gov.ph/</u>)</strong>.
+                            This Farmer Acknowledgement Receipt is intended for rice farmers who cannot be found in the RSMS - farmer beneciary list as of December 31, 2023 but are verified through the RSBSA Verifier App.
 
                         </p>
                     </div>
@@ -291,7 +291,7 @@
                         {{-- <img src="{{ public_path('images/iso.jpg')}}" 
                             style="width: auto; height: 75px;"> --}}
                     </div>
-                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V7.1B  Rev 00 Effectivity Date: 07 Aug 2023</div>
+                        <div style="position: fixed; text-align: right; margin-right: 10px;  bottom:15px;right:0px;"> PhilRice RCEF FAR V7.1B  Rev 01 Effectivity Date: 07 Aug 2023</div>
 
                     
                 </th>
