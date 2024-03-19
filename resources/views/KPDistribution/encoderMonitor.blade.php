@@ -166,13 +166,19 @@
                                     <th>Full Name</th>
                                     <th>User ID</th>
                                     <th>Overall Encoded</th>
+                                    <th>Quota(As of previous contract)</th>
+                                    <th>Quota(As of current contract)</th>
+                                    <th>First Contract</th>
                                 </thead>
                                 <tbody>
                                 @foreach ($overallData as $data)
                                     <tr>
                                     <td>{{ $data["Full_Name"] }}</td>
                                     <td>{{ $data["Encoder"] }}</td>
-                                    <td>{{ $data["Total_Encoded"] }}</td>
+                                    <td style="background-color: {{ $data['Total_Encoded'] < $data['QuotaPrev'] ? '#ff0000aa' : '#00000000' }}; color: {{ $data['Total_Encoded'] < $data['QuotaPrev'] ? 'white' : 'inherit' }}">{{ $data["Total_Encoded"] }}</td>
+                                    <td>{{ $data["QuotaPrev"] }}</td>
+                                    <td>{{ $data["Quota"] }}</td>
+                                    <td>{{ $data["First_Contract"] }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -356,7 +362,7 @@
             if(season != 'default' && encoder != 'default')
             {
                 $('#download_modal').modal('hide');
-                window.open(`https://rcef-seed.philrice.gov.ph/rcef_ds2024/KPEncoderMonitoring/exportStatistics/${season}/${encoder}/${date1}/${date2}`);
+                window.open(`https://rcef-seed.philrice.gov.ph/rcef_ws2024/KPEncoderMonitoring/exportStatistics/${season}/${encoder}/${date1}/${date2}`);
    
             }
             else if(season == 'default' )

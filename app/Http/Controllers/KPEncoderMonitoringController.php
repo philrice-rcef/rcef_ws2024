@@ -28,19 +28,60 @@ class KPEncoderMonitoringController extends Controller
         $encoded = DB::table('kp_distribution.kp_distribution_app')
             ->select(DB::raw('encodedBy as Encoder, count(encodedBy) as Total_Encoded'))
             ->groupBy('encodedBy')
+            ->orderBy('Total_Encoded', 'desc')
             ->get();
 
         foreach($encoded as $encode)
         {
-            $getName1 = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
+            
+            $getName1 = DB::table('ws2024_sdms_db_dev.users')
                 ->where('username',$encode->Encoder)
                 ->first();
+
+            $getContractDate = DB::table('kp_distribution.kp_encoders')
+            ->where('userId',$encode->Encoder)
+            ->first();
+
+            if($getContractDate->status == 0)
+            {
+                continue;
+            }
+
+            $getQuota = DB::table('kp_distribution.kp_encoding_quota')
+            ->where('month','LIKE',$getContractDate->contractStartMonth)
+            ->where('year','LIKE',$getContractDate->contractStartYear)
+            ->first();
+
+            // if(!$getQuota)
+            // {
+            //     dd($encode);
+            // }
+
+            $getTotalQuota = DB::table('kp_distribution.kp_encoding_quota')
+            ->where('sort','>=',$getQuota->sort)
+            ->sum('quota');
+
+            $maxSort = DB::table('kp_distribution.kp_encoding_quota')
+                ->max('sort');
+
+            $getTotalQuotaPrev = DB::table('kp_distribution.kp_encoding_quota')
+                ->where('sort', '>=', $getQuota->sort)
+                ->where('sort', '<', $maxSort)
+                ->sum('quota');
+
+            $contractStart = $getContractDate->contractStartMonth.' '.$getContractDate->contractStartYear;
+
+            // dd($contractStart);
             $fullName1 = $getName1->firstName.' '.$getName1->middleName.' '.$getName1->lastName.' '.$getName1->extName;
             $overallData[] = [
                 "Full_Name" => $fullName1,
                 "Encoder" => $encode->Encoder,
                 "Total_Encoded" => $encode->Total_Encoded,
+                "Quota" => $getTotalQuota,
+                "QuotaPrev" => $getTotalQuotaPrev,
+                "First_Contract" => $contractStart
             ];
+            // dd($overallData);
         }
 
         
@@ -108,9 +149,18 @@ class KPEncoderMonitoringController extends Controller
             }
 
             foreach ($getCount as $count){
-                $getName = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
+                $getName = DB::table('ws2024_sdms_db_dev.users')
                 ->where('username',$count->Encoder)
                 ->first();
+
+                $getContractDate = DB::table('kp_distribution.kp_encoders')
+                ->where('userId',$count->Encoder)
+                ->first();
+
+                if($getContractDate->status == 0)
+                {
+                    continue;
+                }
                 
                 $fullName = $getName->firstName.' '.$getName->middleName.' '.$getName->lastName.' '.$getName->extName;
                 $allData[] = [
@@ -195,7 +245,7 @@ class KPEncoderMonitoringController extends Controller
 
         foreach($getEncoders as $encoder)
         {
-            $getName = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.users')
+            $getName = DB::table('ws2024_sdms_db_dev.users')
                 ->where('username',$encoder->encodedBy)
                 ->first();
 
@@ -247,7 +297,7 @@ class KPEncoderMonitoringController extends Controller
             $province = $location[1];
             $municipality = $location[0];
 
-            $getPSGcode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+            $getPSGcode = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
             ->select('psa_code')
             ->where('province','LIKE',$province)
             ->where('municipality','LIKE',$municipality)
