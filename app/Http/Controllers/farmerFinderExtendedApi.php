@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use DB;
+use Illuminate\Support\Str;
 class farmerFinderExtendedApi extends Controller{
     
     public function downloadLibPrv(){
@@ -497,12 +498,23 @@ class farmerFinderExtendedApi extends Controller{
 
     public function syncKPData(Request $request)
     {
+
         $allKPs = json_decode($request->getContent());
         // $row = json_decode($request->getContent());
         
         
         foreach($allKPs as $row)
         {
+            $locationlength = strlen($row->location);
+            if (preg_match('/[a-zA-Z]/', $row->rsbsa_control_no))
+            {
+                continue;
+            }
+            if($locationlength<10){
+                continue;
+            }
+
+            // dd($row);
             $prv = substr(str_replace('-','',$row->rsbsa_control_no),0,4);
             $season = strtolower($row->season);
             $validate = DB::table('kp_distribution.kp_distribution_app')
@@ -513,7 +525,7 @@ class farmerFinderExtendedApi extends Controller{
             
             
             if(collect($validate)->isEmpty() && $row->isDeleted == 0){
-                $getBday = DB::table('ds2024_prv_'.$prv.'.farmer_information_final')
+                $getBday = DB::table($GLOBALS['season_prefix'].'prv_'.$prv.'.farmer_information_final')
                         ->select('birthdate')
                         ->where('rsbsa_control_no','=', $row->rsbsa_control_no)
                         ->orWhere('assigned_rsbsa','=', $row->rsbsa_control_no)
@@ -537,14 +549,26 @@ class farmerFinderExtendedApi extends Controller{
                         else{
                             $getBday = $getBday->birthdate;
                         }
-                        
+                // dd($row->location);  
                 $locationlength = strlen($row->location);
                 $location = $row->location;
                 if($locationlength == 6){
-                    $checkLibPrv = DB::table('ds2024_rcep_delivery_inspection.lib_prv')
+                    $checkLibPrv = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                     ->where('prv', $location)
                     ->first();
-                    $location = $checkLibPrv->municipality.', '.$checkLibPrv->province.', '.$checkLibPrv->regionName;
+                    if($checkLibPrv){
+                        $location = $checkLibPrv->municipality.', '.$checkLibPrv->province.', '.$checkLibPrv->regionName;
+                    }
+                    else
+                    {
+                        $pt1 = substr($location,0,4);
+                        $pt2 = substr($location,5,2);
+                        $loc = $pt1.'%'.$pt2;
+                        $checkLibPrv2 = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+                        ->where('prv','LIKE', $loc)
+                        ->first();
+                        $location = $checkLibPrv2->municipality.', '.$checkLibPrv2->province.', '.$checkLibPrv2->regionName;
+                    }
                 }
                 else{
                     $location = $row->location; 
@@ -553,9 +577,17 @@ class farmerFinderExtendedApi extends Controller{
                 {
                     $row->encodedBy = 'dg.delossantos';
                 }
+
+                $fullName = str_replace(
+                    ['&lsquo;', '&Ntilde;', '&ntilde;', '&Atilde;', '&atilde;', '&Eacute;', '&eacute;', '&Iacute;', '&iacute;', '-', 'N/A', 'n/a', ' NA', ' na'], 
+                    ["", 'N', 'n', 'A', 'a', 'E', 'e', 'I', 'i', '', '', '', ' ', ' '],
+                    $row->fullName
+                );                
+
+                $fullName = strtoupper($fullName);
                 DB::table('kp_distribution.kp_distribution_app')
                 ->insert([
-                    "fullName" => $row->fullName,
+                    "fullName" => $fullName,
                     "rsbsa_control_no" => $row->rsbsa_control_no,
                     "sex" => $row->sex,
                     "birthdate" => $getBday,
@@ -585,6 +617,6 @@ class farmerFinderExtendedApi extends Controller{
 
             }
         }
-        return json_encode($allKPs);
+        return 1;
     }
 }
