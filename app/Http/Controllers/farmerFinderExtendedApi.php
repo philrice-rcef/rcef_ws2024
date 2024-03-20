@@ -534,7 +534,7 @@ class farmerFinderExtendedApi extends Controller{
                         // dd($getBday);
                     if(!$getBday){
                     
-                        $getBday2 = DB::table('ds2024prv_'.$prv.'.farmer_information_final')
+                        $getBday2 = DB::table('ds2024_prv_'.$prv.'.farmer_information_final')
                             ->select('birthdate')
                             ->where('rsbsa_control_no','=', $row->rsbsa_control_no) 
                             ->orWhere('assigned_rsbsa','=', $row->rsbsa_control_no) 

@@ -2164,6 +2164,13 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
     Route::post('/fcaTagging/api/getFCAFarmers', ['as' => 'getFCAFarmers', 'uses' => 'fcaTaggingController@getFCAFarmers']);
     Route::post('/fcaTagging/api/tagFCA', ['as' => 'tagFCA', 'uses' => 'fcaTaggingController@tagFCA']);
     Route::post('/fcaTagging/api/tagHomeClaim', ['as' => 'tagHomeClaim', 'uses' => 'fcaTaggingController@tagHomeClaim']);
+
+    //DQ Tagging
+    Route::get('/dqTagging/home', ['as' => 'dqTagging', 'uses' => 'dqTaggingController@home_ui']);
+    Route::post('/dqTagging/api/getDQProvinces', ['as' => 'getDQProvinces', 'uses' => 'dqTaggingController@getDQProvinces']);
+    Route::post('/dqTagging/api/getDQMunicipalities', ['as' => 'getDQMunicipalities', 'uses' => 'dqTaggingController@getDQMunicipalities']);
+    Route::post('/dqTagging/api/getDQFarmers', ['as' => 'getDQFarmers', 'uses' => 'dqTaggingController@getDQFarmers']);
+    Route::post('/dqTagging/api/tagDQ', ['as' => 'tagDQ', 'uses' => 'dqTaggingController@tagDQ']);
     
     //Farmer Info
     Route::get('/farmerInfo/home', ['as' => 'farmerInfo', 'uses' => 'farmerInfoController@home_ui']);

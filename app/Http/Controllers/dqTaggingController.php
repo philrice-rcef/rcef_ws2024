@@ -20,7 +20,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Yajra\Datatables\Facades\Datatables;
 use App\utility;
 
-class fcaTaggingController extends Controller
+class dqTaggingController extends Controller
 {
         public function home_ui(){
         $regionNames = array();
@@ -50,7 +50,7 @@ class fcaTaggingController extends Controller
         //     'regionNames',
         //     'regionCodes'
         //  ));
-        return view('fcaTagging.home',
+        return view('dqTagging.home',
          compact(
             'regionNames',
             'regionCodes'
@@ -58,7 +58,7 @@ class fcaTaggingController extends Controller
         
     }
 
-    public function getFCAProvinces(Request $request)
+    public function getDQProvinces(Request $request)
     {
         $getProvinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('province')
@@ -69,7 +69,7 @@ class fcaTaggingController extends Controller
     }
     
 
-    public function getFCAMunicipalities(Request $request)
+    public function getDQMunicipalities(Request $request)
     {
         $getMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('municipality')
@@ -80,7 +80,7 @@ class fcaTaggingController extends Controller
     }
 
     
-    public function getFCAFarmers(Request $request)
+    public function getDQFarmers(Request $request)
     {
         $getPrv = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('prv_code')
@@ -105,7 +105,7 @@ class fcaTaggingController extends Controller
             ->make(true);
     }
 
-    public function tagFCA(Request $request)
+    public function tagDQ(Request $request)
     {
         $test= [];
         $getPrvCode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
@@ -131,31 +131,6 @@ class fcaTaggingController extends Controller
         return 1;
     }
 
-    public function tagHomeClaim(Request $request)
-    {
-        $test= [];
-        $getPrvCode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
-        ->select('prv_code')
-        ->where('province', 'LIKE',$request->prov)
-        ->groupBy('prv_code')
-        ->first();
-
-        $prv = $getPrvCode->prv_code;
-
-        $toBeTagged = $request->toBeTagged;
-
-        foreach($toBeTagged as $row)
-        { 
-            DB::table($GLOBALS['season_prefix'].'prv_'.$prv.'.farmer_information_final')
-            ->where('rsbsa_control_no','LIKE', $row['rsbsa'])
-            ->where('db_ref','LIKE', $row['dbref'])
-            ->update([
-                "is_new" => 7
-            ]);
-        }
-
-        return 1;
-    }
 
     
 }
