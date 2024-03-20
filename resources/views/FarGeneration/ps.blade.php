@@ -147,8 +147,9 @@
 
                                     @else
                                     <button type="button" name="download_flsar_rep" id="download_flsar_rep" class="btn btn-lg btn-warning" style="float: right;" disabled=""><i class="fa fa-file-pdf-o"></i> Download PDF (REPLACEMENT)</button>
-                                 
+                                    @if(Auth::user()->roles->first()->name == "rcef-programmer")
                                     <button type="button" name="download_flsar_a3" id="download_flsar_a3" class="btn btn-lg btn-success" style="float: right;" disabled=""><i class="fa fa-file-pdf-o"></i> Download PDF</button>
+                                    @endif
 
                                     <button type="button" name="open_stored" id="open_stored" class="btn btn-lg btn-success" style="float: right;" disabled=""><i class="fa fa-file-pdf-o"></i> View Downloaded FLSAR</button>
 
