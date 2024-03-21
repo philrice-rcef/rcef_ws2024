@@ -201,6 +201,8 @@
                             <div>
                             <button type="button" id='submit' class="btn btn-success submit" disabled>Submit</button> 
                             <button type="button" id='tagDQ' class="btn btn-warning submit" disabled>Tag as DQ</button>
+                            <!-- <button type="button" id='tagDQ' class="btn btn-warning submit" data-toggle='modal' data-target='#reasonModal' disabled>Tag as DQ</button> -->
+                            <!-- <button type='button' class='btn btn-success btn-sm' data-toggle='modal' data-target='#reasonModal'>Add reason</button> -->
                             </div>
                         </div>
                 </section>
@@ -219,6 +221,12 @@
                         <th>Middle Name</th>
                         <th>Ext Name</th>
                         <th>Final Area</th>
+                        <th>Claimable (Previous Season)</th>
+                        <th>Final Area (Previous Season)</th>
+                        <th>Claimed (Previous Season)</th>
+                        <th>Claimed Area (Previous Season)</th>
+                        <th>DQ Reason</th>
+                        <!-- <th>Action</th> -->
                     </thead>
                     <tbody></tbody>
                     </table>
@@ -229,7 +237,26 @@
     
 
     </div>
-    
+
+    <!-- Modal -->
+<div class="modal fade" id="reasonModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >        
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content" style="width:150%;" >
+        <div class="modal-header">
+           <h2> Please state reason for disqualification</h2>
+        </div>
+        <div class="modal-body"  >
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- <input type="textarea" lines='4' id="reason"> -->
+                    <textarea id="reason" name="reason" rows="5" style="text-align: left; width: 100%"></textarea>
+                    <button id="saveTagging" class="btn btn-success btn-md" data-dismiss="modal">Submit</button>
+                </div>
+            </div>   
+        </div>
+      </div>
+    </div>
+  </div>
 
 @endsection()
 
@@ -257,12 +284,33 @@
         $('#municipality').removeAttr('disabled');
         $('#submit').removeAttr('disabled');
         $('#tagDQ').removeAttr('disabled');
-        $('#tagHomeClaim').removeAttr('disabled');
+        
         
          });
 
 
+        $('#municipality').on('change', () => {
+            if($('#municipality').val() != 'default')
+            {
+                $('#submit').removeAttr('disabled');
+                $('#tagDQ').removeAttr('disabled');
+            }
+            else{
+                $('#submit').attr('disabled', true);
+                $('#tagDQ').attr('disabled', true);
+            }
+        });
+
         $('#region').on('change', () => {
+            if($('#municipality').val() != 'default')
+            {
+                $('#submit').removeAttr('disabled');
+                $('#tagDQ').removeAttr('disabled');
+            }
+            else{
+                $('#submit').attr('disabled', true);
+                $('#tagDQ').attr('disabled', true);
+            }
             $reg = $('#region').val();
 
             var options = {
@@ -294,6 +342,15 @@
         });
 
         $('#provinces').change(() => {
+            if($('#municipality').val() != 'default')
+            {
+                $('#submit').removeAttr('disabled');
+                $('#tagDQ').removeAttr('disabled');
+            }
+            else{
+                $('#submit').attr('disabled', true);
+                $('#tagDQ').attr('disabled', true);
+            }
             $('#municipality').val('default').trigger('change');
             $prov = $('#provinces').val();
             
@@ -379,6 +436,12 @@
                     { data: "midName" },
                     { data: "extName" },
                     { data: "final_area" },
+                    { data: "prev_claimable" },
+                    { data: "prev_final_area" },
+                    { data: "prev_claimed" },
+                    { data: "prev_claimed_area" },
+                    { data: "dq_reason" },
+                    // { data: "action2" },
                 ],
                 });
             }
@@ -419,19 +482,12 @@
         });
         
 
-        $('#tagDQ').on('click', () =>{
-            HoldOn.open();
-            $reg = $('#region').val();
-            $prov = $('#provinces').val();
-            $muni = $('#municipality').val();
-            if(toBeTagged[0]==null)
-            {
-                alert('Please select at least one (1) farmer.');
-                HoldOn.close();
-            }
-            else
-            {
-                $.ajax({
+        $('#saveTagging').on('click', () =>{
+            $reason = $('#reason').val();
+            console.log(toBeTagged);
+            $('#reason').val('');
+
+             $.ajax({
                 type: 'POST',
                 url: "{{route('tagDQ')}}",
                 data: {
@@ -439,7 +495,8 @@
                     reg : $reg,
                     prov : $prov,
                     muni : $muni,
-                    toBeTagged: toBeTagged
+                    toBeTagged: toBeTagged,
+                    reason: $reason
                 },
                 dataType: 'json',
                 success: function(result){
@@ -451,7 +508,25 @@
                     HoldOn.close();
                 }
                 });
-            }
+        });
+
+
+        $('#tagDQ').on('click', () =>{
+            HoldOn.open();
+            $reg = $('#region').val();
+            $prov = $('#provinces').val();
+            $muni = $('#municipality').val();
+            // if(toBeTagged[0]==null)
+            // {
+            //     alert('Please select at least one (1) farmer.');
+            //     HoldOn.close();
+            // }
+            // else
+            // {
+                $('#reasonModal').modal('show');
+                HoldOn.close();
+               
+            // }
         });
 
     

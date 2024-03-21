@@ -92,9 +92,9 @@ class dqTaggingController extends Controller
 
         $getFarmerInfo = DB::table($GLOBALS['season_prefix'].'prv_'.$prv.'.farmer_information_final')
         // ->where('is_new','!=',9)
-        // ->where('is_new','!=',7)
+        // ->where('prev_claimed','!=',0)
         ->get();
-        // dd($getFarmerInfo);
+        // dd($getFarmerInfo[0]);
 
         $getFarmerInfo = collect($getFarmerInfo);
 
@@ -102,6 +102,9 @@ class dqTaggingController extends Controller
         ->addColumn('action', function($row){
             return  "<input type='checkbox' class='toReplace' data-claimingPrv='".$row->claiming_prv."' data-dbref='".$row->db_ref."' data-rsbsa='".$row->rsbsa_control_no."'>";            
         })
+        // ->addColumn('action2', function($row){
+        //     return "<button type='button' class='btn btn-success btn-sm' data-toggle='modal' data-target='#reasonModal'>Add reason</button>";         
+        // })
             ->make(true);
     }
 
@@ -113,19 +116,33 @@ class dqTaggingController extends Controller
         ->where('province', 'LIKE',$request->prov)
         ->groupBy('prv_code')
         ->first();
-
+        
         $prv = $getPrvCode->prv_code;
-
+        
         $toBeTagged = $request->toBeTagged;
+        $reason = $request->reason;
+        
 
         foreach($toBeTagged as $row)
         { 
-            DB::table($GLOBALS['season_prefix'].'prv_'.$prv.'.farmer_information_final')
+            $verifyData = DB::table($GLOBALS['season_prefix'].'prv_'.$prv.'.farmer_information_final')
             ->where('rsbsa_control_no','LIKE', $row['rsbsa'])
             ->where('db_ref','LIKE', $row['dbref'])
-            ->update([
-                "is_new" => 9
-            ]);
+            ->first();
+            // ->update([
+            //     "is_new" => 9
+            // ]);
+
+            
+            if ($verifyData && round($verifyData->prev_claimed_area, 1) > round($verifyData->prev_final_area, 1) && $verifyData->prev_claimed > $verifyData->prev_claimable) 
+            {
+                $reason = 'The system detected that this farmer profile is tagged as not-eligible to claim seeds, reason: exceeded claim, during DS2024 - total parcel area is '.round($verifyData->prev_final_area, 1).'ha equivalent to '.$verifyData->prev_claimable.' bags but actual claim is '.round($verifyData->prev_claimed_area, 1).'ha equivalent to '.$verifyData->prev_claimed.' bags.';
+            }
+            else
+            {
+                $reason = $request->reason;
+            }
+
         }
 
         return 1;

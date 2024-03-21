@@ -31,7 +31,7 @@ if ($connected) {
                 <div style="float:left" class=""><strong>Connect to: </strong></div>
                 <div style="float:left" class="col-md-4">
                     <select class="form-control" id="connect_to">
-                        <option value="rcef">RCEF WS2023</option>
+                        <option value="rcef">RCEF DS2024</option>
                     </select>
                 </div>
                 <div class="col-md-6">
