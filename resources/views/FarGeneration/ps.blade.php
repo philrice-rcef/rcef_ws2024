@@ -582,7 +582,7 @@ $('select[name="brgy_fg"]').on('change', function () {
                     document.getElementById("num_to").value = 0;
 
                 }else{
-                    document.getElementById("download_flsar_a3").disabled = false;
+                    if(document.getElementById("download_flsar_a3")) document.getElementById("download_flsar_a3").disabled = false;
                     document.getElementById("download_flsar_rep").disabled = false;
 
                     $("#download_flsar_rep").hide();
