@@ -599,14 +599,24 @@ class FarGenerationController extends Controller
 
                 // $allowed_array = json_decode(json_encode($allowed_array), true);
                 // // $allowed_array = array("0973", "1247", "1263", "1280", "1538");
-
-                $provinces_list = DB::table($GLOBALS['season_prefix'].'rcep_reports_view.rcef_nrp_provinces')
-                    // ->whereIn("province", $allowed_stations)
-                //    ->whereIn("prv_code", $allowed_array)
-                    // ->whereIn('regCode_int',[3,6,9,12,15])
+                
+                if(Auth::user()->roles->first()->name == "branch-it"){
+                    $provinces_list = DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
+                    ->where('stationID',Auth::user()->stationId)
                     ->groupBy('province')
-                    ->orderBy('region_sort', 'ASC')
+                    ->orderBy('province', 'ASC')
                     ->get();
+                    // dd($provinces_list);
+                }
+                else{
+                    $provinces_list = DB::table($GLOBALS['season_prefix'].'rcep_reports_view.rcef_nrp_provinces')
+                        // ->whereIn("province", $allowed_stations)
+                    //    ->whereIn("prv_code", $allowed_array)
+                        // ->whereIn('regCode_int',[3,6,9,12,15])
+                        ->groupBy('province')
+                        ->orderBy('region_sort', 'ASC')
+                        ->get();
+                }
                 
 
                 // dd(Auth::user()->username);
@@ -2094,6 +2104,21 @@ class FarGenerationController extends Controller
 			dd($ex);
 		}
 	}
+
+    function getRunningFLSAR($prv, $mun){
+        $status = DB::table("temp_db._running_flsar")
+            ->select("status")
+            ->where("prv", $prv)
+            ->where("mun", $mun)
+            ->where("status", "running")
+            ->first();
+
+        $st = "stopped";
+        if($status){
+            $st = $status->status;
+        }
+        return $st;
+    }
 
 }
 

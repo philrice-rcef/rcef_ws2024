@@ -1438,6 +1438,8 @@ Route::group(['middleware' => ['logMw']], function() {
     Route::get('fargeneration/pre_reg/get_report_beneficiary/{province}/{municipality}/{brgy}', ['as' => 'FarGenerationPreReg.get_report_beneficiary', 'uses' => 'FarGenerationController@get_report_beneficiaryPreReg']);
     Route::get('fargeneration/pre_reg/pdf/{province}/{municipality}/{brgy}/{rowFrom}/{rowTo}/{size}', ['as' => 'api.far.pdf.pre_reg', 'uses'=>'FarGenerationController@makePdfFAR_pre_reg']);
 
+    Route::get('fargeneration/getRunningFLSAR/{prv}/{mun}', ['as' => 'api.getRunningFLSAR', 'uses'=>'FarGenerationController@getRunningFLSAR']);
+
 
 
     Route::get('pre_list_index', ['as' => 'pre_list_index', 'uses' => 'preListController@pre_list_index'])->middleware('auth');

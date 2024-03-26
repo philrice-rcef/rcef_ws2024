@@ -147,7 +147,7 @@
 
                                     @else
                                     <button type="button" name="download_flsar_rep" id="download_flsar_rep" class="btn btn-lg btn-warning" style="float: right;" disabled=""><i class="fa fa-file-pdf-o"></i> Download PDF (REPLACEMENT)</button>
-                                    @if(Auth::user()->roles->first()->name == "rcef-programmer")
+                                    @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "branch-it")
                                     <button type="button" name="download_flsar_a3" id="download_flsar_a3" class="btn btn-lg btn-success" style="float: right;" disabled=""><i class="fa fa-file-pdf-o"></i> Download PDF</button>
                                     @endif
 
@@ -493,15 +493,15 @@ $("#download_flsar_rep").hide("slow");
                         },
                         dataType: 'json',
                         success: function (source) {
-                $('select[name="brgy_fg"]').empty().append('<option value="0">--SELECT ASSIGNED BRGY--</option>');
-                $('select[name="brgy_fg"]').append('<option value="all">--ALL BRGY--</option>');
-                $('select[name="brgy_fg"]').append('<option value="NONE">NO BRGY INDICATED</option>');
-                    $.each(source, function (i, d) {
-                     
-                            
+                            $('select[name="brgy_fg"]').empty().append('<option value="0">--SELECT ASSIGNED BRGY--</option>');
+                            $('select[name="brgy_fg"]').append('<option value="all">--ALL BRGY--</option>');
+                            $('select[name="brgy_fg"]').append('<option value="NONE">NO BRGY INDICATED</option>');
+                        $.each(source, function (i, d) {
                         
-                        $('select[name="brgy_fg"]').append('<option value="' + d.geocode_brgy + '">' + d.name + '</option>');
-                    }); 
+                                
+                            
+                            $('select[name="brgy_fg"]').append('<option value="' + d.geocode_brgy + '">' + d.name + '</option>');
+                        }); 
 
                    
                 }
@@ -665,8 +665,26 @@ document.getElementById("download_flsar_rep").addEventListener("click", function
 
 
 document.getElementById("download_flsar_a3").addEventListener("click", function() {
+    var province = $('select[name="province_fg"]').val();
+    var municipalCode = document.getElementById("municipality_fg");
+    var municipalName = municipalCode.options[municipalCode.selectedIndex].text;
   
- HoldOn.open(holdon_options);
+    $.ajax({
+    method: 'GET',
+    url: `getRunningFLSAR/${province}/${municipalName}`,
+    success: function (source) {
+        console.log(source);
+        if(source == "running"){
+            alert("Generation is running. Please check the downloaded FARs for reference.");
+        }else{
+            generateFLSAR_A3();
+        }
+    }
+    });
+});
+
+function generateFLSAR_A3(){
+    HoldOn.open(holdon_options);
 
     var size = "A3";
   
@@ -763,9 +781,7 @@ document.getElementById("download_flsar_a3").addEventListener("click", function(
     }    
 
     HoldOn.close();
-});  
-
-
+}
 
 
 document.getElementById("download_flsar_ext").addEventListener("click", function() {

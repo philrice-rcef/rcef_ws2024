@@ -116,7 +116,7 @@ class dqTaggingController extends Controller
         ->where('province', 'LIKE',$request->prov)
         ->groupBy('prv_code')
         ->first();
-        
+        dd($getPrvCode);
         $prv = $getPrvCode->prv_code;
         
         $toBeTagged = $request->toBeTagged;
