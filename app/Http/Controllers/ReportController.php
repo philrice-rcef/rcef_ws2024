@@ -9479,6 +9479,48 @@ class ReportController extends Controller
                         ->where("prv_dropoff_id", "LIKE", $muni->prv."%")
                         
                         ->first();
+    
+                $home_dist = 0;
+                $parcel_dist = 0;
+                $releaseHome = DB::table($GLOBALS["season_prefix"]."prv_".$db_prv.".new_released")
+                ->where("category", "INBRED")
+                // ->where("prv_dropoff_id", "LIKE", "143211%")
+                ->where("prv_dropoff_id", "LIKE", $muni->prv."%")
+                ->where("remarks","LIKE","%claimed in home address%")
+                ->get();
+                
+                
+                foreach($releaseHome as $rel)
+                {
+                    $remarks = $rel->remarks;
+                    $remarks = str_replace(" bags claimed in home address DOP ",',',$remarks);
+                    $remarks = str_replace("(",',',$remarks);
+                    $remarks = str_replace("(",',',$remarks);
+                    $remarks = str_replace(") with area of ",',',$remarks);
+                    $remarks = explode(",",$remarks);
+                    $home_dist += ($remarks[0]);
+                    // dd($home_dist);
+                }
+
+                $releaseParcel = DB::table($GLOBALS["season_prefix"]."prv_".$db_prv.".new_released")
+                ->where("category", "INBRED")
+                // ->where("prv_dropoff_id", "LIKE", "143211%")
+                ->where("prv_dropoff_id", "LIKE", $muni->prv."%")
+                ->where("remarks","LIKE","%claimed intended for Parcel%")
+                ->get();
+
+                foreach($releaseParcel as $relParcel)
+                {
+                    $remarksParcel = $relParcel->remarks;
+                    $remarksParcel = str_replace(" bags claimed intended for Parcel DOP ",',',$remarksParcel);
+                    $remarksParcel = str_replace("(",',',$remarksParcel);
+                    $remarksParcel = str_replace("(",',',$remarksParcel);
+                    $remarksParcel = str_replace(") with area of ",',',$remarksParcel);
+                    $remarksParcel = explode(",",$remarksParcel);
+                    $parcel_dist += ($remarksParcel[0]);
+                    // dd($parcel_dist);
+                }
+
                 if($release->bags > 0){
                     
                     $regular_dist = $release->bags;
@@ -9551,7 +9593,7 @@ class ReportController extends Controller
                     $yield = "-";
                 }
 
-                $distributed = $ebinhi_distri + $regular_dist;
+                $distributed = $ebinhi_distri + $regular_dist + $parcel_dist;
                 $beneficiaries = $regular_bene + $ebinhi_bene;
 
                 $ebinhi_tag = 0;
@@ -9561,7 +9603,14 @@ class ReportController extends Controller
                     if($regular_dist > 0){
                         $distributed_text .= "<br> Regular: ". number_format($regular_dist);
                         $beneficiaries_text .= "<br> Regular: ". number_format($regular_bene); 
+                        
+                    }
+                    if($home_dist>0){
+                        $distributed_text .= "<br> <strong>Note:</strong> Claimed in home DOP: ". number_format($home_dist);
+                    }
 
+                    if($parcel_dist>0){
+                        $distributed_text .= "<br> <strong>Note:</strong> Claimed intended for parcel DOP: ". number_format($parcel_dist);
                     }
 
                     if($ebinhi_distri > 0 ){
