@@ -127,7 +127,7 @@
                         &nbsp;
                     </div>
                     <div class="">
-                       Gina B. Narca
+                    Sally Grace B. Osorio
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                         &nbsp;
                     </div>
                     <div class="">
-                       Head / IMSSO
+                       OIC / IMSSO
                     </div>
                 </div>
             </div>
