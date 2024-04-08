@@ -31,6 +31,8 @@ class KPEncoderMonitoringController extends Controller
             ->orderBy('Total_Encoded', 'desc')
             ->get();
 
+        
+
         foreach($encoded as $encode)
         {
             
@@ -41,7 +43,7 @@ class KPEncoderMonitoringController extends Controller
             $getContractDate = DB::table('kp_distribution.kp_encoders')
             ->where('userId',$encode->Encoder)
             ->first();
-
+            
             if($getContractDate->status == 0)
             {
                 continue;
@@ -73,6 +75,11 @@ class KPEncoderMonitoringController extends Controller
 
             // dd($contractStart);
             $fullName1 = $getName1->firstName.' '.$getName1->middleName.' '.$getName1->lastName.' '.$getName1->extName;
+            if($encode->Encoder == 'cq.bulan')
+            {
+                $getTotalQuota = $getTotalQuota - 4000;
+                $getTotalQuotaPrev = $getTotalQuotaPrev - 4000;
+            }
             $overallData[] = [
                 "Full_Name" => $fullName1,
                 "Encoder" => $encode->Encoder,
