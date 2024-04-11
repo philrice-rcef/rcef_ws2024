@@ -31,8 +31,6 @@ class KPEncoderMonitoringController extends Controller
             ->orderBy('Total_Encoded', 'desc')
             ->get();
 
-        
-
         foreach($encoded as $encode)
         {
             
@@ -40,10 +38,14 @@ class KPEncoderMonitoringController extends Controller
                 ->where('username',$encode->Encoder)
                 ->first();
 
+            if(!$getName1)
+            {
+                dd($encode);
+            }
             $getContractDate = DB::table('kp_distribution.kp_encoders')
             ->where('userId',$encode->Encoder)
             ->first();
-            
+
             if($getContractDate->status == 0)
             {
                 continue;
@@ -71,15 +73,22 @@ class KPEncoderMonitoringController extends Controller
                 ->where('sort', '<', $maxSort)
                 ->sum('quota');
 
+            if(!$getTotalQuotaPrev)
+            {
+                $getTotalQuotaPrev = 0;
+            }
+
             $contractStart = $getContractDate->contractStartMonth.' '.$getContractDate->contractStartYear;
 
             // dd($contractStart);
             $fullName1 = $getName1->firstName.' '.$getName1->middleName.' '.$getName1->lastName.' '.$getName1->extName;
+
             if($encode->Encoder == 'cq.bulan')
             {
                 $getTotalQuota = $getTotalQuota - 4000;
                 $getTotalQuotaPrev = $getTotalQuotaPrev - 4000;
             }
+
             $overallData[] = [
                 "Full_Name" => $fullName1,
                 "Encoder" => $encode->Encoder,
@@ -344,7 +353,7 @@ class KPEncoderMonitoringController extends Controller
             $province = $location[1];
             $municipality = $location[0];
 
-            $getPSGcode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+            $getPSGcode = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
             ->select('psa_code')
             ->where('province','LIKE',$province)
             ->where('municipality','LIKE',$municipality)
