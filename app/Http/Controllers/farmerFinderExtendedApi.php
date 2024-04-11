@@ -516,7 +516,7 @@ class farmerFinderExtendedApi extends Controller{
             $parsed_prv = explode('-',$row->rsbsa_control_no);
 
             $prv = $parsed_prv[0];
-            $prv = $prv.(count($parsed_prv[1]) == 2? $parsed_prv[1] : substr($parsed_prv[1], 1));
+            $prv = $prv.(strlen($parsed_prv[1]) == 2? $parsed_prv[1] : substr($parsed_prv[1], 1));
             // $prv = substr(str_replace('-','',$row->rsbsa_control_no),0,4);
             $season = strtolower($row->season);
             $validate = DB::table('kp_distribution.kp_distribution_app')
