@@ -513,9 +513,10 @@ class farmerFinderExtendedApi extends Controller{
             if($locationlength<10){
                 continue;
             }
-            $prv = explode('-',$row->rsbsa_control_no);
+            $parsed_prv = explode('-',$row->rsbsa_control_no);
 
-            $prv = $prv[0]."".count($prv[1]) == 2? $prv[1] : substr($prv[1], 1);
+            $prv = $prv[0];
+            $prv = $prv.(count($prv[1]) == 2? $prv[1] : substr($prv[1], 1));
             // $prv = substr(str_replace('-','',$row->rsbsa_control_no),0,4);
             $season = strtolower($row->season);
             $validate = DB::table('kp_distribution.kp_distribution_app')
