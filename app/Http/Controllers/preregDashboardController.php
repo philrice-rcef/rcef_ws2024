@@ -795,7 +795,7 @@ class preregDashboardController extends Controller
         $table_arr = array();
         $computed_bags = 0;
         $table_header = array(
-            ['RCEF ID', 'RSBSA Control Number', 'First Name', 'Middle Name', 'Last Name', 'Extension Name', 'Sex', 'FCA Name', 'Province', 'Municipality', 'Dropoff Point', 'Previous Harvest Yield', 'ds2024 Actual Area', 'ds2024 Declared Area', 'Computed Bags', 'Declared Variety (Available)', 'Sowing Date' 'Pre-registration Date']
+            ['RCEF ID', 'RSBSA Control Number', 'First Name', 'Middle Name', 'Last Name', 'Extension Name', 'Sex', 'FCA Name', 'Province', 'Municipality', 'Dropoff Point', 'Previous Harvest Yield', 'ds2024 Actual Area', 'ds2024 Declared Area', 'Computed Bags', 'Declared Variety (Available)', 'Sowing Date', 'Pre-registration Date']
         );
 
         foreach($final_tbl as $row){
