@@ -521,7 +521,18 @@ class farmerFinderExtendedApi extends Controller{
             }
             else{
                 $prv = $parsed_prv[0];
-                $prv = $prv.(strlen($parsed_prv[1]) == 2? $parsed_prv[1] : substr($parsed_prv[1], 1));
+                if(strlen($parsed_prv[1]) == 2)
+                {
+                    $prv2 = $parsed_prv[1];
+                }
+                else if (strlen($parsed_prv[1]) == 3)
+                {
+                    $prv2 = substr($parsed_prv[1], 1);
+                }
+                else{
+                    $prv2 = substr($parsed_prv[1], 0, 2);
+                }
+                $prv = $prv.$prv2;
             }
             // $prv = substr(str_replace('-','',$row->rsbsa_control_no),0,4);
             $season = strtolower($row->season);
