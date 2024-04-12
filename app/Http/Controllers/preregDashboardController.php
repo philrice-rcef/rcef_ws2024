@@ -738,7 +738,9 @@ class preregDashboardController extends Controller
                             'sed_verified.committed_area as committed_area',
                             'sed_verified.farmer_declared_area as farmer_declared_area',
                             'sed_verified.date_updated as prereg_date',
-                            'sed_verified.varietyPref as varietyPref'
+                            'sed_verified.varietyPref as varietyPref',
+                            'sed_verified.sowing_month as sowing_month',
+                            'sed_verified.sowing_week as sowing_week'
                         )
                         ->where("sed_verified.claiming_prv", $prv_claim_pattern)
                         ->where('sed_verified.isPrereg', 1)
@@ -768,7 +770,9 @@ class preregDashboardController extends Controller
                         'sed_verified.committed_area as committed_area',
                         'sed_verified.farmer_declared_area as farmer_declared_area',
                         'sed_verified.date_updated as prereg_date',
-                        'sed_verified.varietyPref as varietyPref'
+                        'sed_verified.varietyPref as varietyPref',
+                        'sed_verified.sowing_month as sowing_month',
+                        'sed_verified.sowing_week as sowing_week'
                     )
                     ->where("sed_verified.region", "LIKE", $reg)
                     ->where("sed_verified.farm_addr_prv", "LIKE", $prv)
@@ -791,12 +795,12 @@ class preregDashboardController extends Controller
         $table_arr = array();
         $computed_bags = 0;
         $table_header = array(
-            ['RCEF ID', 'RSBSA Control Number', 'First Name', 'Middle Name', 'Last Name', 'Extension Name', 'Sex', 'FCA Name', 'Province', 'Municipality', 'Dropoff Point', 'Previous Harvest Yield', 'ds2024 Actual Area', 'ds2024 Declared Area', 'Computed Bags', 'Declared Variety (Available)', 'Pre-registration Date']
+            ['RCEF ID', 'RSBSA Control Number', 'First Name', 'Middle Name', 'Last Name', 'Extension Name', 'Sex', 'FCA Name', 'Province', 'Municipality', 'Dropoff Point', 'Previous Harvest Yield', 'ds2024 Actual Area', 'ds2024 Declared Area', 'Computed Bags', 'Declared Variety (Available)', 'Sowing Date' 'Pre-registration Date']
         );
 
         foreach($final_tbl as $row){
             $computed_bags = ceil($row->committed_area*2);
-            $tmp = ["\t".$row->rcef_id, $row->rsbsa_control_number,  $row->fname, $row->midname, $row->lname, $row->extename, $row->ver_sex, strlen($row->fca_name) > 0? $row->fca_name : "None", $row->province_name, $row->municipality_name, strlen($row->drop_off_point) > 0? $row->drop_off_point : "Not Scheduled", $row->yield, $row->committed_area, $row->farmer_declared_area, $computed_bags, $row->varietyPref, $row->prereg_date];
+            $tmp = ["\t".$row->rcef_id, $row->rsbsa_control_number,  $row->fname, $row->midname, $row->lname, $row->extename, $row->ver_sex, strlen($row->fca_name) > 0? $row->fca_name : "None", $row->province_name, $row->municipality_name, strlen($row->drop_off_point) > 0? $row->drop_off_point : "Not Scheduled", $row->yield, $row->committed_area, $row->farmer_declared_area, $computed_bags, $row->varietyPref, ($row->sowing_month.$row->sowing_week), $row->prereg_date];
             array_push($table_arr, $tmp);
         }
         
