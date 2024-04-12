@@ -517,7 +517,7 @@ class farmerFinderExtendedApi extends Controller{
 
             if(count($parsed_prv) == 1)
             {
-                $prv = substr($parsed_prv[0], 0, 4)
+                $prv = substr($parsed_prv[0], 0, 4);
             }
             else{
                 if(strlen($parsed_prv[0])>2)
