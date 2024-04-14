@@ -621,7 +621,7 @@ class farmerFinderExtendedApi extends Controller{
                     "season" => $row->season,
                     "kpKits" => !empty($row->kpKits) || $row->kpKits !== '' ? $row->kpKits : 0,
                     "calendars" => !empty($row->calendars) || $row->calendars !== '' ? $row->calendars : 0,
-                    "testimonials" => !empty($row->testimonials) || $row->testimonials!=== '' ? $row->testimonials : 0,
+                    "testimonials" => !empty($row->testimonials) || $row->testimonials!== '' ? $row->testimonials : 0,
                     "services" => !empty($row->services) || $row->services !== '' ? $row->services : 0,
                     "apps" => !empty($row->apps) || $row->apps !== '' ? $row->apps : 0,
                     "yunpalayun" => !empty($row->yunpalayun) || $row->yunpalayun !== '' ? $row->yunpalayun : 0,
