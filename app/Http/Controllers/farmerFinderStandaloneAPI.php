@@ -183,6 +183,8 @@ class farmerFinderStandAloneApi extends Controller{
                 ->select(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName) as 'fullName'"), "rsbsa_control_no", "sex", DB::raw("rsbsa_control_no as rcef_id"), "municipality", "barangay", DB::raw("actual_area as final_area"), DB::raw("LEFT(REPLACE(rsbsa_control_no, '-', ''), 6) as homeGeo"))
                 ->where('rsbsa_control_no','NOT LIKE','%Loading%')
                 ->where('rsbsa_control_no','NOT LIKE','')
+                ->where('lastName','NOT LIKE','')
+                ->where('firstName','NOT LIKE','')
                 ->get();
         }else if($season == "ws2020"){
             $raw = DB::connection("ws2020")->table("prv_".$prv.".farmer_profile")
