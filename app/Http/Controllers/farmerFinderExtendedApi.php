@@ -605,8 +605,8 @@ class farmerFinderExtendedApi extends Controller{
                 }
 
                 $fullName = str_replace(
-                    ['&lsquo;', '&Ntilde;', '&ntilde;', '&Atilde;', '&atilde;', '&Eacute;', '&eacute;', '&Iacute;', '&iacute;', '-', 'N/A', 'n/a', ' NA', ' na'], 
-                    ["", 'N', 'n', 'A', 'a', 'E', 'e', 'I', 'i', '', '', '', ' ', ' '],
+                    ['Ñ','ñ','&lsquo;', '&Ntilde;', '&ntilde;', '&Atilde;', '&atilde;', '&Eacute;', '&eacute;', '&Iacute;', '&iacute;', '-', 'N/A', 'n/a', ' NA', ' na'], 
+                    ['N', 'n',"", 'N', 'n', 'A', 'a', 'E', 'e', 'I', 'i', '', '', '', ' ', ' '],
                     $row->fullName
                 );                
 
