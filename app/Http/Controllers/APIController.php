@@ -2422,13 +2422,15 @@ class APIController extends Controller
 			$farmer_profile_final = DB::table($database_name.".farmer_information_final")	
 			->select( "*",
 			  DB::raw("IF(is_new = 9, 1, 0) as is_fca"),  
+			  'fca_name',
               DB::raw("(final_claimable - total_claimed) as inbred_balance"), 
               DB::raw("(ROUND(final_area,2) - IF(is_replacement = 1, ROUND(replacement_area_claimed,2) , ROUND(total_claimed_area,2))) as hybrid_balance"), 
               DB::raw("CONCAT('4') as version_list"), 
               DB::raw('ROUND(final_area,2) as origin_crop_area'),
               DB::raw('ROUND(final_area,2) as crop_area'),
               'final_claimable as origin_total_claimable', 
-              'final_claimable as total_claimable')
+              'final_claimable as total_claimable' 
+			  )
 						->orderBy("municipality")
 						->orderBy("lastName")
 						->orderBy("firstName")
