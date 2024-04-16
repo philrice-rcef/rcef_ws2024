@@ -270,7 +270,7 @@ class API extends Controller
         foreach($batches as $trans_batch){
             dd($trans_batch);
           $total_bags_overall += DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
-                ->where("remarks", "transferred from batch: ".$trans_batch->batchTicketNumber)
+                ->where("remarks", "transferred from batch: ".$trans_batch["batchTicketNumber"])
                 ->where('tbl_actual_delivery.qrStart', '>', '0')
                 ->where('tbl_actual_delivery.qrEnd', '>', '0')
                 ->sum("totalBagCount");
