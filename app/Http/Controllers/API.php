@@ -135,7 +135,7 @@ class API extends Controller
 
         foreach($batches as $trans_batch){
           $total_bags_overall += DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
-                ->where("remarks", "transferred from batch: ".$trans_batch)
+                ->where("remarks", "transferred from batch: ".$trans_batch["batchTicketNumber"])
                 ->where('tbl_actual_delivery.qrStart', '>', '0')
                 ->where('tbl_actual_delivery.qrEnd', '>', '0')
                 ->sum("totalBagCount");
@@ -176,7 +176,7 @@ class API extends Controller
     }
 
     public function ebinhi_coop_inventory_debug(Request $request){
-
+        return "no tresspassing";
         
         $coop_no = $request->coop_number;
         $current_date = $request->current_date;
