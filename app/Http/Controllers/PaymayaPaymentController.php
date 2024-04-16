@@ -285,7 +285,7 @@ private function search_to_array($array, $key, $value) {
     }
 
     public function manual_form($type, $data, $date3){
-      $bags_amount = 760;
+      $bags_amount = 836;
       $retention_rate = 0.01;
       $towords = new NumberFormatter("en", NumberFormatter::SPELLOUT);
 
@@ -485,7 +485,7 @@ private function search_to_array($array, $key, $value) {
         try{
 
         $button_dl = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 760 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
+        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
           ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
           ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
            ->whereIn('a.coopAccreditation',$coop_data)
@@ -519,7 +519,7 @@ private function search_to_array($array, $key, $value) {
               ->first();
 
           $table_details = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-            ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 760 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 760)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 760) * 0.99 as net_amount'))
+            ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 836 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 836)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 836) * 0.99 as net_amount'))
                 ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
                 ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
                 ->groupby('a.coopAccreditation')
@@ -611,7 +611,7 @@ private function search_to_array($array, $key, $value) {
         try{
 
         $button_dl = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 760 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
+        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
           ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
           ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
            ->whereIn('a.coopAccreditation',$coop_data)
@@ -650,7 +650,7 @@ private function search_to_array($array, $key, $value) {
               // dd($signatory1,$signatory2,$signatory3);
 
           $table_details = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-            ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 760 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 760)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 760) * 0.99 as net_amount'))
+            ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 836 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 836)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 836) * 0.99 as net_amount'))
                 ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
                 ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
                 ->groupby('a.coopAccreditation')
@@ -747,7 +747,7 @@ private function search_to_array($array, $key, $value) {
         try{
 
         $button_dl = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-          ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 760 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
+          ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
           ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
           ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
           ->groupby('a.coopAccreditation')
@@ -783,7 +783,7 @@ private function search_to_array($array, $key, $value) {
 
    
      $table_details = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-     ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 760 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 760)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 760) * 0.99 as net_amount'))
+     ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 836 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 836)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 836) * 0.99 as net_amount'))
         ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
         ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
         ->whereIn('a.coopAccreditation',$coop_data)
@@ -869,7 +869,7 @@ private function search_to_array($array, $key, $value) {
         $date2 = $date2r[0].'-'.$date2r[1].'-'.$day = $date2r[2].' '.'16:00:00';
 
           return Datatables::of(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-          ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.date_created)  * 760 as amount'), DB::raw("COUNT(CASE WHEN is_paid = 1 THEN 1 END) AS paid_count"))
+          ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("COUNT(CASE WHEN is_paid = 1 THEN 1 END) AS paid_count"))
           ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
           ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
           ->groupby('a.coopAccreditation')
@@ -889,7 +889,7 @@ private function search_to_array($array, $key, $value) {
             return $show;
           })
           ->addColumn('amount', function($row){    
-            $total_b = $row->total_bags * 760;
+            $total_b = $row->total_bags * 836;
             $total_ret = $total_b * 0.01;
            return number_format($amount = $total_b - $total_ret,2);
   
@@ -951,7 +951,7 @@ private function search_to_array($array, $key, $value) {
         $date2 = $date2r[0].'-'.$date2r[1].'-'.$day = $date2r[2].' '.'16:00:00';
 
         $button_dl = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.date_created)  * 760 as amount'))
+        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'))
         ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
         ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
         // ->where('a.is_paid','=','0')
@@ -1223,7 +1223,7 @@ private function search_to_array($array, $key, $value) {
         try{
 
         $button_dl = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 760 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
+        ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
           ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
           ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
           ->where("b.coop_name", $coop)
@@ -1258,7 +1258,7 @@ private function search_to_array($array, $key, $value) {
         ->first();
 
     $table_details = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-     ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 760 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 760)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 760) * 0.99 as net_amount'))
+     ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 836 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 836)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 836) * 0.99 as net_amount'))
         ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
         ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
         ->where("b.coop_name", $coop)
@@ -1338,7 +1338,7 @@ private function search_to_array($array, $key, $value) {
           try{
   
           $button_dl = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-          ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 760 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
+          ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.claimId as claimed_id','a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("STR_TO_DATE(a.date_created, '%Y-%m-%d') as actual_date"))
             ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
             ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
             ->where("b.coop_name", $coop)
@@ -1373,7 +1373,7 @@ private function search_to_array($array, $key, $value) {
           ->first();
   
       $table_details = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-       ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 760 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 760)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 760) * 0.99 as net_amount'))
+       ->select(DB::raw('COUNT(a.beneficiary_id) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.beneficiary_id)  * 836 as amount'), DB::raw('(COUNT(a.beneficiary_id)  * 836)* 0.01 as retention'),  DB::raw('(COUNT(a.beneficiary_id)  * 836) * 0.99 as net_amount'))
           ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
           ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
           ->where("b.coop_name", $coop)
