@@ -266,10 +266,10 @@ class API extends Controller
             ->sum("totalBagCount");
 
             // transferred from batch: 596-BCH-1699854392
-        dd($batches);
+        //dd($batches);
         foreach($batches as $trans_batch){
           $total_bags_overall += DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
-                ->where("remarks", "transferred from batch: ".$trans_batch)
+                ->where("remarks", "transferred from batch: ".$trans_batch->batchTicketNumber)
                 ->where('tbl_actual_delivery.qrStart', '>', '0')
                 ->where('tbl_actual_delivery.qrEnd', '>', '0')
                 ->sum("totalBagCount");
