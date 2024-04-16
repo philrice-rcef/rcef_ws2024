@@ -144,6 +144,7 @@ class VerifyCsrfToken extends BaseVerifier
 		'api/ff/syncKPdata',
 		'api/ff/iarLogging',
 		'api/ff/submitReceiver',
-		'api/ff/submitPrcCsh'
+		'api/ff/submitPrcCsh',
+		'ebinhi_app/coop_inventory/debug'
     ];
 }
