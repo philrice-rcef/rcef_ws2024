@@ -174,6 +174,140 @@ class API extends Controller
             )
         );
     }
+
+    public function ebinhi_coop_inventory_debug(Request $request){
+
+        
+        $coop_no = $request->coop_number;
+        $current_date = $request->current_date;
+
+       // $coop_no = str_replace("_","/",$coop_no);
+
+        /*$ebinhi_dop = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
+            ->select('tbl_actual_delivery.dropOffPoint as location',DB::raw("SUM(tbl_actual_delivery.totalBagCount) as dop_delivered"))
+            ->leftjoin($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery', 'tbl_delivery.batchTicketNumber', "=", 'tbl_actual_delivery.batchTicketNumber')
+            ->where('tbl_delivery.coopAccreditation', $coop_no)
+            ->where('tbl_actual_delivery.qrStart', '!=', '')
+            ->where('tbl_actual_delivery.qrEnd', '!=', '')
+            ->groupBy('tbl_actual_delivery.dropOffPoint')
+            ->get();
+
+        $return_data = array();
+        $distribution_data = array();
+        $dop_list = array();
+        $total_distributed = 0;
+        foreach($ebinhi_dop as $dop_data){
+
+            array_push($distribution_data, array(
+                'location' => $dop_data->location,
+                'bags_distributed' => $total_delivered
+            ));
+
+            array_push($dop_list, array($dop_data->location));
+        }
+     
+        return json_encode(
+            array(
+                "dop_list" => $dop_list,
+                "distribution_data" => $distribution_data
+            )
+        );*/
+
+        $ebinhi_dop_list = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
+            ->select('province','municipality','claimLocation', DB::raw('COUNT(beneficiary_id) as total_distributed'))
+            ->where('coopAccreditation', $coop_no)
+            ->groupBy('claimLocation')->get();
+
+        $ebinhi_covered_provinces = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
+            ->select('province')
+            ->where('coopAccreditation', $coop_no)
+            ->groupBy('province')->get();
+        
+        $dop_list = array();
+        $distribution_data = array();
+        $total_distributed = 0;
+        $total_bags_overall = 0;
+
+        /*foreach($ebinhi_covered_provinces as $prov_row){
+            $overall_data = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
+                ->select(DB::raw("SUM(tbl_actual_delivery.totalBagCount) as total_delivered"))
+                ->Leftjoin($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery', 'tbl_delivery.batchTicketNumber', "=", 'tbl_actual_delivery.batchTicketNumber')
+                ->where('tbl_delivery.coopAccreditation', $coop_no)
+                ->where('tbl_actual_delivery.qrStart', '>', '0')
+                ->where('tbl_actual_delivery.qrEnd', '>', '0')
+                ->where('tbl_actual_delivery.province', $prov_row->province)
+                ->first();
+
+            $total_bags_overall += $overall_data->total_delivered;
+        }*/
+
+
+        // $overall_data = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
+        //     ->select(DB::raw("SUM(tbl_actual_delivery.totalBagCount) as total_delivered"))
+        //     ->where('tbl_actual_delivery.qrStart', '>', '0')
+        //     ->where('tbl_actual_delivery.qrEnd', '>', '0')
+        //     ->where('tbl_actual_delivery.province', 'PAMPANGA')
+        //     ->first();
+        //     $total_bags_overall += $overall_data->total_delivered;
+
+        
+        $batches = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+            ->select("batchTicketNumber")
+            ->where("coopAccreditation", $coop_no)
+            ->get();
+    
+        $batches = json_decode(json_encode($batches), true);
+
+        $total_bags_overall = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
+            ->whereIn("batchTicketNumber", $batches)
+            ->where('tbl_actual_delivery.qrStart', '>', '0')
+            ->where('tbl_actual_delivery.qrEnd', '>', '0')
+            
+            ->sum("totalBagCount");
+
+            // transferred from batch: 596-BCH-1699854392
+        
+        foreach($batches as $trans_batch){
+          $total_bags_overall += DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
+                ->where("remarks", "transferred from batch: ".$trans_batch)
+                ->where('tbl_actual_delivery.qrStart', '>', '0')
+                ->where('tbl_actual_delivery.qrEnd', '>', '0')
+                ->sum("totalBagCount");
+        }
+
+
+        foreach($ebinhi_dop_list as $dop){
+            array_push($dop_list, array("location" => $dop->claimLocation));
+            
+            $per_day = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
+            ->select(DB::raw("STR_TO_DATE(date_created, '%Y-%m-%d') as date"), DB::raw('COUNT(beneficiary_id) as total_distributed'))
+            ->where('coopAccreditation', $coop_no)
+            ->where("claimLocation", $dop->claimLocation)
+            ->groupBy(DB::raw("STR_TO_DATE(date_created, '%Y-%m-%d')"))->get();
+           
+
+
+            array_push($distribution_data, array(
+                "location" => $dop->claimLocation,
+                "bags_distributed" => $dop->total_distributed,
+                "data_per_day" => $per_day
+            ));
+
+            $total_distributed += $dop->total_distributed;
+        }
+
+        $remaining_bags = $total_bags_overall - $total_distributed;
+        return json_encode(
+            array(
+                "total_bags_overall" => $total_bags_overall,
+                "remaining_bags_overall" => $remaining_bags,
+                "distributed_bags_overall" => $total_distributed,
+                "as_of" => $current_date,
+                "dop_list" => $dop_list,
+                "distribution_data" => $distribution_data,
+            )
+        );
+    }
 	
 	public function get_dop_coops(){
 		$data = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->select('coopId', 'coopName', 'acronym', 'accreditation_no')->where('isActive', 1)->get();

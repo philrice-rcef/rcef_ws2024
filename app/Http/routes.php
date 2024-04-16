@@ -1347,6 +1347,7 @@ Route::group(['middleware' => ['logMw']], function() {
     //EBINHI APP //
     Route::get('ebinhi_app/coop_monitoring/{coop_number}/{date_from}/{date_to}', ['as' => 'ebinhi_app.monitoring_ui', 'uses' => 'API@ebinhi_coop_monitoring']);
     Route::post('ebinhi_app/coop_inventory', ['as' => 'ebinhi_app.inventory', 'uses' => 'API@ebinhi_coop_inventory']);
+    Route::post('ebinhi_app/coop_inventory/debug', ['as' => 'ebinhi_app.inventory', 'uses' => 'API@ebinhi_coop_inventory_debug']);
 
     Route::post('moet_app/login', ['as' => 'moet.web.login', 'uses' => 'moetController@user_login']);
     Route::post('moet_app/data_request', ['as' => 'moet.web.data.request', 'uses' => 'moetController@dataRequest']);
