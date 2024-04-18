@@ -656,6 +656,5 @@ class farmerFinderExtendedApi extends Controller{
             }
         }
         return 1;
-        
     }
 }
