@@ -513,33 +513,45 @@ class farmerFinderExtendedApi extends Controller{
             if($locationlength<10){
                 continue;
             }
-            $parsed_prv = explode('-',$row->rsbsa_control_no);
 
-            if(count($parsed_prv) == 1 || strlen($parsed_prv[0])>4)
-            {
-                $prv = substr($parsed_prv[0], 0, 4);
-            }
-            else{
-                if(strlen($parsed_prv[0])>2)
-                {
-                    $prv = $parsed_prv[0];
-                }
-                else{
-                    $prv = $parsed_prv[0];
-                    if(strlen($parsed_prv[1]) == 2)
-                    {
-                        $prv2 = $parsed_prv[1];
-                    }
-                    else if (strlen($parsed_prv[1]) == 3)
-                    {
-                        $prv2 = substr($parsed_prv[1], 1);
-                    }
-                    else{
-                        $prv2 = substr($parsed_prv[1], 0, 2);
-                    }
-                    $prv = $prv.$prv2;
-                }
-            }
+            $locationString = $row->location;
+            $locationString = explode(', ',$locationString);
+            
+            $getPrv = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+            ->where('regionName','LIKE',$locationString[2])
+            ->where('province','LIKE',$locationString[1])
+            ->where('municipality','LIKE',$locationString[0])
+            ->first();
+            
+        
+            $prv = $getPrv->prv_code;
+            // $parsed_prv = explode('-',$row->rsbsa_control_no);
+
+            // if(count($parsed_prv) == 1 || strlen($parsed_prv[0])>4)
+            // {
+            //     $prv = substr($parsed_prv[0], 0, 4);
+            // }
+            // else{
+            //     if(strlen($parsed_prv[0])>2)
+            //     {
+            //         $prv = $parsed_prv[0];
+            //     }
+            //     else{
+            //         $prv = $parsed_prv[0];
+            //         if(strlen($parsed_prv[1]) == 2)
+            //         {
+            //             $prv2 = $parsed_prv[1];
+            //         }
+            //         else if (strlen($parsed_prv[1]) == 3)
+            //         {
+            //             $prv2 = substr($parsed_prv[1], 1);
+            //         }
+            //         else{
+            //             $prv2 = substr($parsed_prv[1], 0, 2);
+            //         }
+            //         $prv = $prv.$prv2;
+            //     }
+            // }
 
             // $prv = substr(str_replace('-','',$row->rsbsa_control_no),0,4);
             $season = strtolower($row->season);
