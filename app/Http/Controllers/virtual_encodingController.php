@@ -14,11 +14,11 @@ class virtual_encodingController extends Controller
 
     public function index_fca(){
 
-        if(Auth::user()->roles->first()->name != "rcef-programmer"){
-            $mss = "Under Development";
-                return view("utility.pageClosed")
-            ->with("mss",$mss);
-        }
+        // if(Auth::user()->roles->first()->name != "rcef-programmer"){
+        //     $mss = "Under Development";
+        //         return view("utility.pageClosed")
+        //     ->with("mss",$mss);
+        // }
 
         if(Auth::user()->roles->first()->name == "rcef-programmer"){
             $user_provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
