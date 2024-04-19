@@ -938,7 +938,7 @@ class virtual_encodingController extends Controller
                                     $checker_2=0;
                                     while ($checker_2==0) {
                                         $rcef_id = $prv_db.rand(100000,999999);
-                                        $da_farmer_profile =  DB::table("ds2024_prv_".$prv_db.".farmer_information_final")
+                                        $da_farmer_profile =  DB::table("ws2024_prv_".$prv_db.".farmer_information_final")
                                                 ->where('rcef_id',$rcef_id)->count(); 
                                         if($da_farmer_profile == 0){
                                             $checker_2 = 1;
