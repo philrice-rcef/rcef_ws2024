@@ -232,7 +232,7 @@ class FarGenerationController extends Controller
 
         $list =DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
             ->select("rsbsa_control_number as rsbsa_control_no", "lname as lastName", "fname as firstName", "midname as midName", "farmer_declared_area as final_area","barangay_code",
-            "farmer_declared_area as area_to_be_planted", DB::raw("CEIL(farmer_declared_area *2) as no_of_bags"), DB::raw("IF(crop_establishment='direct_seeding', 'D', 'T') as crop_est"),"sowing_month", "sowing_week",DB::raw("SUBSTRING(yield_seed_type,1,1) as yield_seed_type"),"yield_seed_name","yield_no_bags","yield_weight_bags","yield_area", DB::raw("CONCAT('1') as is_prereg")  )
+            "farmer_declared_area as area_to_be_planted", DB::raw("CEIL(farmer_declared_area *2) as no_of_bags"), DB::raw("IF(crop_establishment='direct_seeding', 'D', 'T') as crop_est"),"sowing_month", "sowing_week",DB::raw("SUBSTRING(yield_seed_type,1,1) as yield_seed_type"),DB::raw("LEFT(`yield_seed_name`, LOCATE('(', `yield_seed_name`) - 1) as yield_seed_name"),"yield_no_bags","yield_weight_bags","yield_area", DB::raw("CONCAT('1') as is_prereg")  )
             // ->where("province_name", $province)
             // ->where("municipality_name", $municipality)
             ->where("claiming_prv", $prv_claim_pattern)
@@ -275,7 +275,7 @@ class FarGenerationController extends Controller
                     "title" => $title, "province"=>$province, "municipality"=> $municipality, "mark" => "unmark"])
                     ->setPaper('LEGAL', 'landscape');    
                 
-
+                // dd($pdf);
                 return $pdf->stream($pdf_name); 
 
         }else{

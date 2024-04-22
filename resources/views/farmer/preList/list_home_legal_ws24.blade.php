@@ -664,8 +664,12 @@
                     <!-- REPRESENTATIVE -->
 {{--  --}}
              
-                    <td style="width: 50px;" align="center"> </td>
-                   
+                    <!-- <td style="width: 50px;" align="center"> </td> -->
+                    @if(isset($list[$cnt]["is_prereg"]))
+                        <td style="width: 70px;" align="center">{{$list[$cnt]["yield_seed_name"]}}</td>
+                    @else
+                        <td style="width: 70px;" align="center"> </td>
+                    @endif
 
                     
 
