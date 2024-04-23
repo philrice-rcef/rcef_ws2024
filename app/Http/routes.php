@@ -2228,7 +2228,7 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
     Route::post('/api/travis/delete-attachments', ['as' => 'deleteAttachments', 'uses' => 'TravisAPIController@deleteAttachments']);
     Route::get('/api/travis/countFarmers/{province}', ['as' => 'countFarmers', 'uses' => 'TravisAPIController@countFarmers']);
     
-    Route::get('/api/bm/countFarmers', ['as' => 'countFarmers', 'uses' => 'bmAPIController@countFarmers']);
+    Route::get('/api/bm/seedAnalysisAPI', ['as' => 'seedAnalysisAPI', 'uses' => 'bmAPIController@seedAnalysisAPI']);
 
     //e-Paalalay API
     Route::get('/api/epaalalay/login/{login_id}/{password}/{login}', ['as' => 'login', 'uses' => 'epaalalayController@login']);
