@@ -124,7 +124,7 @@ class BePDashboardController extends Controller
 
             
             if($provTgtArea!=0){
-            $amount = $provTgtBags * 760;
+            $amount = $provTgtBags * 836;
             array_push($provTgt,array(
             "province" => $provTarget[0]->province,
             "municipality" => $provTarget[0]->municipality,
@@ -208,7 +208,7 @@ class BePDashboardController extends Controller
                 }
                 // $provTgtArea = $provTgtArea !== null ? $provTgtArea : 0;
 
-                $amount = $munTgtBags[0]->bags * 760;
+                $amount = $munTgtBags[0]->bags * 836;
                 array_push($munTgt,array(
                     "province" => $munTarget[0]->province,
                     "municipality" => $munTarget[0]->municipality,
@@ -295,7 +295,7 @@ class BePDashboardController extends Controller
                         }
                     }
                     if($munTgtArea2!=0){
-                        $amount = $munTgtBags[0]->bags * 760;
+                        $amount = $munTgtBags[0]->bags * 836;
                         array_push($munTgt,array(
                             "province" => $munTarget[0]->province,
                             "municipality" => $munTarget[0]->municipality,
@@ -413,7 +413,7 @@ class BePDashboardController extends Controller
                 //         }
                 //     }
                 //     if($munTgtArea2!=0){
-                        $amount = $munTgtBags[0]->bags * 760;
+                        $amount = $munTgtBags[0]->bags * 836;
 
                         $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                         ->select('coopName')
@@ -521,7 +521,7 @@ class BePDashboardController extends Controller
                     }
                     
                     if($provTgtArea2!=0){
-                        $amount = $provTgtBags[0]->bags * 760;
+                        $amount = $provTgtBags[0]->bags * 836;
                         array_push($provTgt,array(
                             "province" => $provTarget[0]->province,
                             "municipality" => $provTarget[0]->municipality,
@@ -639,7 +639,7 @@ class BePDashboardController extends Controller
                 //     }
                     
                     // if($provTgtArea2!=0){
-                        $amount = $provTgtBags[0]->bags * 760;
+                        $amount = $provTgtBags[0]->bags * 836;
 
                         $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
                         ->select('coopName')
