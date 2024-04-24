@@ -27,36 +27,427 @@ use Illuminate\Support\Str;
 class bmAPIController extends Controller
 {
     public function seedAnalysisAPI(Request $request){
-        $season = 'ds2024';
+        // $season = 'ds2024';
+        // $season2 = 'ws2024';
+        // $season3 = 'ws2023';
+        $season3 = 'ds2023';
+        $season = 'ws2023';
+        $season2 = 'ds2024';
+
         $getDelivery = DB::table($season.'_rcep_delivery_inspection.tbl_delivery')
-        ->select( 'coopAccreditation', 'batchTicketNumber', 'seedTag', 'seedVariety', DB::raw('SUM(totalBagCount) as bags'), 'province', 'municipality', 'prv_dropoff_id', 'dropOffPoint')
+        ->select( 'coopAccreditation','batchTicketNumber','seedVariety','province')
+        ->where('isBuffer', 0) //new and inventory
+        // ->where('isBuffer', 1) //buffer
         ->groupBy('coopAccreditation', 'province', 'batchTicketNumber', 'seedVariety')
+        // ->limit(10)
         ->get();
 
-        $result = [];
+        $getBuffer = DB::table($season3.'_rcep_delivery_inspection.tbl_delivery as a')
+        ->select('b.coopName','a.coopAccreditation','a.province','a.seedVariety', DB::raw("SUM(totalBagCount) as total_bags"))
+        ->leftJoin($season.'_rcep_seed_cooperatives.tbl_cooperatives as b', 'a.coopAccreditation','=','b.accreditation_no')
+        ->where('a.isBuffer', 1) 
+        ->groupBy('a.coopAccreditation', 'a.province', 'a.seedVariety')
+        ->get();
+        // dd($getBuffer);
+
+        // $getDelivery = DB::table($season.'_rcep_delivery_inspection.tbl_delivery as a')
+        // ->select( 'a.coopAccreditation','a.batchTicketNumber','b.seedVariety','b.province', DB::raw("SUM(b.totalBagCount) as total_bags"))
+        // ->leftJoin($season.'_rcep_delivery_inspection.tbl_actual_delivery as b','a.batchTicketNumber','=','b.batchTicketNumber')
+        // ->where('a.isBuffer', 0) //new and inventory
+        // // ->where('isBuffer', 1) //buffer
+        // ->groupBy('a.coopAccreditation', 'a.province', 'a.batchTicketNumber', 'a.seedVariety')
+        // ->limit(10)
+        // ->get();
+
         // dd($getDelivery);
-        $totalBagsNew = [];
+
+        $finalNew = [];
+        $finalInventory = [];
+        $temp = [];
+        // dd($getDelivery[0]);
+        // $inventorySeeds = [];
+
         foreach($getDelivery as $delivery)
         {
-            $coop = $delivery->coopAccreditation;
-            $prv = $delivery->province;
-            $variety = $delivery->seedVariety;
-            $type = 'N';
-            $totalBags[$coop][$prv][$variety][$type] = 0;
+            $getCoopName = DB::table($season.'_rcep_seed_cooperatives.tbl_cooperatives')
+            ->select('coopName', 'accreditation_no')
+            ->where('accreditation_no','LIKE',$delivery->coopAccreditation)
+            ->first();
+            
+            $coop = $getCoopName->coopName;
 
             $getActualDelivery = DB::table($season.'_rcep_delivery_inspection.tbl_actual_delivery')
             ->select('batchTicketNumber','province','seedVariety',DB::raw('SUM(totalBagCount) as total_bags'))
             ->where('batchTicketNumber', 'LIKE',$delivery->batchTicketNumber)
             ->where('province', 'LIKE',$delivery->province)
             ->where('seedVariety', 'LIKE',$delivery->seedVariety)
-            // ->where('seedTag', 'LIKE',$delivery->seedTag)
-            ->groupBy('batchTicketNumber','province','seedVariety')
-            ->where('isBuffer', 0)
-            ->first();
+            ->groupBy('province','seedVariety')
+            ->get();
+            if($getActualDelivery)
+            {
+                // dd($getActualDelivery);
+                foreach($getActualDelivery as $actual)
+                {
+                    array_push($finalNew,(
+                        [
+                            "coopName" => $coop,
+                            "coopAccreditation" => $delivery->coopAccreditation,
+                            "province" => $actual->province,
+                            "seedVariety" => $actual->seedVariety,
+                            "total_bags" => $actual->total_bags,
+                            // "type" => 'New'
+                        ]
+                        ));
+                }
+            }
 
-            $totalBags[$coop][$prv][$variety][$type] += $getActualDelivery->total_bags;
+            // dd($finalNew);
+
+            $batchVar = $delivery->batchTicketNumber;
+            $batchVar2 = $delivery->batchTicketNumber;
+
+            $getCoopAccred = DB::table($season.'_rcep_delivery_inspection.tbl_delivery')
+                ->select('coopAccreditation')
+                ->where('batchTicketNumber',$batchVar)
+                ->first();
+
+                // dd($getCoopAccred);
+            do{
+                $getCStoCS = DB::table($season.'_rcep_delivery_inspection.tbl_actual_delivery')
+                ->select('batchTicketNumber','province','seedVariety','remarks',DB::raw('SUM(totalBagCount) as total_bags'))
+                ->where('remarks', 'LIKE','%'.$batchVar.'%')
+                ->groupBy('batchTicketNumber','province','seedVariety')
+                ->get();
+                if($getCStoCS){
+                    // dd($getCStoCS);
+                    foreach($getCStoCS as $CStoCS){
+
+                        array_push($finalNew,(
+                            [
+                                "coopName" => $coop,
+                                "coopAccreditation" => $delivery->coopAccreditation,
+                                "province" => $actual->province,
+                                "seedVariety" => $actual->seedVariety,
+                                "total_bags" => $actual->total_bags,
+                                // "type" => 'CS to CS'
+                            ]
+                            ));
+                            $batchVar = $CStoCS->batchTicketNumber;
+                    }
+                }
+
+            
+            }while($getCStoCS);
+
+
+            do{
+                $getCStoNS = DB::table($season2.'_rcep_delivery_inspection.tbl_actual_delivery')
+                ->select('batchTicketNumber','province','seedVariety',DB::raw('SUM(totalBagCount) as total_bags'))
+                ->where('remarks', 'LIKE','%'.$batchVar2.'%')
+                ->groupBy('batchTicketNumber','province','seedVariety')
+                ->get();
+                if($getCStoNS){
+                    // dd($getCStoCS);
+                    foreach($getCStoNS as $CStoNS){
+                        array_push($finalInventory,(
+                            [
+                                "coopName" => $coop,
+                                "coopAccreditation" => $delivery->coopAccreditation,
+                                "province" => $actual->province,
+                                "seedVariety" => $actual->seedVariety,
+                                "total_bags" => $actual->total_bags,
+                                // "type" => 'CS to CS'
+                            ]
+                            ));
+                            $batchVar2 = $CStoNS->batchTicketNumber;
+                    }
+                }
+                
+            }while($getCStoNS);
         }
-        dd($totalBags);
+
+            $finalNewArray = [];
+            foreach ($finalNew as $new) {
+                $key = $new['coopAccreditation'] . '_' . $new['province'] . '_' . $new['seedVariety'];
+                if (!isset($finalNewArray[$key])) {
+                    $finalNewArray[$key] = [
+                        'coopName' => $new['coopName'],
+                        'coopAccreditation' => $new['coopAccreditation'],
+                        'province' => $new['province'],
+                        'seedVariety' => $new['seedVariety'],
+                        'total_bags' => (int)$new['total_bags'] 
+                    ];
+                } else {
+                    
+                    $finalNewArray[$key]['total_bags'] += (int)$new['total_bags'];
+                }
+            }
+
+            $finalNewArray = array_values($finalNewArray);
+
+            $finalInventoryArray = [];
+            foreach ($finalInventory as $inventory) {
+                $key = $inventory['coopAccreditation'] . '_' . $inventory['province'] . '_' . $inventory['seedVariety'];
+                if (!isset($finalInventoryArray[$key])) {
+                    $finalInventoryArray[$key] = [
+                        'coopName' => $inventory['coopName'],
+                        'coopAccreditation' => $inventory['coopAccreditation'],
+                        'province' => $inventory['province'],
+                        'seedVariety' => $inventory['seedVariety'],
+                        'total_bags' => (int)$inventory['total_bags'] 
+                    ];
+                } else {
+                    
+                    $finalInventoryArray[$key]['total_bags'] += (int)$inventory['total_bags'];
+                }
+            }
+
+            $finalInventoryArray = array_values($finalInventoryArray);
+
+        // dd($finalNewArray);
+        $finalNew = collect($finalNewArray);
+        $finalInventory = collect($finalInventoryArray);
+        $finalBuffer = collect($getBuffer);
+
+        $excel_data = json_decode(json_encode($finalNew), true);
+        $excel_data2 = json_decode(json_encode($finalInventory), true);
+        $excel_data3 = json_decode(json_encode($finalBuffer), true);
+        // dd($excel_data);
+        $filename = 'Local Seeds Analysis';
+        return Excel::create($filename, function($excel) use ($excel_data,$excel_data2,$excel_data3) {
+            $excel->sheet("New Seeds", function($sheet) use ($excel_data) {
+                $sheet->fromArray($excel_data);
+                $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
+                $border_style = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('argb' => '000000'),
+                        ),
+                    ),
+                );
+                $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
+            });
+
+            $excel->sheet("Inventory Seeds", function($sheet) use ($excel_data2) {
+                $sheet->fromArray($excel_data2);
+                $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
+                $border_style = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('argb' => '000000'),
+                        ),
+                    ),
+                );
+                $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
+            });
+
+            $excel->sheet("Buffer Seeds", function($sheet) use ($excel_data3) {
+                $sheet->fromArray($excel_data3);
+                $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
+                $border_style = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('argb' => '000000'),
+                        ),
+                    ),
+                );
+                $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
+            });
+        })->setActiveSheetIndex(0)->download('xlsx');
+    }
+
+    public function seedAnalysisAPI2(Request $request){
+        $season = 'ds2024';
+        $season2 = 'ws2024';
+        $getDelivery = DB::table($season.'_rcep_delivery_inspection.tbl_delivery')
+        ->select( 'coopAccreditation','batchTicketNumber','seedVariety','province')
+        ->where('isBuffer', 0) //new and inventory
+        // ->where('isBuffer', 1) //buffer
+        ->groupBy('coopAccreditation', 'province', 'batchTicketNumber', 'seedVariety')
+        ->get();
+
+        $finalNew = [];
+        $finalInventory = [];
+        $temp = [];
+        // dd($getDelivery[0]);
+        // $inventorySeeds = [];
+
+        foreach($getDelivery as $delivery)
+        {
+            $coop = $delivery->coopAccreditation;
+            $prv = $delivery->province;
+            $variety = $delivery->seedVariety;
+            
+            $getActualDelivery = DB::table($season.'_rcep_delivery_inspection.tbl_actual_delivery')
+            ->select('batchTicketNumber','province','seedVariety',DB::raw('SUM(totalBagCount) as total_bags'))
+            ->where('batchTicketNumber', 'LIKE',$delivery->batchTicketNumber)
+            // ->where('province', 'LIKE',$delivery->province)
+            // ->where('seedVariety', 'LIKE',$delivery->seedVariety)
+            ->groupBy('province','seedVariety')
+            ->get();
+            
+            // dd($getActualDelivery);
+            if(!$getActualDelivery)
+            {
+                // dd($delivery);
+                // continue;
+            }else{
+                foreach($getActualDelivery as $actual){
+                    array_push($temp,$actual);
+                    $coop = $delivery->coopAccreditation;
+                    $prv = $actual->province;
+                    $variety = $actual->seedVariety;
+                
+                    if(isset($newSeeds[$coop][$prv][$variety]['N']))
+                    {
+                        $newSeeds[$coop][$prv][$variety]["N"] += $actual->total_bags;
+                    }
+                    else
+                    {
+                        $newSeeds[$coop][$prv][$variety]['N'] = $actual->total_bags;
+                    }
+                }
+            }
+            
+            $batchVar = $delivery->batchTicketNumber;
+            $batchVar2 = $delivery->batchTicketNumber;
+
+            $getCoopAccred = DB::table($season.'_rcep_delivery_inspection.tbl_delivery')
+                ->select('coopAccreditation')
+                ->where('batchTicketNumber',$batchVar)
+                ->first();
+            do{
+                $getCStoCS = DB::table($season.'_rcep_delivery_inspection.tbl_actual_delivery')
+                ->select('batchTicketNumber','province','seedVariety',DB::raw('SUM(totalBagCount) as total_bags'))
+                ->where('remarks', 'LIKE','%'.$batchVar.'%')
+                ->groupBy('batchTicketNumber','province','seedVariety')
+                ->get();
+
+                
+                
+                foreach($getCStoCS as $CStoCS){
+                    $coop = $getCoopAccred->coopAccreditation;
+                    $prv = $CStoCS->province;
+                    $variety = $CStoCS->seedVariety;
+                    if(isset($newSeeds[$coop][$prv][$variety]['N']))
+                    {
+                        $newSeeds[$coop][$prv][$variety]["N"] += $CStoCS->total_bags;
+                    }
+                    else
+                    {
+                        $newSeeds[$coop][$prv][$variety]['N'] = $CStoCS->total_bags;
+                    }
+                    $batchVar = $CStoCS->batchTicketNumber;
+                }
+            
+            }while($getCStoCS);
+
+            do{
+                $getCStoNS = DB::table($season2.'_rcep_delivery_inspection.tbl_actual_delivery')
+                ->select('batchTicketNumber','province','seedVariety',DB::raw('SUM(totalBagCount) as total_bags'))
+                ->where('remarks', 'LIKE','%'.$batchVar.'%')
+                ->groupBy('batchTicketNumber','province','seedVariety')
+                ->get();
+                foreach($getCStoNS as $CStoNS){
+                    $coop = $delivery->coopAccreditation;
+                    $prv = $CStoNS->province;
+                    $variety = $CStoNS->seedVariety;
+                    if(isset($inventorySeeds[$coop][$prv][$variety]['I']))
+                    {
+                        $inventorySeeds[$coop][$prv][$variety]["I"] += $CStoNS->total_bags;
+                    }
+                    else
+                    {
+                        $inventorySeeds[$coop][$prv][$variety]['I'] = $CStoNS->total_bags;
+                    }
+                    $batchVar = $CStoNS->batchTicketNumber;
+                }
+                
+            }while($getCStoNS);
+        }
+        
+        $coops1 = array_keys($newSeeds);
+        foreach($coops1 as $coop1)
+        {
+            $cop1 = $coop1;
+            $prv1 = key($newSeeds[$coop1]);
+            $vars1 = array_keys($newSeeds[$coop1][$prv1]);
+            foreach($vars1 as $v1){
+                $typ1 = key($newSeeds[$coop1][$prv1][$v1]);
+                $bag1 = $newSeeds[$coop1][$prv1][$v1][$typ1];
+
+                array_push($finalNew, array(
+                    "Coop Accreditation" => $cop1,
+                    "Province" => $prv1,
+                    "Seed Variety" => $v1,
+                    "Type" => $typ1,
+                    "Total Bags" => (int)$bag1,
+                ));
+            }
+        }
+
+        $coops = array_keys($inventorySeeds);
+        foreach($coops as $coop)
+        {
+            $cop = $coop;
+            $prv = key($inventorySeeds[$coop]);
+            // dd(array_keys($inventorySeeds[$coop][$prv]));
+            $vars = array_keys($inventorySeeds[$coop][$prv]);
+            foreach($vars as $v){
+                $typ = key($inventorySeeds[$coop][$prv][$v]);
+                $bag = $inventorySeeds[$coop][$prv][$v][$typ];
+
+                array_push($finalInventory, array(
+                    "Coop Accreditation" => $cop,
+                    "Province" => $prv,
+                    "Seed Variety" => $v,
+                    "Type" => $typ,
+                    "Total Bags" => (int)$bag,
+                ));
+            }
+        }
+        // dd($finalInventory);
+
+        
+        $finalNew = collect($finalNew);
+        $finalInventory = collect($finalInventory);
+
+        $excel_data = json_decode(json_encode($finalNew), true);
+        $excel_data2 = json_decode(json_encode($finalInventory), true);
+        // dd($excel_data);
+        $filename = 'Local Seeds Analysis';
+        return Excel::create($filename, function($excel) use ($excel_data,$excel_data2) {
+            $excel->sheet("New Seeds", function($sheet) use ($excel_data) {
+                $sheet->fromArray($excel_data);
+                $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
+                $border_style = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('argb' => '000000'),
+                        ),
+                    ),
+                );
+                $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
+            });
+
+            $excel->sheet("Inventory Seeds", function($sheet) use ($excel_data2) {
+                $sheet->fromArray($excel_data2);
+                $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
+                $border_style = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('argb' => '000000'),
+                        ),
+                    ),
+                );
+                $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
+            });
+        })->setActiveSheetIndex(0)->download('xlsx');
     }
     
     public function codes(){
