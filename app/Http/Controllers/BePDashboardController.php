@@ -133,7 +133,7 @@ class BePDashboardController extends Controller
             "area" => number_format($provTarget[0]->area,2),
             "actualBeneficiaries" =>number_format($provTgtBeneficiaries),
             "actualBags"=>number_format($provTgtBags),
-            "amount"=>"₱".(number_format($amount,2)),
+            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
             "actualArea"=>number_format($provTgtArea,2)
             )); 
             }            
@@ -217,7 +217,7 @@ class BePDashboardController extends Controller
                 "area" => number_format($munTarget[0]->area,2),
                 "actualBeneficiaries" =>number_format($munTgtBeneficiaries[0]->beneficiaries),
                 "actualBags"=>number_format($munTgtBags[0]->bags),
-                "amount"=>"₱".(number_format($amount,2)),
+                "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
                 "actualArea"=>number_format($munTgtArea2,2)
             )); 
         }
@@ -306,7 +306,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($munTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($munTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($munTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2)),
+                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($munTgtArea2,2),
                             "selectedView" => $request->selectedView
                         ));
@@ -432,7 +432,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($munTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($munTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($munTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2)),
+                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($actualArea,2),
                             "selectedView" => $request->selectedView
                         ));
@@ -457,13 +457,26 @@ class BePDashboardController extends Controller
     public function getDatedData(Request $request)
     {   
         
-        $date1 = Carbon::createFromFormat('m/d/Y H:i:s', $request->date1 . ' 00:00:00')->format('Y-m-d H:i:s');
-        $date2 = Carbon::createFromFormat('m/d/Y H:i:s', $request->date2 . ' 00:00:00')->format('Y-m-d H:i:s');
+        // $date1 = Carbon::createFromFormat('m/d/Y H:i:s', $request->date1 . ' 00:00:00')->format('Y-m-d H:i:s');
 
+        // Assuming $request->date1 contains a date string in the format 'm/d/Y'
+        $date1 = Carbon::createFromFormat('m/d/Y', $request->date1)->startOfDay();
 
-        if ($date1 == $date2) {
-            $date2 = Carbon::createFromFormat('Y-m-d H:i:s', $date2)->endOfDay()->format('Y-m-d H:i:s');
-        }
+        // Convert to the desired format
+        $date1Formatted = $date1->format('Y-m-d H:i:s');
+
+        // Get the previous date
+        $previousDate = $date1->copy()->subDay();
+        $previousDateFormatted = $previousDate->format('Y-m-d') . ' 16:00:01';
+
+        $date1 = $previousDateFormatted;
+
+        $date2 = Carbon::createFromFormat('m/d/Y H:i:s', $request->date2 . ' 16:00:00')->format('Y-m-d H:i:s');
+
+        // dd($date1,$date2);
+        // if ($date1 == $date2) {
+        //     $date2 = Carbon::createFromFormat('Y-m-d H:i:s', $date2)->endOfDay()->format('Y-m-d H:i:s');
+        // }
         // dd($date1,$date2);
         if($request->selectedView == 'provincial'){
             $provTgt = array();
@@ -532,7 +545,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($provTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($provTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($provTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2)),
+                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($provTgtArea2,2)
                         )); 
                     }
@@ -557,7 +570,7 @@ class BePDashboardController extends Controller
             ->whereBetween('date_created', [$date1, $date2])
             ->groupBy('coopAccreditation')
             ->pluck('coopAccreditation');
-            // dd($coops);
+            // dd($coops,$date1, $date2);
             // dd($coops);
             foreach($coops as $row)
             {
@@ -658,7 +671,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($provTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($provTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($provTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2)),
+                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($actualArea,2)
                         )); 
                     // }
