@@ -2231,6 +2231,8 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
     Route::get('/api/bm/seedAnalysisAPI', ['as' => 'seedAnalysisAPI', 'uses' => 'bmAPIController@seedAnalysisAPI']);
     Route::get('/api/bm/seedAnalysisAPI_old_seasons', ['as' => 'seedAnalysisAPI_old_seasons', 'uses' => 'bmAPIController@seedAnalysisAPI_old_seasons']);
 
+    Route::get('/api/bm/testAPI', ['as' => 'testAPI', 'uses' => 'bmAPIController@testAPI']);
+
     //e-Paalalay API
     Route::get('/api/epaalalay/login/{login_id}/{password}/{login}', ['as' => 'login', 'uses' => 'epaalalayController@login']);
     Route::get('/epaalalay/advisory', ['as' => 'advisory', 'uses' => 'epaalalayController@advisory']);

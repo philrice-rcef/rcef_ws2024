@@ -26,6 +26,183 @@ use Illuminate\Support\Str;
 
 class bmAPIController extends Controller
 {
+    public function testAPI(Request $request){
+
+        $farmers = [];
+
+        $fullName = '';
+        $rsbsa_control_no = '';
+        $sex = '';
+        $birthdate = '';
+        $location = 'CABUGAO, ILOCOS SUR, ILOCOS';
+        $season = 'WS2021';
+        $kpKits = 0;
+        $calendars = 1;
+        $testimonials = 1;
+        $services = 0;
+        $apps = 0;
+        $yunpalayun = 1;
+        $encodedBy = 'dp.grospe';
+        $time_stamp = 0;
+       
+    
+        foreach($farmers as $farmer)
+        {   
+            $randomNumber = rand(1, 59);
+            $date = Carbon::now();
+            $time_stamp = $date->format('D M d Y H:i:s');
+            $time_stamp = $date->addSeconds($randomNumber)->format('D M d Y H:i:s');
+            // dd($time_stamp);
+            $time_stamp .= ' GMT+0800 (Philippine Standard Time)';
+            $ws2024 = DB::table('ws2024_prv_0129.farmer_information_final')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+            // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first();
+            ->where('rsbsa_control_no','LIKE',$farmer)->first();
+            if(!$ws2024)
+            {
+                $ds2024 = DB::table('ds2024_prv_0129.farmer_information_final')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first();
+                ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                if(!$ds2024)
+                {
+                    $ws2023 = DB::table('ws2023_prv_0129.farmer_information_final')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                    // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first();
+                    ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                    if(!$ws2023)
+                    {
+                        $ds2023 = DB::table('ds2023_prv_0129.farmer_information_final')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                        // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first();
+                        ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                        if(!$ds2023)
+                        {
+                            $ws2022 = DB::connection('ws2022')->table('prv_0129.farmer_profile')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                            // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first();
+                            ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                            if(!$ws2022)
+                            {
+                                $ds2022 = DB::connection('ds2022')->table('prv_0129.farmer_profile')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                                // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first(); 
+                                ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                                if(!$ds2022)
+                                {
+                                    $ws2021 = DB::connection('ws2021')->table('prv_0129.farmer_profile')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                                    // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first();
+                                    ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                                    if(!$ws2021)  
+                                    {
+                                        $ds2021 = DB::connection('ds2021')->table('prv_0129.farmer_profile')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                                        // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first(); 
+                                        ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                                        if(!$ds2021)
+                                        {
+                                            $ws2020 = DB::connection('ws2020')->table('prv_0129.farmer_profile')->select('lastName','firstName','midName','extName','rsbsa_control_no','sex','birthdate')
+                                            // ->where(DB::raw("CONCAT(lastName, ', ', firstName, ' ', midName, ' ', extName)"), 'LIKE', '%' . $farmer . '%')->first(); 
+                                            ->where('rsbsa_control_no','LIKE',$farmer)->first();
+                                            if(!$ws2020){
+                                                $fullName = '';
+                                                $rsbsa_control_no = '';
+                                                $sex = '';
+                                                $birthdate = '';
+                                            }else
+                                            {
+                                                $fullName = $ws2020->lastName.', '.$ws2020->firstName.' '.$ws2020->midName.' '.$ws2020->extName;
+                                                $rsbsa_control_no = $ws2020->rsbsa_control_no;
+                                                $sex = $ws2020->sex;
+                                                $birthdate = $ws2020->birthdate;
+                                            }
+                                        }else
+                                        {
+                                            $fullName = $ds2021->lastName.', '.$ds2021->firstName.' '.$ds2021->midName.' '.$ds2021->extName;
+                                            $rsbsa_control_no = $ds2021->rsbsa_control_no;
+                                            $sex = $ds2021->sex;
+                                            $birthdate = $ds2021->birthdate;
+                                        }
+                                        
+                                    }else
+                                    {
+                                        $fullName = $ws2021->lastName.', '.$ws2021->firstName.' '.$ws2021->midName.' '.$ws2021->extName;
+                                        $rsbsa_control_no = $ws2021->rsbsa_control_no;
+                                        $sex = $ws2021->sex;
+                                        $birthdate = $ws2021->birthdate;
+                                    }
+                                    
+                                }else
+                                {
+                                    $fullName = $ds2022->lastName.', '.$ds2022->firstName.' '.$ds2022->midName.' '.$ds2022->extName;
+                                    $rsbsa_control_no = $ds2022->rsbsa_control_no;
+                                    $sex = $ds2022->sex;
+                                    $birthdate = $ds2022->birthdate;
+                                }
+                                
+                            }else
+                            {
+                                $fullName = $ws2022->lastName.', '.$ws2022->firstName.' '.$ws2022->midName.' '.$ws2022->extName;
+                                $rsbsa_control_no = $ws2022->rsbsa_control_no;
+                                $sex = $ws2022->sex;
+                                $birthdate = $ws2022->birthdate;
+                            }
+                            
+                        }else
+                        {
+                            $fullName = $ds2023->lastName.', '.$ds2023->firstName.' '.$ds2023->midName.' '.$ds2023->extName;
+                            $rsbsa_control_no = $ds2023->rsbsa_control_no;
+                            $sex = $ds2023->sex;
+                            $birthdate = $ds2023->birthdate;
+                        }
+                        
+                    }else
+                    {
+                        $fullName = $ws2023->lastName.', '.$ws2023->firstName.' '.$ws2023->midName.' '.$ws2023->extName;
+                        $rsbsa_control_no = $ws2023->rsbsa_control_no;
+                        $sex = $ws2023->sex;
+                        $birthdate = $ws2023->birthdate;
+                    }
+                    
+                }else
+                {
+                    $fullName = $ds2024->lastName.', '.$ds2024->firstName.' '.$ds2024->midName.' '.$ds2024->extName;
+                    $rsbsa_control_no = $ds2024->rsbsa_control_no;
+                    $sex = $ds2024->sex;
+                    $birthdate = $ds2024->birthdate;
+                }
+                
+            }
+            else
+            {
+                $fullName = $ws2024->lastName.', '.$ws2024->firstName.' '.$ws2024->midName.' '.$ws2024->extName;
+                $rsbsa_control_no = $ws2024->rsbsa_control_no;
+                $sex = $ws2024->sex;
+                $birthdate = $ws2024->birthdate;
+            }
+
+            if($fullName == '' || $rsbsa_control_no == "" || !$fullName || !$rsbsa_control_no)
+            {
+                continue;
+            }
+            else
+            {
+                DB::table('kp_distribution.kp_distribution_app')
+                ->insert([
+                    "fullName" => $fullName,
+                    "rsbsa_control_no" => $rsbsa_control_no,
+                    "sex" => $sex,
+                    "birthdate" => $birthdate,
+                    "location" => $location,
+                    "season" => $season,
+                    "kpKits" => $kpKits,
+                    "calendars" => $calendars,
+                    "testimonials" => $testimonials,
+                    "services" => $services,
+                    "apps" => $apps,
+                    "yunpalayun" => $yunpalayun,
+                    "encodedBy" => $encodedBy,
+                    "time_stamp" => $time_stamp
+                ]);
+            }
+        }
+        return('Done');
+    
+    }
+    
     public function seedAnalysisAPI(Request $request){
         $season = 'ds2024';
         $season2 = 'ws2024';
