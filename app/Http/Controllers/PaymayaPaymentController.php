@@ -876,12 +876,12 @@ private function search_to_array($array, $key, $value) {
         $date1 = date('Y-m-d H:i:s',strtotime( '-1 day',strtotime($date1)));
         $date2 = $date2r[0].'-'.$date2r[1].'-'.$day = $date2r[2].' '.'16:00:00';
 
-        $test = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
-          ->select(DB::raw('COUNT(*) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("COUNT(CASE WHEN is_paid = 1 THEN 1 END) AS paid_count"))
-          ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
-          ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
-          ->groupby('a.coopAccreditation')
-          ->get();
+        // $test = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')
+        //   ->select(DB::raw('COUNT(*) as total_bags'),'a.*','b.*', DB::raw('COUNT(a.date_created)  * 836 as amount'), DB::raw("COUNT(CASE WHEN is_paid = 1 THEN 1 END) AS paid_count"))
+        //   ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_coop_payment_details as b', 'b.coop_ref' ,'=','a.coopAccreditation')
+        //   ->whereRaw("STR_TO_DATE(a.date_created, '%Y-%m-%d %H:%i:%s') between STR_TO_DATE('".$date1."', '%Y-%m-%d %H:%i:%s') and STR_TO_DATE('".$date2."', '%Y-%m-%d %H:%i:%s')")
+        //   ->groupby('a.coopAccreditation')
+        //   ->get();
           // dd($test);
         // dd($date1,$date2);
           return Datatables::of(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim AS a')

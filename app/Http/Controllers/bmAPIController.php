@@ -263,13 +263,13 @@ class bmAPIController extends Controller
         // $season = 'ds2024';
         // $season2 = 'ws2024';
         // $season3 = 'ws2023';
-        $season3 = 'ds2021'; //previous
-        $season = 'ws2021'; //current
-        $season2 = 'ds2022'; //next
+        $season3 = 'ds2020'; //previous
+        $season = 'ws2020'; //current
+        $season2 = 'ds2021'; //next
 
         $getDelivery = DB::connection($season)->table('rcep_delivery_inspection.tbl_delivery')
         ->select( 'coopAccreditation','batchTicketNumber','seedVariety','province')
-        ->where('isBuffer', 0) //new and inventory
+        ->where('dropOffPoint', 'NOT LIKE', '%buffer%') //new and inventory
         // ->where('isBuffer', 1) //buffer
         ->groupBy('coopAccreditation', 'province', 'batchTicketNumber', 'seedVariety')
         // ->limit(10)
@@ -277,12 +277,12 @@ class bmAPIController extends Controller
 
         // dd($getDelivery);
         // $getBuffer = DB::table($season3.'_rcep_delivery_inspection.tbl_delivery as a')
-        $getBuffer = DB::connection($season3)->table('rcep_delivery_inspection.tbl_delivery as a')
-        ->select('b.coopName','a.coopAccreditation','a.province','a.seedVariety', DB::raw("SUM(totalBagCount) as total_bags"))
-        ->leftJoin('rcep_seed_cooperatives.tbl_cooperatives as b', 'a.coopAccreditation','=','b.accreditation_no')
-        ->where('a.isBuffer', 1) 
-        ->groupBy('a.coopAccreditation', 'a.province', 'a.seedVariety')
-        ->get();
+        // $getBuffer = DB::connection($season3)->table('rcep_delivery_inspection.tbl_delivery as a')
+        // ->select('b.coopName','a.coopAccreditation','a.province','a.seedVariety', DB::raw("SUM(totalBagCount) as total_bags"))
+        // ->leftJoin('rcep_seed_cooperatives.tbl_cooperatives as b', 'a.coopAccreditation','=','b.accreditation_no')
+        // ->where('a.dropOffPoint', 'LIKE', '%buffer%') 
+        // ->groupBy('a.coopAccreditation', 'a.province', 'a.seedVariety')
+        // ->get();
         // dd($getBuffer);
 
         // $getDelivery = DB::table($season.'_rcep_delivery_inspection.tbl_delivery as a')
@@ -452,14 +452,15 @@ class bmAPIController extends Controller
         // dd($finalNewArray);
         $finalNew = collect($finalNewArray);
         $finalInventory = collect($finalInventoryArray);
-        $finalBuffer = collect($getBuffer);
+        // $finalBuffer = collect($getBuffer);
 
         $excel_data = json_decode(json_encode($finalNew), true);
         $excel_data2 = json_decode(json_encode($finalInventory), true);
-        $excel_data3 = json_decode(json_encode($finalBuffer), true);
+        // $excel_data3 = json_decode(json_encode($finalBuffer), true);
         // dd($excel_data);
         $filename = 'Local Seeds Analysis '.$season;
-        return Excel::create($filename, function($excel) use ($excel_data,$excel_data2,$excel_data3) {
+        return Excel::create($filename, function($excel) use ($excel_data,$excel_data2) {
+        // return Excel::create($filename, function($excel) use ($excel_data,$excel_data2,$excel_data3) {
             $excel->sheet("New Seeds", function($sheet) use ($excel_data) {
                 $sheet->fromArray($excel_data);
                 $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
@@ -488,19 +489,19 @@ class bmAPIController extends Controller
                 $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
             });
 
-            $excel->sheet("Buffer Seeds", function($sheet) use ($excel_data3) {
-                $sheet->fromArray($excel_data3);
-                $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
-                $border_style = array(
-                    'borders' => array(
-                        'allborders' => array(
-                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
-                            'color' => array('argb' => '000000'),
-                        ),
-                    ),
-                );
-                $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
-            });
+            // $excel->sheet("Buffer Seeds", function($sheet) use ($excel_data3) {
+            //     $sheet->fromArray($excel_data3);
+            //     $sheet->getStyle('A1:E1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00B53F');
+            //     $border_style = array(
+            //         'borders' => array(
+            //             'allborders' => array(
+            //                 'style' => \PHPExcel_Style_Border::BORDER_THIN,
+            //                 'color' => array('argb' => '000000'),
+            //             ),
+            //         ),
+            //     );
+            //     $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
+            // });
         })->setActiveSheetIndex(0)->download('xlsx');
     }
 
