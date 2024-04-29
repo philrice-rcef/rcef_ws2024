@@ -219,7 +219,7 @@
                                 <thead style="background-color: white">
                                     <th>Full Name</th>
                                     <th>User ID</th>
-                                    <th>Season</th>
+                                    <!-- <th>Season</th> -->
                                     <th>Total Encoded</th>
                                     <th>Month Encoded</th>
                                 </thead>
@@ -340,7 +340,7 @@
             columns: [
                 { data: "Full_Name" },
                 { data: "Encoder" },
-                { data: "Season" },
+          //      { data: "Season" },
                 { data: "Total_Encoded" },
                 { data: "Month_Encoded" }
             ],
