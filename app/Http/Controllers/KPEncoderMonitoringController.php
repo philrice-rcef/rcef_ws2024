@@ -162,7 +162,7 @@ class KPEncoderMonitoringController extends Controller
             ->select(DB::raw('encodedBy as Encoder, count(encodedBy) as Total_Encoded, season as Season'))
             ->where('time_stamp','LIKE','%'.$month->month_name.'%')
             ->groupBy('encodedBy')
-            // ->groupBy('season')
+            ->groupBy('season')
             ->get();
 
             switch($month->month_name){
@@ -222,7 +222,7 @@ class KPEncoderMonitoringController extends Controller
                 $allData[] = [
                     "Full_Name" => $fullName,
                     "Encoder" => $count->Encoder,
-                    // "Season" => $count->Season,
+                    "Season" => $count->Season,
                     "Total_Encoded" => $count->Total_Encoded,
                     "Month_Encoded" => $month->month_name.' '.$month->year
                 ];
