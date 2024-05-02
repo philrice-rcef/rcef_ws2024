@@ -1062,14 +1062,27 @@ class BePDashboardController extends Controller
     public function downloadDatedCoopData($coop,$date1,$date2)
     {   
 
-        $date1 = Carbon::createFromFormat('m-d-Y H:i:s', $date1 . ' 00:00:00')->format('Y-m-d H:i:s');
-        $date2 = Carbon::createFromFormat('m-d-Y H:i:s', $date2 . ' 00:00:00')->format('Y-m-d H:i:s');
+        // $date1 = Carbon::createFromFormat('m-d-Y H:i:s', $date1 . ' 00:00:00')->format('Y-m-d H:i:s');
+        // $date2 = Carbon::createFromFormat('m-d-Y H:i:s', $date2 . ' 00:00:00')->format('Y-m-d H:i:s');
 
 
-        if ($date1 == $date2) {
-            $date2 = Carbon::createFromFormat('Y-m-d H:i:s', $date2)->endOfDay()->format('Y-m-d H:i:s');
-        }
-        
+        // if ($date1 == $date2) {
+        //     $date2 = Carbon::createFromFormat('Y-m-d H:i:s', $date2)->endOfDay()->format('Y-m-d H:i:s');
+        // }
+
+        $date1 = Carbon::createFromFormat('m-d-Y', $date1)->startOfDay();
+        // dd($date1);
+        // Convert to the desired format
+        $date1Formatted = $date1->format('Y-m-d H:i:s');
+
+        // Get the previous date
+        $previousDate = $date1->copy()->subDay();
+        $previousDateFormatted = $previousDate->format('Y-m-d') . ' 16:00:01';
+
+        $date1 = $previousDateFormatted;
+
+        $date2 = Carbon::createFromFormat('m-d-Y H:i:s', $date2 . ' 16:00:00')->format('Y-m-d H:i:s');
+        // dd($date1,$date2,$coop);
         $getCoopAccred = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
             ->select('accreditation_no')
             ->where('coopName','=', $coop)
@@ -1082,12 +1095,12 @@ class BePDashboardController extends Controller
                 'tbl_beneficiaries.lastname as Last_Name', 'tbl_beneficiaries.extname as Ext_Name', 'tbl_claim.paymaya_code as eBinhiCode', 'tbl_claim.date_created as Date_Claimed', 'tbl_claim.province as Province','tbl_claim.municipality as Municipality',
                 'tbl_claim.barangay as Barangay', 'tbl_claim.claimLocation as Pick-up_Point', 'tbl_claim.phoneNumber as Phone_Number', 'tbl_beneficiaries.area as Area', DB::raw('0 as Bags'), 'tbl_claim.seedVariety as Seed_Variety', DB::raw("IF(is_paid = 1, 'Procossed via RSMS', '-') as Remarks"))
                 ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_beneficiaries', 'tbl_claim.paymaya_code', '=', 'tbl_beneficiaries.paymaya_code')
-                ->where('tbl_claim.coopAccreditation', '=', $coopAccred)
+                ->where('tbl_claim.coopAccreditation', 'LIKE', $coopAccred)
                 ->whereBetween('date_created', [$date1, $date2])
                 // ->whereRaw("DATE_FORMAT(tbl_claim.date_created, '%H:%i:%s') >= '16:00:00'")
                 ->groupBy('tbl_claim.paymaya_code')
                 ->get();
-
+            // dd($getInfo);
                 // $getInfo2 = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
                 // ->select('tbl_claim.coopAccreditation as Cooperative_Name', DB::raw("CONCAT(DATE_FORMAT(tbl_beneficiaries.schedule_start, '%M %d, %Y'), ' - ', DATE_FORMAT(tbl_beneficiaries.schedule_end, '%M %d, %Y')) as Schedule"),
                 // 'tbl_claim.rsbsa_control_no as RSBSA_Number', 'tbl_beneficiaries.firstname as First_Name', 'tbl_beneficiaries.middname as Middle_Name',
