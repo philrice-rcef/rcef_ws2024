@@ -120,6 +120,7 @@ class API extends Controller
         $batches = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
             ->select("batchTicketNumber")
             ->where("coopAccreditation", $coop_no)
+            ->groupBy('batchTicketNumber')
             ->get();
     
         $batches = json_decode(json_encode($batches), true);
