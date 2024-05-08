@@ -199,7 +199,21 @@
                                     <tr>
                                     <td>{{ $data["Full_Name"] }}</td>
                                     <td>{{ $data["Encoder"] }}</td>
-                                    <td style="background-color: {{ $data['Total_Encoded'] < $data['QuotaPrev'] ? '#ff0000aa' : '#00000000' }}; color: {{ $data['Total_Encoded'] < $data['QuotaPrev'] ? 'white' : 'inherit' }}">{{ $data["Total_Encoded"] }}</td>
+                                    <td style="background-color: 
+                                        {{ $data['Total_Encoded'] < $data['QuotaPrev'] ? '#ff0000aa' : 
+                                            ($data['Total_Encoded'] > $data['QuotaPrev'] && $data['Total_Encoded'] > $data['Quota'] ? '#33bf00' : 
+                                                ($data['Total_Encoded'] > $data['QuotaPrev'] ? '#00000000' : '#00000000')
+                                            )
+                                        }}; 
+                                        color: 
+                                        {{ $data['Total_Encoded'] < $data['QuotaPrev'] ? 'white' : 
+                                            ($data['Total_Encoded'] > $data['QuotaPrev'] && $data['Total_Encoded'] > $data['Quota'] ? 'white' : 
+                                                ($data['Total_Encoded'] > $data['QuotaPrev'] ? 'inherit' : 'inherit')
+                                            )
+                                        }}">
+                                        {{ $data["Total_Encoded"] }}
+                                    </td>
+
                                     <td>{{ $data["QuotaPrev"] }}</td>
                                     <td>{{ $data["Quota"] }}</td>
                                     <td>{{ $data["First_Contract"] }}</td>
