@@ -135,7 +135,7 @@ class preListController extends Controller
 
                 if($request->municipality == "%"){
                     $list = DB::table($db_table.".".$tbl_farmer)
-                        ->select("claiming_prv","claiming_prv as claiming_muni","rcef_id", "claiming_brgy","no_of_parcels","assigned_rsbsa as rsbsa_grounds","rsbsa_control_no as rsbsa_ffrs", "lastName", "firstName", "midName", "extName",  "tel_no", "is_ip", "final_area as claimable_area" )
+                        ->select("claiming_prv","claiming_prv as claiming_muni","rcef_id", "claiming_brgy","no_of_parcels","assigned_rsbsa as rsbsa_grounds","rsbsa_control_no as rsbsa_ffrs", "lastName", "firstName", "midName", "extName", "birthdate", "tel_no", "is_ip", "final_area as claimable_area" )
                       
                         ->where("rcef_id", "!=", "")
                         ->orderBy(DB::raw("SUBSTRING(rsbsa_control_no,1,8)"))
@@ -148,7 +148,7 @@ class preListController extends Controller
                     $claim_prv = substr($prv_id->prv,0,2)."-".substr($prv_id->prv,2,2)."-".substr($prv_id->prv,4,2);
                     
                     $list = DB::table($db_table.".".$tbl_farmer)
-                        ->select("claiming_prv","claiming_prv as claiming_muni","rcef_id", "claiming_brgy","no_of_parcels", "assigned_rsbsa as rsbsa_grounds","rsbsa_control_no as rsbsa_ffrs","lastName", "firstName", "midName", "extName",  "tel_no", "is_ip", "final_area as claimable_area" )
+                        ->select("claiming_prv","claiming_prv as claiming_muni","rcef_id", "claiming_brgy","no_of_parcels", "assigned_rsbsa as rsbsa_grounds","rsbsa_control_no as rsbsa_ffrs","lastName", "firstName", "midName", "extName", "birthdate", "tel_no", "is_ip", "final_area as claimable_area" )
                        
                         ->where("rcef_id", "!=", "")
                         ->where("claiming_prv", "LIKE", $claim_prv)
