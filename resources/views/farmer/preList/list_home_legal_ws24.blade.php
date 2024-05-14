@@ -627,7 +627,11 @@
                     
 
                     {{-- VARIETY --}}
-                    <td></td> 
+                    @if(isset($list[$cnt]["is_prereg"]))
+                    <td align="center">{{$list[$cnt]["varietyPref"]}}</td>
+                    @else
+                    <td> </td>
+                    @endif
 
                     
                     @if(isset($list[$cnt]["is_prereg"]))
