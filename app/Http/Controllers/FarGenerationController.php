@@ -205,7 +205,7 @@ class FarGenerationController extends Controller
 
   
     public function makeFarPreReg($province, $municipality, $brgy){
-        
+  
        if($brgy == "all"){$brgy="%";}
 
         if($municipality == "RIZAL (LIWAN)")$municipality="RIZAL";
@@ -228,38 +228,21 @@ class FarGenerationController extends Controller
         $prv_claim_pattern = $prv_data->regCode."-".$prv_data->provCode."-".$prv_data->munCode;
 
         
-        if($prv_claim_pattern == '03-71-05')
-        {
-            $list =DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-                ->select("rsbsa_control_number as rsbsa_control_no", "lname as lastName", "fname as firstName", "midname as midName", "farmer_declared_area as final_area","barangay_code",
-                "farmer_declared_area as area_to_be_planted", DB::raw("CEIL(farmer_declared_area *2) as no_of_bags"), DB::raw("IF(crop_establishment='direct_seeding', 'D', 'T') as crop_est"),"sowing_month", "sowing_week",DB::raw("SUBSTRING(yield_seed_type,1,1) as yield_seed_type"),DB::raw("LEFT(`yield_seed_name`, LOCATE('(', `yield_seed_name`) - 1) as yield_seed_name"),"yield_no_bags","yield_weight_bags","yield_area","varietyPref", DB::raw("CONCAT('1') as is_prereg")  )
-                // ->where("province_name", $province)
-                // ->where("municipality_name", $municipality)
-                ->where("claiming_prv", $prv_claim_pattern)
-                ->where("barangay_code", "LIKE", $brgy)
-                // ->orderBy(DB::raw('TRIM(LEFT(rsbsa_control_number,12))'), 'ASC') 
-                ->orderBy("claiming_prv")
-                ->orderBy("lname")
-                ->orderBy("fname")
-                ->orderBy("midname")
-                ->get();
-        }
-        else{
-            $list =DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-                ->select("rsbsa_control_number as rsbsa_control_no", "lname as lastName", "fname as firstName", "midname as midName", "farmer_declared_area as final_area","barangay_code",
-                "farmer_declared_area as area_to_be_planted", DB::raw("CEIL(farmer_declared_area *2) as no_of_bags"), DB::raw("IF(crop_establishment='direct_seeding', 'D', 'T') as crop_est"),"sowing_month", "sowing_week",DB::raw("SUBSTRING(yield_seed_type,1,1) as yield_seed_type"),DB::raw("LEFT(`yield_seed_name`, LOCATE('(', `yield_seed_name`) - 1) as yield_seed_name"),"yield_no_bags","yield_weight_bags","yield_area", DB::raw("CONCAT('1') as is_prereg")  )
-                // ->where("province_name", $province)
-                // ->where("municipality_name", $municipality)
-                ->where("claiming_prv", $prv_claim_pattern)
-                ->where("barangay_code", "LIKE", $brgy)
-                // ->orderBy(DB::raw('TRIM(LEFT(rsbsa_control_number,12))'), 'ASC') 
-                ->orderBy("claiming_prv")
-                ->orderBy("lname")
-                ->orderBy("fname")
-                ->orderBy("midname")
-                ->get();
-        }
 
+
+        $list =DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
+            ->select("rsbsa_control_number as rsbsa_control_no", "lname as lastName", "fname as firstName", "midname as midName", "farmer_declared_area as final_area","barangay_code",
+            "farmer_declared_area as area_to_be_planted", DB::raw("CEIL(farmer_declared_area *2) as no_of_bags"), DB::raw("IF(crop_establishment='direct_seeding', 'D', 'T') as crop_est"),"sowing_month", "sowing_week",DB::raw("SUBSTRING(yield_seed_type,1,1) as yield_seed_type"),DB::raw("LEFT(`yield_seed_name`, LOCATE('(', `yield_seed_name`) - 1) as yield_seed_name"),"yield_no_bags","yield_weight_bags","yield_area", DB::raw("CONCAT('1') as is_prereg")  )
+            // ->where("province_name", $province)
+            // ->where("municipality_name", $municipality)
+            ->where("claiming_prv", $prv_claim_pattern)
+            ->where("barangay_code", "LIKE", $brgy)
+            // ->orderBy(DB::raw('TRIM(LEFT(rsbsa_control_number,12))'), 'ASC') 
+            ->orderBy("claiming_prv")
+            ->orderBy("lname")
+            ->orderBy("fname")
+            ->orderBy("midname")
+            ->get();
         // dd($list);
         if(count($list)>0){    
 
