@@ -162,7 +162,6 @@ class FarGenerationController extends Controller
 
      public function ebinhi_get_brgy(Request $request)
     {
-        dd($request->all());
         $lib_prv = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
             ->where("municipality", $request->municipality)
             ->where("province", $request->province)
@@ -216,7 +215,7 @@ class FarGenerationController extends Controller
             ->where("municipality", $municipality)
             ->first();
 
-            
+
         $array_week = array(
             "1st Week" => "01",
             "2nd Week" => "02",
@@ -227,7 +226,7 @@ class FarGenerationController extends Controller
         
 
         $prv_claim_pattern = $prv_data->regCode."-".$prv_data->provCode."-".$prv_data->munCode;
-        
+
         
         if($prv_claim_pattern == '03-71-05')
         {
