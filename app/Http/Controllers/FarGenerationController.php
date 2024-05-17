@@ -210,6 +210,7 @@ class FarGenerationController extends Controller
 
         if($municipality == "RIZAL (LIWAN)")$municipality="RIZAL";
 
+        $province = str_replace(' (HUC)','',$province);
        $prv_data = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
             ->where('province', $province)
             ->where("municipality", $municipality)
