@@ -27,13 +27,18 @@ use Illuminate\Support\Str;
 class bmAPIController extends Controller
 {
     public function unlinkExcelExport(){
+
         $documentRoot = $_SERVER['DOCUMENT_ROOT'];
-        $filePath = $documentRoot . '/rcef_ws2024/public/reports/excel_export/ms_2023-09-01_2024-02-29.xlsx';
-        
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        } else {
-            echo "File does not exist.";
+        $files = ["ms_2023-09-01_2024-04-09.xlsx","ms_2024-03-01_2024-03-24.xlsx","ms_2024-03-01_2024-03-31.xlsx","ms_2024-03-01_2024-04-07.xlsx","ms_2024-03-01_2024-04-14.xlsx","ms_2024-03-01_2024-04-21.xlsx","ms_2024-03-01_2024-04-22.xlsx","ms_2024-03-01_2024-04-30.xlsx","ms_2024-03-01_2024-05-12.xlsx","ms_2024-03-01_2024-05-19.xlsx"];
+        foreach($files as $file)
+        {
+            $filePath = $documentRoot . '/rcef_ws2024/public/reports/excel_export/'.$file;
+            
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            } else {
+                echo "File does not exist.";
+            }
         }
     }
     
