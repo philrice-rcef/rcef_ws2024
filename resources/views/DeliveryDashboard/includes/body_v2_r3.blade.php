@@ -138,7 +138,7 @@
                         &nbsp;
                     </div>
                     <div class="">
-                       OIC / IMSSO
+                       OIC - IMSSO
                     </div>
                 </div>
             </div>
