@@ -26,6 +26,18 @@ use Illuminate\Support\Str;
 
 class bmAPIController extends Controller
 {
+    public function unlinkExcelExport(){
+        $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+        $filePath = $documentRoot . '/rcef_ws2024/public/reports/excel_export/ms_2023-09-01_2024-02-29.xlsx';
+        
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        } else {
+            echo "File does not exist.";
+        }
+    }
+    
+
     public function testAPI(Request $request){
 
         $farmers = [];
