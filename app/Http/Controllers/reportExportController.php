@@ -1450,14 +1450,14 @@ public function exportProvincialStatistics($date_from,$date_to,$region){
 
 
 
-                        $eBinhi_data = DB::table($GLOBALS['season_prefix']."rcep_paymaya.tbl_beneficiaries")
-                            ->select("tbl_beneficiaries.*")
-                            ->join($GLOBALS['season_prefix']."rcep_paymaya.tbl_claim", "tbl_claim.paymaya_code", "=", "tbl_beneficiaries.paymaya_code")
-                            ->where('tbl_beneficiaries.province', $value->province)
-                            ->where('tbl_beneficiaries.municipality', $value->municipality)
+                        $eBinhi_data = DB::table($GLOBALS['season_prefix']."rcep_paymaya.tbl_claim")
+                            ->select("tbl_claim.*")
+                            ->join($GLOBALS['season_prefix']."rcep_paymaya.tbl_beneficiaries", "tbl_claim.paymaya_code", "=", "tbl_beneficiaries.paymaya_code")
+                            ->where('tbl_claim.province', $value->province)
+                            ->where('tbl_claim.municipality', $value->municipality)
                             //->where('tbl_beneficiaries.municipality', "BAMBANG")
                             ->whereRaw("STR_TO_DATE(tbl_claim.date_created, '%Y-%m-%d') BETWEEN  STR_TO_DATE('".$date_from."', '%Y-%m-%d')  AND STR_TO_DATE('".$date_to."', '%Y-%m-%d')")
-                            ->groupBy("tbl_beneficiaries.beneficiary_id")
+                            ->groupBy("tbl_claim.beneficiary_id")
                             ->get();
 
                             foreach ($eBinhi_data as $key => $binhi_val) {
