@@ -1451,7 +1451,7 @@ public function exportProvincialStatistics($date_from,$date_to,$region){
 
 
                         $eBinhi_data = DB::table($GLOBALS['season_prefix']."rcep_paymaya.tbl_claim")
-                            ->select("tbl_claim.*")
+                            ->select("tbl_claim.*,tbl_beneficiaries.*")
                             ->join($GLOBALS['season_prefix']."rcep_paymaya.tbl_beneficiaries", "tbl_claim.paymaya_code", "=", "tbl_beneficiaries.paymaya_code")
                             ->where('tbl_claim.province', $value->province)
                             ->where('tbl_claim.municipality', $value->municipality)
