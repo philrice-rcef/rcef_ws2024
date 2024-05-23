@@ -418,7 +418,7 @@ class rlaMonitoring extends Controller
 
 
                 ->addColumn('action', function($row){
-                        if(Auth::user()->userId == 28 || Auth::user()->userId == 370 || Auth::user()->userId == 2 || Auth::user()->userId == 2618 || Auth::user()->roles->first()->name == "system-admin"){
+                        if(Auth::user()->userId == 28 || Auth::user()->userId == 370 || Auth::user()->userId == 2 || Auth::user()->userId == 2618 || Auth::user()->roles->first()->name == "system-admin"|| Auth::user()->roles->first()->name == "rcef-programmer"){
 
 
                         $checkifExceeds = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
@@ -430,7 +430,7 @@ class rlaMonitoring extends Controller
                         if($checkifExceeds >= $row->noOfBags){
                                   return '<a onclick="" class="btn btn-dark btn-md" disabled> <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</a>';
                          }else{
-                                  return '<a onclick="window.open('."'".'https://rcef-seed.philrice.gov.ph/rcef_ws2022/cooperatives/rla/edit/'.$row->id.''."'".')" class="btn btn-warning btn-md" > <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</a>';
+                                  return '<a onclick="window.open('."'".'https://rcef-seed.philrice.gov.ph/'.substr($GLOBALS['season_prefix'], 0, -1).'/cooperatives/rla/edit/'.$row->id.''."'".')" class="btn btn-warning btn-md" > <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</a>';
                          }
 
 
