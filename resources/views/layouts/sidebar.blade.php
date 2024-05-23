@@ -1451,7 +1451,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 						<li><a><i class="fa fa-users"></i> Seed Cooperative<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								 <li><a href="{{route('coop.commitment')}}">Commitment</a></li>
-								 @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "e.tolentino" || Auth::user()->username == "mcrmercado")
+								 @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "lei.malubag" || Auth::user()->username == "mcrmercado")
 	 								<li><a href="{{route('rsis.rla.dashboard')}}">(RSIS) Result of Lab Analysis </a></li>
 	 								<li><a href="{{route('rsis.rs_distri.dashboard')}}">RS - CS Seed Production </a></li>
 	 								<li><a href="{{route('api.coop.logs')}}">Commitment Adjustment Logs</a></li>
