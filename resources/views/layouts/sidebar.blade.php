@@ -1422,11 +1422,8 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 									<li class="sub_menu"><a href="{{route('paymaya.municipalities.list')}}">Municipalities</a></li>
 									@endif
 								 @endif
-								  @if(Auth::user()->username == "jpalileo" || Auth::user()->username == "r.benedicto_2" || Auth::user()->username == "reggie_dioses" ||  Auth::user()->username == "dc.gaspar" ||  Auth::user()->username == "jg.villanueva"||  Auth::user()->username == "e.lopez"||  Auth::user()->username == "jt.rivera" || Auth::user()->username == "renaida_pascual" || Auth::user()->username == "processor_jbl" || Auth::user()->username == "ar.aromin"|| Auth::user()->username == "ar.aromin1"|| Auth::user()->username == "danrio"|| Auth::user()->username == "bm.delossantos" || Auth::user()->username == "v.villadon" ||  Auth::user()->username == "tine" ||Auth::user()->username == "ddc.espiritu")
-								 
-								  
-							
-								  	
+								  @if(Auth::user()->username == "jpalileo" || Auth::user()->username == "r.benedicto_2" || Auth::user()->username == "reggie_dioses" ||  Auth::user()->username == "dc.gaspar" ||  Auth::user()->username == "jg.villanueva"||  Auth::user()->username == "e.lopez"||  Auth::user()->username == "jt.rivera" || Auth::user()->username == "renaida_pascual" || Auth::user()->username == "processor_jbl" || Auth::user()->username == "ar.aromin"|| Auth::user()->username == "ar.aromin1"|| Auth::user()->username == "danrio"|| Auth::user()->username == "bm.delossantos" || Auth::user()->username == "v.villadon" ||  Auth::user()->username == "tine" || Auth::user()->username == "ddc.espiritu")
+								
 								  <li><a>Payments<span class="fa fa-chevron-down"></span></a>
 								 
 								  <ul class="nav child_menu">
