@@ -1725,6 +1725,10 @@ Route::group(['middleware' => ['logMw']], function() {
     Route::post('rla_monitoring/table', ['as' => 'rla.monitoring.table', 'uses' => 'rlaMonitoring@table_data']);
     Route::post('rla_monitoring/find_rla', ['as' => 'rla.monitoring.find_rla', 'uses' => 'rlaMonitoring@rlaFinder']);
     
+    
+    Route::get('rla_monitoring/homeMissing', ['as' => 'rla.monitoring.homeMissing', 'uses' => 'rlaMonitoring@homeMissing'])->middleware('auth');
+    Route::post('rla_monitoring/tableMissing', ['as' => 'rla.monitoring.tableMissing', 'uses' => 'rlaMonitoring@table_dataMissing']);
+    
     Route::post('rla_monitoring/data/graph', ['as' => 'rla.monitoring.graph', 'uses' => 'rlaMonitoring@graphData']);    
     /* RLA MONITORING */
     /*OPS PLANNING*/

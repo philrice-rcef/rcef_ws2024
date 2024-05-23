@@ -324,6 +324,16 @@ class rlaMonitoring extends Controller
                 ->with("coop_list", $coop_list);
     }
 
+    public function homeMissing(){
+        $coop_list = DB::table($GLOBALS['season_prefix']."rcep_seed_cooperatives.tbl_cooperatives")
+            ->select("coopName", "accreditation_no", "current_moa")
+            ->orderBy("coopName", "ASC")
+            ->get();
+
+            return view("dashboard.rla_dashboardMissing")
+                ->with("coop_list", $coop_list);
+    }
+
     public function table_data(Request $request){
         if($request->accre == "all"){
             $accre = "%";
@@ -450,6 +460,137 @@ class rlaMonitoring extends Controller
 
 
 
+
+    }
+
+    public function table_dataMissing(Request $request){
+        if($request->accre == "all"){
+            $accre = "%";
+        }else{
+            $accre = $request->accre;
+        }
+        $varieties = [];
+        $getSeedVariety = DB::table('ws2024_seed_seed.seed_characteristics')
+        ->selectRaw('DISTINCT(variety)')
+        ->get('variety');
+        
+        foreach ($getSeedVariety as $variety)
+        {
+            array_push($varieties,$variety->variety);
+        }
+        // dd($varieties);
+
+      return Datatables::of(DB::connection('delivery_inspection_db') ->table('tbl_rla_details')
+            ->select("rlaId as id", "coop_name", "sg_id", "coopAccreditation", "moaNumber", "labNo",
+                "lotNo", "certificationDate", "seedVariety", "noOfBags", DB::raw("IF(IF(NOW() > certificationDate, DATEDIFF(NOW(), certificationDate), 0) >=90, '#FF8000', '' ) as color"))
+           
+            ->where("coopAccreditation", "LIKE" , $accre)
+            ->whereNotIn('seedVariety',$varieties)
+            ->groupBy("coopAccreditation")
+            ->groupBy("labNo")
+            ->groupBy("lotNo")
+            ->groupBy("seedVariety")
+        )
+                ->addColumn('coopAccreditation', function($row){
+                        if($row->color == ""){
+                            $checkifduplicate = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_rla_details")
+                                ->where("coopAccreditation", $row->coopAccreditation)
+                                ->where("labNo", $row->labNo)
+                                ->where("lotNo", $row->lotNo)
+                                ->where("seedVariety", $row->seedVariety)
+                                ->get();
+                            if(count($checkifduplicate)>1){
+                                $row->color = "#088A29";
+                            }
+                        }
+
+
+
+                        $checkifExceeds = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+                            ->where("is_cancelled", 0)
+                            ->where("coopAccreditation", $row->coopAccreditation)
+                            ->where("seedTag", $row->labNo.'/'.$row->lotNo)
+                            ->sum("totalBagCount");
+
+                        if($checkifExceeds >= $row->noOfBags){
+                                $row->color = "red";
+                         }
+
+
+
+
+                       return '<font style="color:'.$row->color.';">'.$row->coopAccreditation.'</font>';
+                })
+                ->addColumn('moaNumber', function($row){
+                       return '<font style="color:'.$row->color.';">'.$row->moaNumber.'</font>';
+                })
+                ->addColumn('labNo', function($row){
+                       return '<font style="color:'.$row->color.';">'.$row->labNo.'</font>';
+                })
+                ->addColumn('lotNo', function($row){
+                       return '<font style="color:'.$row->color.';">'.$row->lotNo.'</font>';
+                })
+                ->addColumn('certificationDate', function($row){
+                       return '<font style="color:'.$row->color.';">'.$row->certificationDate.'</font>';
+                })
+                ->addColumn('seedVariety', function($row){
+                       return '<font style="color:'.$row->color.';">'.$row->seedVariety.'</font>';
+                })
+                ->addColumn('noOfBags', function($row){
+                       return '<font style="color:'.$row->color.';">'.$row->noOfBags.'</font>';
+                })
+                ->addColumn('coop_name', function($row){
+                        $coop_info = DB::table($GLOBALS['season_prefix']."rcep_seed_cooperatives.tbl_cooperatives")
+                            ->where("accreditation_no", $row->coopAccreditation)    
+                            ->first();
+                    
+
+                        if(count($coop_info)>0){
+                            return '<a data-target="#info_modal" style="cursor: pointer;" data-toggle="modal" data-type_modal="coop" data-coop_accre="'.$coop_info->accreditation_no.'" data-coop="'.$coop_info->coopName.'" data-moa="'.$coop_info->current_moa.'" ><font style="color:'.$row->color.';">'.$coop_info->coopName.'</font></a>';
+                        }else{
+                            return "No Coop on Library (".$row->coopAccreditation.")";
+                        }
+                })
+                ->addColumn('sg_id', function($row){
+                        $sg_info = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_seed_grower")
+                            ->select("tbl_seed_grower.full_name", "tbl_cooperatives.coopName", "tbl_seed_grower.coop_accred")
+                            ->join($GLOBALS['season_prefix']."rcep_seed_cooperatives.tbl_cooperatives", "tbl_seed_grower.coop_accred", "=", "tbl_cooperatives.accreditation_no" )
+                            ->where("sg_id", $row->sg_id)    
+                            ->where("is_active", 1)
+                            ->first();
+                        if(count($sg_info)>0){
+                            return '<a data-target="#info_modal" style="cursor: pointer;" data-toggle="modal" data-type_modal="sg" data-coop_accre="'.$sg_info->coop_accred.'" data-coop="'.$sg_info->coopName.'" data-full="'.$sg_info->full_name.'" ><font style="color:'.$row->color.';">'.$sg_info->full_name.' </font></a>';
+                        }else{
+                            return "No SG on Library (".$row->sg_id.")";
+                        }
+                })
+
+
+                ->addColumn('action', function($row){
+                        if(Auth::user()->userId == 28 || Auth::user()->userId == 370 || Auth::user()->userId == 2 || Auth::user()->userId == 2618 || Auth::user()->roles->first()->name == "system-admin"|| Auth::user()->roles->first()->name == "rcef-programmer"|| Auth::user()->userId == 504){
+
+
+                        $checkifExceeds = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+                            ->where("is_cancelled", 0)
+                            ->where("coopAccreditation", $row->coopAccreditation)
+                            ->where("seedTag", $row->labNo.'/'.$row->lotNo)
+                            ->sum("totalBagCount");
+
+                        if($checkifExceeds >= $row->noOfBags){
+                                  return '<a onclick="" class="btn btn-dark btn-md" disabled> <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</a>';
+                         }else{
+                                  return '<a onclick="window.open('."'".'https://rcef-seed.philrice.gov.ph/rcef_'.substr($GLOBALS['season_prefix'], 0, -1).'/cooperatives/rla/edit/'.$row->id.''."'".')" class="btn btn-warning btn-md" > <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</a>';
+                         }
+
+
+
+                   
+                        }
+                })
+
+
+//https://rcef-seed.philrice.gov.ph/rcef_ws2021/cooperatives/rla/edit/395
+             ->make(true);
 
     }
 

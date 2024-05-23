@@ -837,6 +837,9 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 										<li><a>Result of Lab Analysis<span class="fa fa-chevron-down"></span></a>
 											<ul class="nav child_menu">
 												<li><a href="{{route('rla.monitoring.home')}}"> RLA Monitoring</a></li>
+												@if(Auth::user()->roles->first()->name == "system-admin" || Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->userId == 504)
+													<li><a href="{{route('rla.monitoring.homeMissing')}}"> RLA Monitoring (Missing RLA)</a></li>
+												@endif
 												@if(Auth::user()->roles->first()->name == "rcef-programmer")
 													<!--<li><a href="{{route('edit_delivery.home')}}">Edit Delivery</a></li>-->
 												@endif
@@ -1268,6 +1271,9 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 						<li><a><i class="fa fa-flask"></i>RLA <br> Management<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								<li><a href="{{route('rla.monitoring.home')}}"> RLA Monitoring</a></li>
+								@if(Auth::user()->roles->first()->name == "system-admin" || Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->userId == 504)
+									<li><a href="{{route('rla.monitoring.homeMissing')}}"> RLA Monitoring (Missing RLA)</a></li>
+								@endif
 								@if(Auth::user()->roles->first()->name == "rcef-programmer")
 									<!--<li><a href="{{route('edit_delivery.home')}}">Edit Delivery</a></li>-->
 								@endif
