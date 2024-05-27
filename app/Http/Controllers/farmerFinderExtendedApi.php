@@ -497,7 +497,8 @@ class farmerFinderExtendedApi extends Controller{
     
 
     public function syncKPData(Request $request)
-    {
+    {  
+        dd($request->all);
        
         $allKPs = json_decode($request->getContent());
         // $row = json_decode($request->getContent());
@@ -505,10 +506,7 @@ class farmerFinderExtendedApi extends Controller{
         
         foreach($allKPs as $row)
         {
-            if($row->encodedBy == 'dg.lanza' || $row->encodedBy == 'ja.lanza')
-            {
-                dd("Unavailable");
-            }
+            
             $locationlength = strlen($row->location);
             if (preg_match('/[a-zA-Z]/', $row->rsbsa_control_no))
             {
