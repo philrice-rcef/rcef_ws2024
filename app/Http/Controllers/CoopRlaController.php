@@ -106,10 +106,15 @@ class CoopRlaController extends Controller
           ->select(DB::raw("SUM(BagsReceived) as total_bags"), DB::raw("SUM(NumOfBagsRejected) as total_rejected"))
           ->where("CoopAccreNum", "!=", "")
           ->first();
-        if($rejection_data != null){
-            $rejection_rate = ($rejection_data->total_rejected / $rejection_data->total_bags) * 100;
-            $rejection_rate = number_format($rejection_rate,2);
-        }
+          if($rejection_data != null){
+            try{
+              $rejection_rate = ($rejection_data->total_rejected / $rejection_data->total_bags) * 100;
+            }catch(\Exception $e)
+            {
+              $rejection_rate = 0;
+            }
+              $rejection_rate = number_format($rejection_rate,2);
+          }
       
         $total_coops = count(DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
         ->where("isActive", "1")
@@ -339,65 +344,69 @@ class CoopRlaController extends Controller
                  false, stream_context_create($stream_opts));
 
     $tmp_data = json_decode($response, true);
-  
+
+    // dd($tmp_data);
     // https://rsis.philrice.gov.ph/api_management/rcef_sg_list
     // https://rsis.philrice.gov.ph/api_management/rcef_applied_seed_cert
 
     try {
       DB::table($GLOBALS['season_prefix'].'rcep_rsis_rla.tbl_rla_details')->truncate();
 
+
       foreach($tmp_data as $key=> $data){
-        if(count($data["SeedGrower"])==0) $data["SeedGrower"] = "";
-        if(count($data["GrowerAccreNum"])==0) $data["GrowerAccreNum"] = "";
-        if(count($data["CoopName"])==0) $data["CoopName"] = "";
-        if(count($data["CoopAccreNum"])==0) $data["CoopAccreNum"] = "";
-        if(count($data["CoopRegion"])==0) $data["CoopRegion"] = "";
-        if(count($data["Variety"])==0) $data["Variety"] = "";
-        if(count($data["LotNo"])==0) $data["LotNo"] = "";
-        if(count($data["LabNo"])==0) $data["LabNo"] = "";
-        if(count($data["DateSampled"])==0) $data["DateSampled"] = "";
-        if(count($data["BagsReceived"])==0) $data["BagsReceived"] = "";
-        if(count($data["BagWeight"])==0) $data["BagWeight"] = "";
-        if(count($data["LabReceivedDate"])==0) $data["LabReceivedDate"] = "";
-        if(count($data["LabStatus"])==0) $data["LabStatus"] = "";
-        if(count($data["LabResult"])==0) $data["LabResult"] = "";
-        if(count($data["DateTestCompleted"])==0) $data["DateTestCompleted"] = "";
-        if(count($data["NumOfBagsPassed"])==0) $data["NumOfBagsPassed"] = "";
-        if(count($data["NumOfBagsRejected"])==0) $data["NumOfBagsRejected"] = "";
-        if(count($data["CauseOfReject"])==0) $data["CauseOfReject"] = "";
-        if(count($data["SeedClass"])==0) $data["SeedClass"] = "";
+        if(count($data["serial_number"])==0) $data["serial_number"] = "";
+        if(count($data["variety"])==0) $data["variety"] = "";
+        if(count($data["lot_no"])==0) $data["lot_no"] = "";
+        if(count($data["lab_no"])==0) $data["lab_no"] = "";
+        if(count($data["date_sampled"])==0) $data["date_sampled"] = "";
+        if(count($data["bags_received"])==0) $data["bags_received"] = "";
+        if(count($data["bag_weight"])==0) $data["bag_weight"] = "";
+        if(count($data["lab_received_date"])==0) $data["lab_received_date"] = "";
+        if(count($data["lab_status"])==0) $data["lab_status"] = "";
+        if(count($data["lab_result"])==0) $data["lab_result"] = "";
+        if(count($data["date_test_completed"])==0) $data["date_test_completed"] = "";
+        if(count($data["seed_class"])==0) $data["seed_class"] = "";
+        if(count($data["num_of_bags_pass"])==0) $data["num_of_bags_pass"] = "";
+        if(count($data["num_of_bags_reject"])==0) $data["num_of_bags_reject"] = "";
+        if(count($data["cause_of_reject"])==0) $data["cause_of_reject"] = "";
+        if(count($data["growapp_tracking_id"])==0) $data["growapp_tracking_id"] = "";
+
+        // dd($data);
+        $sgProfile = DB::table($GLOBALS['season_prefix'].'rcep_rsis_rla.tbl_sg_list')
+        ->where('SerialNum',$data["serial_number"])
+        ->first();
+        if(!$sgProfile)
+        {
+          continue;
+        }
+        
 
         $ins= array(
-        "SeedGrower" => $data["SeedGrower"],
-        "GrowerAccreNum" => $data["GrowerAccreNum"],
-        "CoopName" => $data["CoopName"],
-        "CoopAccreNum" => $data["CoopAccreNum"],
-        "CoopRegion" => $data["CoopRegion"],
-        "Variety" => $data["Variety"],
-        "LotNo" => $data["LotNo"],
-        "LabNo" => $data["LabNo"],
-        "DateSampled" => $data["DateSampled"],
-        "BagsReceived" => $data["BagsReceived"],
-        "BagWeight" => $data["BagWeight"],
-        "LabReceivedDate" => $data["LabReceivedDate"],
-        "LabStatus" => $data["LabStatus"],
-        "LabResult" => $data["LabResult"],
-        "DateTestCompleted" => $data["DateTestCompleted"],
-        "NumOfBagsPassed" => $data["NumOfBagsPassed"],
-        "NumOfBagsRejected" => $data["NumOfBagsRejected"],
-        "CauseOfReject" => $data["CauseOfReject"],
-        "SeedClass" => $data["SeedClass"],
+        "SeedGrower" => $sgProfile->GrowerName,
+        "GrowerAccreNum" => $sgProfile->AccreNum,
+        "CoopName" => $sgProfile->CoopName,
+        "CoopAccreNum" => $sgProfile->CoopAccreNum,
+        "CoopRegion" => $sgProfile->Region,
+        "Variety" => $data["variety"],
+        "LotNo" => $data["lot_no"],
+        "LabNo" => $data["lab_no"],
+        "DateSampled" => $data["date_sampled"],
+        "BagsReceived" => $data["bags_received"],
+        "BagWeight" => $data["bag_weight"],
+        "LabReceivedDate" => $data["lab_received_date"],
+        "LabStatus" => $data["lab_status"],
+        "LabResult" => $data["lab_result"],
+        "DateTestCompleted" => $data["date_test_completed"],
+        "NumOfBagsPassed" => $data["num_of_bags_pass"],
+        "NumOfBagsRejected" => $data["num_of_bags_reject"],
+        "CauseOfReject" => $data["cause_of_reject"],
+        "SeedClass" => $data["seed_class"],
         );
 
         DB::table($GLOBALS['season_prefix'].'rcep_rsis_rla.tbl_rla_details')
         ->insert($ins);
-
       }
-
-     
       return json_encode("Synced Date : ".date("F j, Y (g:i a)"));
-
-    
     } catch (\Throwable $th) {
  
     return $th;
@@ -417,7 +426,7 @@ class CoopRlaController extends Controller
       ]
     ];  
 
-      $response = file_get_contents("https://rsis.philrice.gov.ph/api_management/rcef_sg_list",
+      $response = file_get_contents("https://stagingdev.philrice.gov.ph/rsis/api_management/rcef_sg_list",
                   false, stream_context_create($stream_opts));
 
       $tmp_data = json_decode($response, true);
