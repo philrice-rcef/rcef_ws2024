@@ -334,7 +334,8 @@ class CoopRlaController extends Controller
           ]
         ];  
   
-    $response = file_get_contents("https://rsis.philrice.gov.ph/api_management/rcef_lab_results",
+    $response = file_get_contents("https://stagingdev.philrice.gov.ph/rsis/api_management/rcef_lab_results",
+    // $response = file_get_contents("https://rsis.philrice.gov.ph/api_management/rcef_lab_results",
                  false, stream_context_create($stream_opts));
 
     $tmp_data = json_decode($response, true);
