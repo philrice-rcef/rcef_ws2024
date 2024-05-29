@@ -233,7 +233,7 @@
         var yesno = confirm("Sync New Data from RSIS?");
 
         if(yesno){
-            // HoldOn.open(holdon_options);
+            HoldOn.open(holdon_options);
                     $.ajax({
                     type: 'POST',
                     url: "{{ route('coop.rla-report') }}",
