@@ -209,6 +209,11 @@ class KPEncoderMonitoringController extends Controller
                 ->where('username',$count->Encoder)
                 ->first();
 
+                if(!$getName)
+                {
+                    continue;
+                }
+
                 $getContractDate = DB::table('kp_distribution.kp_encoders')
                 ->where('userId',$count->Encoder)
                 ->first();
