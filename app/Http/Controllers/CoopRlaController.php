@@ -107,12 +107,7 @@ class CoopRlaController extends Controller
           ->where("CoopAccreNum", "!=", "")
           ->first();
         if($rejection_data != null){
-            try{
             $rejection_rate = ($rejection_data->total_rejected / $rejection_data->total_bags) * 100;
-          }catch(\Exception $e)
-          {
-            $rejection_rate = 0;
-          }
             $rejection_rate = number_format($rejection_rate,2);
         }
       

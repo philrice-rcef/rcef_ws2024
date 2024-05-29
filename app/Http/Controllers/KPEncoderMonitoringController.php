@@ -40,7 +40,7 @@ class KPEncoderMonitoringController extends Controller
 
             if(!$getName1)
             {
-                dd($encode);
+                continue;
             }
             $getContractDate = DB::table('kp_distribution.kp_encoders')
             ->where('userId',$encode->Encoder)
