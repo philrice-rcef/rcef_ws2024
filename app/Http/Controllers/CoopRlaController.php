@@ -887,7 +887,33 @@ class CoopRlaController extends Controller
   }
 
 
+  public function exportAll(Request $request)
+  {   
+    $getAll = DB::table($GLOBALS['season_prefix'].'rcep_rsis_rla.tbl_rla_details')
+    ->get();
 
+    // dd($getAll);
+    $excel_data = json_decode(json_encode($getAll), true);
+
+    return Excel::create("RSIS RLA Data as of ".date("Y-m-d g:i A"), function($excel) use ($excel_data) {
+        $excel->sheet("KP Kit Distribution Report", function($sheet) use ($excel_data) {
+            $sheet->fromArray($excel_data);
+
+            $border_style = array(
+                'borders' => array(
+                    'allborders' => array(
+                        'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                        'color' => array('argb' => '000000'),
+                    ),
+                ),
+            );
+            $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())->applyFromArray($border_style);
+        });
+
+    })->setActiveSheetIndex(0)->download('xlsx');
+
+  
+  }
 
 
     

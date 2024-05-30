@@ -100,8 +100,8 @@
                             <i class="fa fa-refresh" aria-hidden="true" > Sync</i> 
                         </button> <br>
                
-                        <button class="btn btn-dark btn-sm " disabled>
-                            <i class="fa fa-file-excel-o" aria-hidden="true" > Export Results</i> 
+                        <button class="btn btn-dark btn-sm " id="exportAll">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"> Export Results</i> 
                         </button>
                
                       
@@ -228,12 +228,17 @@
 
 @push('scripts')
 <script>
+
+    $("#exportAll").on('click', function (e){
+        var url = '{{ route("rsis.export.all.rla") }}';
+        window.open(url);
+    });
 	
     function sync_rla(){
         var yesno = confirm("Sync New Data from RSIS?");
 
         if(yesno){
-            HoldOn.open(holdon_options);
+            // HoldOn.open(holdon_options);
                     $.ajax({
                     type: 'POST',
                     url: "{{ route('coop.rla-report') }}",

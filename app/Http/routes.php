@@ -1904,6 +1904,7 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
     Route::post('rsis/coop/rla', ['as' => 'rsis.view.coop.rla', 'uses' => 'CoopRlaController@viewCoopRLA']);
     Route::get('rsis/coop/export/{account}', ['as' => 'rsis.export.coop.rla', 'uses' => 'CoopRlaController@exportRSIS']);
     Route::get('rsis/coop/export_production/{account}', ['as' => 'rsis.export.coop.rla.production', 'uses' => 'CoopRlaController@exportSeedProduction']);
+    Route::get('rsis/coop/exportAll', ['as' => 'rsis.export.all.rla', 'uses' => 'CoopRlaController@exportAll']);
 
     
     Route::post('rsis/sg_distri/api', ['as' => 'rsis.rla.api', 'uses' => 'CoopRlaController@sg_distri_api']);
