@@ -696,12 +696,24 @@ class CoopController extends Controller
 
     public function confirmDeleteRLA (Request $request)
     {
+        $getRLA = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_rla_details')
+        ->where('rlaId',$request->id)
+        ->first();
+
         
         $delete = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_rla_details')
         ->where('rlaId',$request->id)
         ->delete();
         if($delete ==  1)
         {
+            DB::connection('mysql')->table('lib_logs')
+					->insert([
+						'category' => 'DELETE_RLA',
+						'description' => 'Deleted rla with details | seed cooperative: '.$getRLA->coop_name.', lab no.: '.$getRLA->labNo.', lab no.: '.$getRLA->lotNo.", seed grower: ".$getRLA->sg_name.", seed variety: ".$getRLA->seedVariety.", number of bags: ".$getRLA->noOfBags,
+						'author' => Auth::user()->username,
+						'ip_address' => $_SERVER['REMOTE_ADDR']
+					]);
+					DB::commit();
             return $delete;
         }
 
