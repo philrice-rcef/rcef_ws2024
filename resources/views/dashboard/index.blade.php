@@ -291,7 +291,7 @@
             <div class="x_panel">
                 <div class="x_title">
                     <!-- <h2> Yield t/ha (42 Provinces)</h2> -->
-                    <h2>Percent Accomplishment vs Target (All Regions) as of December 2023</h2><br><br>
+                    <h2>Percent Accomplishment vs Target (All Regions) as of February 2024</h2><br><br>
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content form-horizontal form-label-left">
