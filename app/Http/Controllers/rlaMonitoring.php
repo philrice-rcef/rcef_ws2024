@@ -446,7 +446,7 @@ class rlaMonitoring extends Controller
                         if($checkActualDelivery > 0){
                             return '<a onclick="" class="btn btn-dark btn-md" disabled> <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</a>';
                         }
-                        else if($checkifExceeds >= $row->noOfBags){
+                        else if($checkifExceeds > 0){
                             return '<a onclick="window.open('."'".'https://rcef-seed.philrice.gov.ph/rcef_'.substr($GLOBALS['season_prefix'], 0, -1).'/cooperatives/rla/edit/'.$row->id.''."'".')" class="btn btn-warning btn-md" > <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>';
                         }
                         else{
