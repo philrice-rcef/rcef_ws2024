@@ -373,7 +373,7 @@ class rlaMonitoring extends Controller
                             ->where("seedTag", $row->labNo.'/'.$row->lotNo)
                             ->sum("totalBagCount");
 
-                        if($checkifExceeds >= $row->noOfBags){
+                        if($checkifExceeds > 0){
                                 $row->color = "red";
                          }
 
