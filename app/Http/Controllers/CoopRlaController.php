@@ -379,6 +379,24 @@ class CoopRlaController extends Controller
         {
           continue;
         }
+        else
+        {
+          if(strlen($sgProfile->CoopAccreNum)>10)
+          {
+            $accred = substr($sgProfile->CoopAccreNum,-5);
+            // dd($accred);
+            $checkCoopAccred = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
+            ->where('accreditation_no','LIKE','%'.$accred)
+            ->first();
+            if($checkCoopAccred)
+            {
+              dd($sgProfile->GrowerName,$sgProfile->CoopAccreNum,$checkCoopAccred);
+              
+            }
+          }
+
+
+        }
         
 
         $ins= array(
