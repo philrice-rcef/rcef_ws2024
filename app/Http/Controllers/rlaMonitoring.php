@@ -428,7 +428,7 @@ class rlaMonitoring extends Controller
 
 
                 ->addColumn('action', function($row){
-                        if(Auth::user()->userId == 28 || Auth::user()->userId == 370 || Auth::user()->userId == 2 || Auth::user()->userId == 2618 || Auth::user()->roles->first()->name == "system-admin"|| Auth::user()->roles->first()->name == "rcef-programmer"|| Auth::user()->userId == 504){
+                        if(Auth::user()->userId == 28 || Auth::user()->userId == 370 || Auth::user()->userId == 2 || Auth::user()->userId == 2618 || Auth::user()->roles->first()->name == "system-admin"|| Auth::user()->roles->first()->name == "rcef-programmer"|| Auth::user()->roles->first()->name == "branch-it" || Auth::user()->userId == 504){
 
 
                         $checkifExceeds = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
