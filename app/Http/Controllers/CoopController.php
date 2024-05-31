@@ -12,6 +12,7 @@ use Session;
 use Auth;
 use Excel;
 use QrCode;
+use Carbon\Carbon;
 use Yajra\Datatables\Facades\Datatables;
 class CoopController extends Controller
 {
@@ -691,6 +692,19 @@ class CoopController extends Controller
         }else{
             
         }
+    }
+
+    public function confirmDeleteRLA (Request $request)
+    {
+        
+        $delete = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_rla_details')
+        ->where('rlaId',$request->id)
+        ->delete();
+        if($delete ==  1)
+        {
+            return $delete;
+        }
+
     }
 
     public function CoopCommitmentCancel(Request $request){
@@ -2024,6 +2038,8 @@ class CoopController extends Controller
         //layers of checkin
         //1. check if seedtag is being used, if yes must not exceed 240 bags
         //2. check seed grower if exists, if yes return id if no insert profile and return id
+
+        // dd($request->all());
         
         $request_seedTag = $request->lab_number."/".$request->lot_number;
         $current_seedTag = $request->rla_old_seedtag;
@@ -2050,10 +2066,86 @@ class CoopController extends Controller
             ->where("is_cancelled", 0)
 			->get();
 			
-		// if(count($delivery_data) > 0){
+		if(count($delivery_data) > 0){
 			// Session::flash('error_msg', 'The seed tag already has delivery data, this is no longer available for editting.');
             // return redirect()->route('coop.rla.edit.form', $request->rla_id);
-		// }else{
+
+            // dd($delivery_data);
+            $seed_volume = $seed_volume + $request->bags;
+			if($seed_volume <= 240){
+				//check seed grower profile
+				if($request->sg_name != ""){
+					$seed_grower_profile = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_seed_grower')->where('full_name', $request->sg_name)->first();
+					if(count($seed_grower_profile) > 0){
+						$sg_id = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_seed_grower')->where('full_name', $request->sg_name)->value('sg_id');
+					}else{
+						$sg_id = DB::connection('delivery_inspection_db')->table('tbl_seed_grower')->insertGetId([
+							'coop_accred' => $request->coop,
+							'is_active' => 1,
+							'is_block' => 0,
+							'fname' => '',
+							'mname' => '',
+							'lname' => '',
+							'extension' => '',
+							'full_name' => $request->sg_name
+						]);
+					}
+
+					$coop_name = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->where('accreditation_no', $request->coop)->value('coopName');
+					$coop_moa = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->where('accreditation_no', $request->coop)->value('current_moa');
+
+					DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_rla_details')
+					->where('rlaId', $request->rla_id)
+					->update([
+						'coop_name' => $coop_name,
+						'coopAccreditation' => $request->coop,
+						'sg_id' => $sg_id,
+						'sg_name' => $request->sg_name,
+						'certificationDate' => $request->certification_date,
+						'labNo' => $request->lab_number,
+						'lotNo' => $request->lot_number,
+						'seedVariety' => $request->variety,
+						'moaNumber' => $coop_moa
+					]);
+
+                    foreach($delivery_data as $delivery)
+                    {
+                        DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
+                        ->where('deliveryId', $delivery->deliveryId)
+                        ->update([
+                            'coopAccreditation' => $request->coop,
+                            'sg_id' => $sg_id,
+                            'seedTag' => $request->lab_number.'/'.$request->lot_number,
+                            'seedVariety' => $request->variety,
+                            'moa_number' => $coop_moa,
+                            'date_updated' => Carbon::now()->format('Y-m-d H:i:s')
+                        ]);
+                    }
+
+
+
+					DB::connection('mysql')->table('lib_logs')
+					->insert([
+						'category' => 'EDIT_RLA',
+						'description' => 'Editted rla of seedtag: `'.$current_seedTag.'` with details | seed cooperative: '.$coop_name.', seed tag: '.$request->lab_number."/".$request->lot_number.", seed grower: ".$request->sg_name.", seed variety: ".$request->variety.", number of bags: ".$request->bags,
+						'author' => Auth::user()->username,
+						'ip_address' => $_SERVER['REMOTE_ADDR']
+					]);
+					DB::commit();
+
+					Session::flash('success', 'You have successfully updated an RLA');
+					return redirect()->route('coop.rla.edit');
+
+				}else{
+					Session::flash('error_msg', 'Please specify a seed grower');
+					return redirect()->route('coop.rla.edit.form', $request->rla_id);
+				}            
+
+			}else{
+				Session::flash('error_msg', 'Exceeded maximum volume for the inputted seedtag (240 bags)');
+				return redirect()->route('coop.rla.edit.form', $request->rla_id);
+			}
+		}else{
 			$seed_volume = $seed_volume + $request->bags;
 			if($seed_volume <= 240){
 				//check seed grower profile
@@ -2113,7 +2205,7 @@ class CoopController extends Controller
 				Session::flash('error_msg', 'Exceeded maximum volume for the inputted seedtag (240 bags)');
 				return redirect()->route('coop.rla.edit.form', $request->rla_id);
 			}
-		// }
+		}
     }
 	
 	//01-06-2021

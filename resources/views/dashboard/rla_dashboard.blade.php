@@ -119,6 +119,60 @@
      <script src=" {{ asset('public/js/highcharts.js') }} "></script>
 <script>
     
+    function openDeleteModal($id){
+        $("<div>").html(`
+                        <span class="fw-700">Are you sure you want to delete this RLA?</span>
+                        `).dialog({
+                        title: "Confirm Deletion",
+                        modal: true,
+                        closeOnEscape: false,
+                        buttons: {
+                            Delete: function(){
+                                deleteRLA($id);
+                                $(this).dialog("close");
+                            },
+                            Cancel: function() {
+                                $(this).dialog("close");
+                            }
+                        },
+                        open: function(event, ui) {
+                            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                        }
+                    });
+    }
+
+    function deleteRLA($id) {
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('coop.rla.confirmDeleteRLA') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: $id
+            },
+            success: function(data) {
+                if(data == 1)
+                {
+                    $("<div>").html(`
+                        <span class="fw-700">RLA successfully deleted</span>
+                    `).dialog({
+                        title: "Notice",
+                        modal: true,
+                        closeOnEscape: false,
+                        buttons: {
+                            Close: function() {
+                                $(this).dialog("close");
+                                location.reload();
+                            }
+                        },
+                        open: function(event, ui) {
+                            $(".ui-dialog-titlebar-close", ui.dialog).hide();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
 
     function graph(){
         var accre = $("#cooperatives_rla").val();

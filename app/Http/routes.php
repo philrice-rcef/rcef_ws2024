@@ -277,6 +277,7 @@ Route::group(['middleware' => ['auth','logMw']], function() {
     Route::post('cooperatives/rla/edit/tbl', ['as' => 'coop.rla.edit_tbl', 'uses'=>'CoopController@coop_rla_edit_tbl']);
     Route::get('cooperatives/rla/edit/{id}', ['as' => 'coop.rla.edit.form', 'uses'=>'CoopController@coop_rla_edit_form']);
     Route::post('cooperatives/rla/edit/confirm', ['as' => 'coop.rla.confirm_edit', 'uses'=>'CoopController@confirm_edit_rla']);
+    Route::post('cooperatives/rla/confirmDeleteRLA', ['as' => 'coop.rla.confirmDeleteRLA', 'uses'=>'CoopController@confirmDeleteRLA']);
 	
 	Route::get('cooperatives/rla/bpi', ['as' => 'coop.rla.bpi', 'uses'=>'CoopController@coop_rla_bpi']);
     Route::post('cooperatives/rla/bpi/save_request', ['as' => 'coop.rla.bpi_save_request', 'uses'=>'CoopController@save_request_bpi']); 

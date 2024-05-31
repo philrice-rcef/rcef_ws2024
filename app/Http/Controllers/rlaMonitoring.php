@@ -450,7 +450,7 @@ class rlaMonitoring extends Controller
                             return '<a onclick="window.open('."'".'https://rcef-seed.philrice.gov.ph/rcef_'.substr($GLOBALS['season_prefix'], 0, -1).'/cooperatives/rla/edit/'.$row->id.''."'".')" class="btn btn-warning btn-md" > <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>';
                         }
                         else{
-                            return '<a onclick="window.open('."'".'https://rcef-seed.philrice.gov.ph/rcef_'.substr($GLOBALS['season_prefix'], 0, -1).'/cooperatives/rla/edit/'.$row->id.''."'".')" class="btn btn-warning btn-md" > <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a> <a onclick="" class="btn btn-danger btn-md"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>';
+                            return '<a onclick="window.open('."'".'https://rcef-seed.philrice.gov.ph/rcef_'.substr($GLOBALS['season_prefix'], 0, -1).'/cooperatives/rla/edit/'.$row->id.''."'".')" class="btn btn-warning btn-md" > <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a> <a onclick="openDeleteModal('.$row->id.')" class="btn btn-danger btn-md"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>';
                          }
 
 
