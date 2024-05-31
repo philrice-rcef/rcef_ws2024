@@ -1997,10 +1997,24 @@ class CoopController extends Controller
     }
 
     public function coop_rla_edit_form($id){
+        $hasDelivery = 0;
 		$rla_details = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_rla_details')->where('rlaId', $id)->first();
+        $checkifExceeds = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+            ->where("is_cancelled", 0)
+            ->where("coopAccreditation", $rla_details->coopAccreditation)
+            ->where("seedTag", $rla_details->labNo.'/'.$rla_details->lotNo)
+            ->sum("totalBagCount");
+
+        if($checkifExceeds >= $rla_details->noOfBags){
+            $hasDelivery = 1;
+        }
+        else{
+            $hasDelivery = 0;
+        }
         $coop_list = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->get();
         $variety_list = DB::table('seed_seed.seed_characteristics')->groupBy('variety')->get();
         return view('coop.rla.edit_form')
+            ->with('hasDelivery', $hasDelivery)
             ->with('rla_details', $rla_details)
             ->with('coop_list', $coop_list)
             ->with('variety_list', $variety_list);
@@ -2036,10 +2050,10 @@ class CoopController extends Controller
             ->where("is_cancelled", 0)
 			->get();
 			
-		if(count($delivery_data) > 0){
-			Session::flash('error_msg', 'The seed tag already has delivery data, this is no longer available for editting.');
-            return redirect()->route('coop.rla.edit.form', $request->rla_id);
-		}else{
+		// if(count($delivery_data) > 0){
+			// Session::flash('error_msg', 'The seed tag already has delivery data, this is no longer available for editting.');
+            // return redirect()->route('coop.rla.edit.form', $request->rla_id);
+		// }else{
 			$seed_volume = $seed_volume + $request->bags;
 			if($seed_volume <= 240){
 				//check seed grower profile
@@ -2099,7 +2113,7 @@ class CoopController extends Controller
 				Session::flash('error_msg', 'Exceeded maximum volume for the inputted seedtag (240 bags)');
 				return redirect()->route('coop.rla.edit.form', $request->rla_id);
 			}
-		}
+		// }
     }
 	
 	//01-06-2021
