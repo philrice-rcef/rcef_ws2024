@@ -2085,24 +2085,6 @@ class CoopController extends Controller
             // dd($delivery_data);
             $seed_volume = $seed_volume + $request->bags;
 			if($seed_volume <= 240){
-				//check seed grower profile
-				if($request->sg_name != ""){
-					$seed_grower_profile = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_seed_grower')->where('full_name', $request->sg_name)->first();
-					if(count($seed_grower_profile) > 0){
-						$sg_id = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_seed_grower')->where('full_name', $request->sg_name)->value('sg_id');
-					}else{
-						$sg_id = DB::connection('delivery_inspection_db')->table('tbl_seed_grower')->insertGetId([
-							'coop_accred' => $request->coop,
-							'is_active' => 1,
-							'is_block' => 0,
-							'fname' => '',
-							'mname' => '',
-							'lname' => '',
-							'extension' => '',
-							'full_name' => $request->sg_name
-						]);
-					}
-
 					$coop_name = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->where('accreditation_no', $request->coop)->value('coopName');
 					$coop_moa = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->where('accreditation_no', $request->coop)->value('current_moa');
 
@@ -2137,11 +2119,7 @@ class CoopController extends Controller
 
 					Session::flash('success', 'You have successfully updated an RLA');
 					return redirect()->route('coop.rla.edit');
-
-				}else{
-					Session::flash('error_msg', 'Please specify a seed grower');
-					return redirect()->route('coop.rla.edit.form', $request->rla_id);
-				}            
+         
 
 			}else{
 				Session::flash('error_msg', 'Exceeded maximum volume for the inputted seedtag (240 bags)');
