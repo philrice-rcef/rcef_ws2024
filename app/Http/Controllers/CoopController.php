@@ -2109,15 +2109,9 @@ class CoopController extends Controller
 					DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_rla_details')
 					->where('rlaId', $request->rla_id)
 					->update([
-						'coop_name' => $coop_name,
-						'coopAccreditation' => $request->coop,
-						'sg_id' => $sg_id,
-						'sg_name' => $request->sg_name,
 						'certificationDate' => $request->certification_date,
 						'labNo' => $request->lab_number,
 						'lotNo' => $request->lot_number,
-						'seedVariety' => $request->variety,
-						'moaNumber' => $coop_moa
 					]);
 
                     foreach($delivery_data as $delivery)
@@ -2125,11 +2119,7 @@ class CoopController extends Controller
                         DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
                         ->where('deliveryId', $delivery->deliveryId)
                         ->update([
-                            'coopAccreditation' => $request->coop,
-                            'sg_id' => $sg_id,
                             'seedTag' => $request->lab_number.'/'.$request->lot_number,
-                            'seedVariety' => $request->variety,
-                            'moa_number' => $coop_moa,
                             'date_updated' => Carbon::now()->format('Y-m-d H:i:s')
                         ]);
                     }

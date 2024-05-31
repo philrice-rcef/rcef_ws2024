@@ -58,24 +58,36 @@
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-2">Seed Cooperative:</label>
                             <div class="col-md-10 col-sm-10 col-xs-10">
-                                <select name="coop" id="coop" class="form-control" required>
-                                    <option value="0">Please select a seed cooperative</option>
+                                @if ($hasDelivery == 1)
                                     @foreach ($coop_list as $row)
                                         @if ($rla_details->coopAccreditation == $row->accreditation_no)
-                                            <option value="{{$row->accreditation_no}}" selected>{{$row->coopName}}</option>
-                                        @else
-                                            <option value="{{$row->accreditation_no}}">{{$row->coopName}}</option>
+                                        <div style="height: 3em; display: flex; align-items: center;">{{$row->coopName}}</div>
                                         @endif
                                     @endforeach
-                                </select>
+                                @else                                    
+                                    <select name="coop" id="coop" class="form-control" required>
+                                        <option value="0">Please select a seed cooperative</option>
+                                        @foreach ($coop_list as $row)
+                                            @if ($rla_details->coopAccreditation == $row->accreditation_no)
+                                                <option value="{{$row->accreditation_no}}" selected>{{$row->coopName}}</option>
+                                            @else
+                                                <option value="{{$row->accreditation_no}}">{{$row->coopName}}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-2">Seed Grower:</label>
                             <div class="col-md-10 col-sm-10 col-xs-10" required>
-                                <select name="sg_name" id="sg_name" class="form-control" required>
-                                    <option value="{{$rla_details->sg_name}}">{{$rla_details->sg_name}}</option>
-                                </select>
+                                @if ($hasDelivery == 1)
+                                    <div style="height: 3em; display: flex; align-items: center;">{{$rla_details->sg_name}}</div>
+                                @else
+                                    <select name="sg_name" id="sg_name" class="form-control" required>
+                                        <option value="{{$rla_details->sg_name}}">{{$rla_details->sg_name}}</option>
+                                    </select>
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">
@@ -99,23 +111,27 @@
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-2">Seed Variety:</label>
                             <div class="col-md-10 col-sm-10 col-xs-10">
-                                <select name="variety" id="variety" class="form-control" required>
-                                    <option value="0">Please select a seed variety</option>
-                                    @foreach ($variety_list as $row)
-                                        @if ($rla_details->seedVariety == $row->variety)
-                                            <option value="{{$row->variety}}" selected>{{$row->variety}}</option>
-                                        @else
-                                            <option value="{{$row->variety}}">{{$row->variety}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
+                                @if ($hasDelivery == 1)
+                                    <div style="height: 3em; display: flex; align-items: center;">{{$rla_details->seedVariety}}</div>
+                                @else
+                                    <select name="variety" id="variety" class="form-control" required>
+                                        <option value="0">Please select a seed variety</option>
+                                        @foreach ($variety_list as $row)
+                                            @if ($rla_details->seedVariety == $row->variety)
+                                                <option value="{{$row->variety}}" selected>{{$row->variety}}</option>
+                                            @else
+                                                <option value="{{$row->variety}}">{{$row->variety}}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-2"># of Bags:</label>
                             <div class="col-md-10 col-sm-10 col-xs-10">
                                 @if ($hasDelivery == 1)
-                                <input type="number" class="form-control" name="bags" id="bags" min="1" max="240" disabled value="{{$rla_details->noOfBags}}" required>
+                                <div style="height: 3em; display: flex; align-items: center;">{{$rla_details->noOfBags}}</div>
                                 @else
                                 <input type="number" class="form-control" name="bags" id="bags" min="1" max="240" value="{{$rla_details->noOfBags}}" required>
                                 @endif
