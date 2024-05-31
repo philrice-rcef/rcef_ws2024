@@ -67,7 +67,7 @@ class DashboardController extends Controller {
         //             ->first();
 
             
-        //      $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports_mirror" . '.lib_national_reports')
+        //      $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports" . '.lib_national_reports')
         //             ->select('*')
         //             ->first();
 
@@ -354,7 +354,7 @@ class DashboardController extends Controller {
                     ->first();
 
             
-            $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports_mirror" . '.lib_national_reports')
+            $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports" . '.lib_national_reports')
                     ->select('*')
                     ->first();
 
@@ -702,7 +702,7 @@ class DashboardController extends Controller {
                     ->first();
 
             
-             $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports_mirror" . '.lib_national_reports')
+             $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports" . '.lib_national_reports')
                     ->select('*')
                     ->first();
 
@@ -2164,7 +2164,7 @@ class DashboardController extends Controller {
             ));
 
         }else{
-            $confirmed_delivery = DB::connection("ds2024")->select( DB::raw("SELECT coopAccreditation,batchTicketNumber, region, province, municipality, dropOffPoint, SUM(totalBagCount) as expected_bags, deliveryDate  
+            $confirmed_delivery = DB::connection("ws2024")->select( DB::raw("SELECT coopAccreditation,batchTicketNumber, region, province, municipality, dropOffPoint, SUM(totalBagCount) as expected_bags, deliveryDate  
                 FROM ".$GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery WHERE region != '' 
                     AND DATE(deliveryDate) >= :week_start AND DATE(deliveryDate) <= :week_end AND region = :region_name AND isBuffer != '9'
                     GROUP BY batchTicketNumber ORDER BY deliveryDate DESC"), array(
@@ -2198,7 +2198,7 @@ class DashboardController extends Controller {
                 $coop_name = "N/A";
             }
 
-            $dr_number = DB::connection("ds2024")->table('tbl_inspection')
+            $dr_number = DB::connection("ws2024")->table('tbl_inspection')
             ->select('dr_number')
             ->where('batchTicketNumber', $row->batchTicketNumber)
             ->first();
@@ -2211,7 +2211,7 @@ class DashboardController extends Controller {
                 $hasDR = 'No';
             }
 
-            $paymentStatus = DB::connection("ds2024")->table('tbl_particulars')
+            $paymentStatus = DB::connection("ws2024")->table('tbl_particulars')
             ->select('paymentStatus')
             ->where('batchTicketNumber', $row->batchTicketNumber)
             ->first();
@@ -2236,7 +2236,7 @@ class DashboardController extends Controller {
                 $status_name = 'Cancelled';
             }
 
-            $hasParticulars = DB::connection("ds2024")->table('tbl_particulars')
+            $hasParticulars = DB::connection("ws2024")->table('tbl_particulars')
             ->select('particulars')
             ->where('batchTicketNumber', $row->batchTicketNumber)
             ->first();
@@ -2366,7 +2366,7 @@ class DashboardController extends Controller {
             ));
 
         }else{
-            $confirmed_delivery = DB::connection("ds2024")->select( DB::raw("SELECT deliveryId,tbl_delivery.region
+            $confirmed_delivery = DB::connection("ws2024")->select( DB::raw("SELECT deliveryId,tbl_delivery.region
                 FROM ".$GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery
                     JOIN ".$GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv ON ".$GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery.region = ".$GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv.regionName
                     WHERE tbl_delivery.region != '' AND DATE(tbl_delivery.deliveryDate) >= :week_start AND DATE(tbl_delivery.deliveryDate) <= :week_end 
@@ -2407,7 +2407,7 @@ class DashboardController extends Controller {
         $deliveryType = '';
         $batchTickets = $request->checkedVals;
         foreach($batchTickets as $batch){
-            $tbl_delivery_data = DB::connection('ds2024')->table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
+            $tbl_delivery_data = DB::connection('ws2024')->table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
             ->select(DB::raw('SUM(totalBagCount) as total_bags'), 'coopAccreditation','region', 'province', 'municipality', 'dropOffPoint','deliveryDate')
             ->where('batchTicketNumber', $batch)
             ->groupBy('batchTicketNumber')
@@ -2419,23 +2419,23 @@ class DashboardController extends Controller {
                 array_push($dateArray, date("m/d/Y", strtotime($tbl_delivery_data->deliveryDate)));
                 // array_push($dateArray, $tbl_delivery_data->deliveryDate);
 
-                $IAR = DB::connection('ds2024')->table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
+                $IAR = DB::connection('ws2024')->table($GLOBALS['season_prefix'].'rcep_delivery_inspection.iar_print_logs')
                 ->select('iarCode')
                 ->where('batchTicketNumber', $batch)
                 ->first();
                 array_push($iarArray, $IAR);
 
-                $dr_number = DB::connection("ds2024")->table('tbl_inspection')
+                $dr_number = DB::connection("ws2024")->table('tbl_inspection')
                 ->select('dr_number')
                 ->where('batchTicketNumber', $batch)
                 ->first();
 
-                $paymentStatus = DB::connection("ds2024")->table('tbl_particulars')
+                $paymentStatus = DB::connection("ws2024")->table('tbl_particulars')
                 ->select('paymentStatus')
                 ->where('batchTicketNumber', $batch)
                 ->first();
 
-                $deliveryTypes = DB::connection('ds2024')->table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
+                $deliveryTypes = DB::connection('ws2024')->table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
                 ->select('qrStart','qrEnd')
                 ->where('batchTicketNumber', $batch)
                 ->first();
@@ -2452,7 +2452,7 @@ class DashboardController extends Controller {
                     $deliveryType = 'Binhi e-Padala';
                 }
                     
-                DB::connection("ds2024")->table('tbl_particulars')
+                DB::connection("ws2024")->table('tbl_particulars')
                 ->insert([
                 'coopAccreditation' => $tbl_delivery_data->coopAccreditation,
                 'region' => $tbl_delivery_data->region,
@@ -2515,7 +2515,7 @@ class DashboardController extends Controller {
 
         foreach($sortedDates as $date){
             $DRs = [];
-            $dateDR = DB::connection("ds2024")->table('tbl_particulars')
+            $dateDR = DB::connection("ws2024")->table('tbl_particulars')
             ->select('deliveryReceipt', 'delivery_date')
             ->where('delivery_date', '=', $date)
             ->get();
@@ -2536,7 +2536,7 @@ class DashboardController extends Controller {
         $particulars = "Payment for ".number_format($sumTotalBags)." bags of CS for 2024DS to ".$tbl_delivery_data->province." as per DR# ".$outputDates." less 1% retention fee | Attached IAR #: ".$outputIAR;
 
         foreach($batchTickets as $batch){
-            DB::connection("ds2024")->table('tbl_particulars')
+            DB::connection("ws2024")->table('tbl_particulars')
                 ->where('batchTicketNumber','=',$batch)
                 ->update([
                 'particulars' => $particulars,
@@ -2548,7 +2548,7 @@ class DashboardController extends Controller {
     
 
     public function viewParticulars (Request $request){
-        $viewParticulars = DB::connection("ds2024")->table('tbl_particulars')
+        $viewParticulars = DB::connection("ws2024")->table('tbl_particulars')
             ->select('particulars')
             ->where('batchTicketNumber', $request->batch)
             ->first();
