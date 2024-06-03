@@ -29,7 +29,7 @@ class bmAPIController extends Controller
     public function unlinkExcelExport(){
 
         $documentRoot = $_SERVER['DOCUMENT_ROOT'];
-        $files = ["ms_2024-03-01_2024-05-22","ms_2024-03-01_2024-05-26","ms_2024-03-01_2024-05-31"];
+        $files = ["ms_2024-03-01_2024-05-22.xlsx","ms_2024-03-01_2024-05-26.xlsx","ms_2024-03-01_2024-05-31.xlsx"];
         foreach($files as $file)
         {
             $filePath = $documentRoot . '/rcef_ws2024/public/reports/excel_export/'.$file;
