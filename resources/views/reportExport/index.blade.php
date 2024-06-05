@@ -133,36 +133,39 @@
 
         
         <div class="main_table x_content form-horizontal form-label-left shadow-xl cp rounded">
-        
-            <div class="super_title">Available Excels for Download</div>
-            <div class="form-group cp">
-                            <div class="x_content form-horizontal form-label-left">
-                                        <table class="table table-hover table-striped table-bordered rounded" id="dataTBL">
-                                        
-                                            <thead>
-                                                
-                                                <th>Date Generated </th>
-                                                <th > Excel Name</th>
-                                                <th > Action</th>
-                                        
-                                            </thead>
-                                            <tbody id='databody' >
-                                                @foreach($files as $file)
-                                                    <tr>
-                                                        <td>{{$file["date_generated"]}}</td>
-                                                        <td>{{$file["file_name"]}}</td>
-                                                        <td>
-                                                            <button value='{{$file["file_name"]}}'  class="btn btn-success btn-sm download_file"> <i class="fa fa-cloud-download" aria-hidden="true"> Download File</i> </button>
+            
+                <div class="super_title">Available Excels for Download</div>
+                <div class="form-group cp">
+                                <div class="x_content form-horizontal form-label-left">
+                                            <table class="table table-hover table-striped table-bordered rounded" id="dataTBL">
+                                            
+                                                <thead>
+                                                    
+                                                    <th>Date Generated </th>
+                                                    <th > Excel Name</th>
+                                                    <th > Action</th>
+                                            
+                                                </thead>
+                                                <tbody id='databody' >
+                                                    
+                                                        <tr>
+                                                            <td></td>
+                                                            
+                                                            <td></td>
+                                                            
+                                                            <td>
+                                                                
+                                                                
 
-                                                        </td>
-                                                        
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                            </div>
-            </div>
+                                                            </td>
+                                                            
+                                                        </tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                </div>
+                </div>
     </div>
 </div>
    
@@ -174,10 +177,32 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-         $("#dataTBL").DataTable({
-            "order": [],
-            "pageLength": 10
-             });
+
+         window.onload = function () {
+            $("#dataTBL").DataTable().clear();
+            $("#dataTBL").DataTable({
+            bDestroy: true,
+            autoWidth: false,
+            searchHighlight: true,
+            processing: true,
+            serverSide: true,
+            orderMulti: true,
+            order: [],
+            ajax: {
+                url: "{{ route('ui.export.municipal.getFiles') }}",
+                dataType: "json",
+                type: "GET",
+                data: {
+                _token: "{{ csrf_token() }}",
+                },
+            },
+            columns: [
+                { data: "date_generated" },
+                { data: "file_name" },
+                { data: "action" },
+            ],
+            });
+        };
              
         $(".download_file").on("click", function(){
             var file_name = $(this).val();

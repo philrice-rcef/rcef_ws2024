@@ -329,8 +329,8 @@ public function exportMunicipalUI(){
 
 
   
-    return view("reportExport.index")
-        ->with("files", $return_array);
+    return view("reportExport.index");
+        // ->with("files", $return_array);
 }
 
 
@@ -3609,5 +3609,41 @@ $excel_array = array();
                 $sheet->freezeFirstRow();
             });
         })->download('xlsx');
+    }
+
+
+    public function getFiles(){
+
+        $publicDirectory = public_path("reports\\excel_export\\");
+        $return_array = array();
+        if (File::exists($publicDirectory)) {
+            $files = File::allFiles($publicDirectory);
+            
+            // Now $files contains an array of SplFileInfo objects representing the files in the directory.
+            // You can loop through them or process them as needed.
+    
+        
+            foreach ($files as $file) {
+                $filePath = $file->getPathname(); // Full path of the file
+                $fileName = $file->getFilename(); // Name of the file
+                $lastModifiedTimestamp = File::lastModified($filePath);
+                array_push($return_array, array(
+                    "file_name" => $fileName,
+                 
+                    "date_generated" => date("Y-m-d", $lastModifiedTimestamp)
+                ));
+            // dd($filePath,$fileName,$return_array);
+            }
+        }
+
+        $sortedData = collect($return_array);
+
+        // dd($sortedData);
+        return Datatables::of($sortedData)
+        ->addColumn('action', function($row){
+            return  '<a href="https://rcef-seed.philrice.gov.ph/rcef_'.str_replace('_','',$GLOBALS['season_prefix']).'/public/reports/excel_export/'.$row['file_name'].'" target="_blank" class="btn btn-success btn-sm download_file"> <i class="fa fa-cloud-download" aria-hidden="true"> Download File</i> </a>';            
+        })
+        ->make(true);
+
     }
 }

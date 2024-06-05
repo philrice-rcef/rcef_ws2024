@@ -1119,6 +1119,7 @@ Route::group(['middleware' => ['auth','logMw']], function() {
     Route::post('virtual_save_distribution_homeClaim', ['as' => 'virtual.save.distribution_homeClaim', 'uses' => 'virtual_encodingController@save_distribution_homeClaim']);
 
     Route::get('export/excel/ui', ['as' => 'ui.export.municipal', 'uses' => 'reportExportController@exportMunicipalUI']);
+    Route::get('export/excel/getFiles', ['as' => 'ui.export.municipal.getFiles', 'uses' => 'reportExportController@getFiles']);
 
     Route::get('ebinhi_claimant_checker', ['as' => 'ui.ebinhi.payment.checker', 'uses' => 'PaymayaPaymentController@ebinhi_claimant_checker']);
     Route::post('ebinhi_claimant_checker/upload', ['as' => 'ui.ebinhi.payment.upload', 'uses' => 'PaymayaPaymentController@ebinhi_claimant_checker_upload']);
