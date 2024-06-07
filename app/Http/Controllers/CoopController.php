@@ -457,7 +457,7 @@ class CoopController extends Controller
                 {
                     if($getActualDelivery->bags > $request->volume)
                     {
-                        return json_encode("Volume cannot be less than confirmed seeds"); 
+                        return json_encode("Volume cannot be less than ".$getActualDelivery->bags); 
                     }
                     else{
                         
