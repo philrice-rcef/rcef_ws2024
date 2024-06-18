@@ -536,6 +536,7 @@ class farmerFinderExtendedApi extends Controller{
                 ->first();
             }
 
+            
             $prv = $getPrv->prv_code;
             // $parsed_prv = explode('-',$row->rsbsa_control_no);
             // if(count($parsed_prv) == 1 || strlen($parsed_prv[0])>4)
