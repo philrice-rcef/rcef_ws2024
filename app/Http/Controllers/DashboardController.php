@@ -44,6 +44,13 @@ class DashboardController extends Controller {
         );
     }
 
+    public function pageClosed(){
+        $mss = "TEMPORARY CLOSED";
+
+        return view('utility.pageClosed')
+            ->with("mss", $mss);
+    }
+
     public function index() {
 
 		// if(Auth::user()->roles->first()->name == "da-icts"){

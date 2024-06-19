@@ -580,16 +580,16 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 								<li><a href="{{route('analytics.home')}}"> Analytics Summary</a></li>
 								<li><a href="{{route('yieldCount.home')}}"> Yield Report</a></li>
 								<li><a href="{{route('palaysikatan.dashboard.index')}}"> Palaysikatan Dashboard </a></li>
+								<li><a href="{{route('payment_dashboard.home')}}">Payment Dashboard</a></li>
+								<li><a href="{{route('coop.dashboard')}}">Coop Dashboard</a></li>
+								<li><a href="{{route('station_report.home')}}">Station Dashboard </a></li>
+								<li><a href="{{route('planting_calendar_index')}}">Seed Variety Performance Dashboard</a></li>
 								@endif
 								<li><a href="{{route('dashboard.gad.view')}}">GAD Dashboard</a></li>
-								<li><a href="{{route('payment_dashboard.home')}}">Payment Dashboard</a></li>
 								<li><a href="{{route('cssDashboard')}}">CSS Dashboard</a></li>
 								<li><a href="#" data-toggle="modal" data-target="#noticePage404">KP Kits/IEC Distribution</a></li>
 								<li><a href="#" data-toggle="modal" data-target="#noticePage404">RCEF KYC (MAP)</a></li>
 								<li><a href="{{url('/DeliveryDashboard')}}">Delivery Dashboard </a></li>
-								<li><a href="{{route('station_report.home')}}">Station Dashboard </a></li>
-								<li><a href="{{route('coop.dashboard')}}">Coop Dashboard</a></li>
-								<li><a href="{{route('planting_calendar_index')}}">Seed Variety Performance Dashboard</a></li>
 								<li><a href="{{route('KPDistribution_index')}}">KP-IEC Distribution Dashboard</a></li>
 								{{-- @if(Auth::user()->roles->first()->name == "rcef-programmer") --}}
 								{{-- @endif --}}
@@ -606,7 +606,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 										<li class="sub_menu"><a href="#" data-toggle="modal" data-target="#noticePage404">Payment Forms/Monitoring</a></li>
 									</ul>
 								</li>
-								@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "rm.capiroso")
+								@if(Auth::user()->roles->first()->name == "rcef-programmer")
 								<li><a style="display: flex; align-items: center; justify-content: space-between;"><span style="display: flex; align-items: center;">PalaySikatan</span><span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li class="sub_menu"><a href="#" data-toggle="modal" data-target="#noticePage404">Data Collection Form</a></li>
@@ -750,7 +750,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 							    @endif
 								
 								@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "rm.capiroso" || Auth::user()->username == "eb.cabanisas" || Auth::user()->username == "aa.alonzo" || Auth::user()->username == "jc.tizon" )
-									<li><a>Excel Export<span class="fa fa-chevron-down"></span></a>
+									<li><a>DRO Report<span class="fa fa-chevron-down"></span></a>
 										<ul class="nav child_menu">
 											<li class="sub_menu"><a href="{{route('ui.export.municipal')}}" >Municipal Statistics</a></li>
 											<li class="sub_menu"><a href="{{route('ui.export.provincial')}}" >Provincial Statistics</a></li>
@@ -855,7 +855,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 													 <li><a href="{{route('coop.rla.bpi')}}">ADD RLA </a></li> 
 												@endif
 												
-												@if(Auth::user()->roles->first()->name == "rcef-pmo" || Auth::user()->roles->first()->name == "rcef-programmer")
+												@if(Auth::user()->roles->first()->name == "rcef-programmer")
 													<li><a href="{{route('coop.rla.pmo')}}">Monitor RLA</a></li>
 													<li><a href="{{route('coop.rla.approve_home')}}">Approve RLA</a></li>
 												@endif
@@ -929,11 +929,11 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 
 										@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "rfp.esteban")
 											<li class="sub_menu"><a href="{{route('customExportUI')}}">Custom Export UI</a></li> 
+											<li><a href=" {{route('farmer.id.home')}} ">QR Code Generation </a></li>
 										@endif
 
-										<li><a href=" {{route('farmer.id.home')}} ">QR Code Generation </a></li>
 
-										@if(Auth::user()->roles->first()->name == "encoder_yield" || Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "rm.capiroso")
+										@if(Auth::user()->roles->first()->name == "rcef-programmer")
 											<li><a href="{{route('encoder.yield.home')}}">Yield Updating</a></li>
 										@endif
 										@if(Auth::user()->username == "r.benedicto_2")
@@ -1247,17 +1247,17 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 								<li><a href="{{route('analytics.home')}}"> Analytics Summary</a></li>
 								<li><a href="{{route('yieldCount.home')}}"> Yield Report</a></li>
 								<li><a href="{{route('palaysikatan.dashboard.index')}}"> Palaysikatan Dashboard </a></li>
+								<li><a href="{{route('payment_dashboard.home')}}">Payment Dashboard</a></li>
+								<li><a href="{{route('station_report.home')}}">Station Dashboard </a></li>
+								<li><a href="{{route('coop.dashboard')}}">Coop Dashboard</a></li>
+								<li><a href="{{route('planting_calendar_index')}}">Seed Variety Performance Dashboard</a></li>
 								@endif
 								<li><a href="{{route('dashboard.gad.view')}}">GAD Dashboard</a></li>
-								<li><a href="{{route('payment_dashboard.home')}}">Payment Dashboard</a></li>
 								<li><a href="{{route('preregDashboard')}}">Pre-registration Dashboard</a></li>
 								<li><a href="{{route('cssDashboard')}}">CSS Dashboard</a></li>
 								{{-- <li><a href="#" data-toggle="modal" data-target="#noticePage404">KP Kits/IEC Distribution</a></li> --}}
 								{{-- <li><a href="#" data-toggle="modal" data-target="#noticePage404">RCEF KYC (MAP)</a></li> --}}
 								<li><a href="{{url('/DeliveryDashboard')}}">Delivery Dashboard </a></li>
-								<li><a href="{{route('station_report.home')}}">Station Dashboard </a></li>
-								<li><a href="{{route('coop.dashboard')}}">Coop Dashboard</a></li>
-								<li><a href="{{route('planting_calendar_index')}}">Seed Variety Performance Dashboard</a></li>
 								<li><a href="{{route('KPDistribution_index')}}">KP-IEC Distribution Dashboard</a></li>
 								{{-- @if(Auth::user()->roles->first()->name == "rcef-programmer") --}}
 								{{-- @endif --}}
@@ -1289,7 +1289,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 									 <li><a href="{{route('coop.rla.bpi')}}">ADD RLA </a></li> 
 								@endif
 								
-								@if(Auth::user()->roles->first()->name == "rcef-pmo" || Auth::user()->roles->first()->name == "rcef-programmer")
+								@if(Auth::user()->roles->first()->name == "rcef-programmer")
 									<li><a href="{{route('coop.rla.pmo')}}">Monitor RLA</a></li>
 									<li><a href="{{route('coop.rla.approve_home')}}">Approve RLA</a></li>
 								@endif
@@ -1365,11 +1365,13 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 
 								
 								<li><a href="{{route('distribution.app.stocks_home')}}">Release Stocks</a></li>
-								<li><a href="{{route('distribution.app.stocks_seedType')}}">Change Seed Type</a></li>
 								<li><a href="{{route('released.data.index')}}"> Edit\Delete Distribution Data</a></li>
 								<li><a href="{{route('web.dop.maker.regular')}}">DOP Maker</a></li>	
-								<li><a href="{{route('pre_reg.view_farmer')}}"> Update Farmer Information</a></li>
 								<li><a href="{{route('stocks.monitoring.index')}}">Stocks Monitoring</a></li>
+								@if(Auth::user()->roles->first()->name == "rcef-programmer")
+								<li><a href="{{route('distribution.app.stocks_seedType')}}">Change Seed Type</a></li>
+								<li><a href="{{route('pre_reg.view_farmer')}}"> Update Farmer Information</a></li>
+								@endif
 							  @else
 								<li><a href="{{route('distribution.app.stocks_home_public')}}">Stocks Downloaded</a></li>
 								<li><a href="{{route('stocks.monitoring.index')}}">Stocks Monitoring</a></li>
@@ -1420,10 +1422,9 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 							   
 
 							   @if(Auth::user()->username == "bs.pungtilan" || Auth::user()->username == "rfp.esteban" || Auth::user()->username == "NUEVAECIJA_Jhoemar" || Auth::user()->username == "e.lopez" || Auth::user()->roles->first()->name == "rcef-programmer" )
-							   		<li><a href="{{route('paymaya.beneficiary.codes')}}">Beneficiary List with Codes</a></li>
 							   		@if(Auth::user()->roles->first()->name == "rcef-programmer")
 									{{-- <li class="sub_menu"><a href="{{route('upload.paymaya.process.index')}}" onclick="return confirm('Proceed Processing Paymaya Codes?')">Process Paymaya Codes</a></li>  --}}
-                            
+									<li><a href="{{route('paymaya.beneficiary.codes')}}">Beneficiary List with Codes</a></li>
 									<li><a href="#" data-toggle="modal" data-target="#paymaya_tags_modal">Excess QR Codes</a></li>
 									<li class="sub_menu"><a href="{{route('paymaya.municipalities.list')}}">Municipalities</a></li>
 									@endif
@@ -1506,9 +1507,9 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 								 <!-- <li><a href="{{route('rcef.inspection.buffer.designation')}}">Reports</a></li> -->
 							</ul>
 						</li>
+						<li><a href=" {{route('farmer.id.home')}} "><i class="fa fa-qrcode"></i> QR Code Generation </a></li>	
 						@endif
 
-						<li><a href=" {{route('farmer.id.home')}} "><i class="fa fa-qrcode"></i> QR Code Generation </a></li>	
 						
 						
 					
@@ -1554,7 +1555,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 						  </li>-->
 
 						 
-						 @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "rm.capiroso")
+						 @if(Auth::user()->roles->first()->name == "rcef-programmer")
 						  <li><a href="{{route('palaysikatan.farmers')}}"><i class="fa fa-list-alt"></i>Palaysikatan</a></li>
 
 						  <li><a><i class="fa fa-list-alt"></i>MOET APP<span class="fa fa-chevron-down"></span></a>
@@ -1569,7 +1570,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 						  
 						  @endif
 
-						  @if(Auth::user()->roles->first()->name == "encoder_yield" || Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "rm.capiroso")
+						  @if(Auth::user()->roles->first()->name == "rcef-programmer")
 							  	 <li><a href="{{route('encoder.yield.home')}}"><i class="fa fa-pencil-square-o"></i>Yield Updating</a></li>
 							  @endif
 						@if(Auth::user()->username == "r.benedicto_2")
@@ -1612,7 +1613,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 							    @endif
 								
 								@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->username == "rm.capiroso" || Auth::user()->username == "eb.cabanisas" || Auth::user()->username == "aa.alonzo" || Auth::user()->username == "jc.tizon" )
-									<li class="sub_menu"><a>Excel Export<span class="fa fa-chevron-down"></span></a>
+									<li class="sub_menu"><a>DRO Report<span class="fa fa-chevron-down"></span></a>
 										<ul class="nav child_menu">
 										  <li class="sub_menu"><a href="{{route('ui.export.municipal')}}" >Municipal Statistics</a></li>
 										  <li class="sub_menu"><a href="{{route('ui.export.provincial')}}" >Provincial Statistics</a></li>
@@ -1710,7 +1711,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 
 						
 
-			@if(Auth::user()->roles->first()->name != "sed-caller" && Auth::user()->roles->first()->name != "system-encoder" &&  Auth::user()->roles->first()->name != "sed-caller-manager" && Auth::user()->roles->first()->name != "it-sra")
+			@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "system-admin")
             {{-- <li><a href="{{route('distribution.replacement')}}"><i class="fa fa-stack-exchange"></i> Open for Replacement</a></li> --}}
 			<li><a><i class="fa fa-cogs"></i> Utility <span class="fa fa-chevron-down"></span></a>
 						<ul class="nav child_menu">

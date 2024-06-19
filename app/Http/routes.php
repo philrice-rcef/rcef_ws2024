@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth','logMw']], function() {
     Route::post('insp_monitoring/inspection_data', ['as' => 'inspector.excel.data', 'uses' => 'InspmonitoringController@inspection_data']);
 	
     Route::get('/', ['as' => 'dashboard.index', 'uses' => 'DashboardController@index'])->middleware('techno');
+    Route::get('/pageClosed', ['as' => 'pageClosed', 'uses' => 'DashboardController@pageClosed']);
     
     Route::get('upcoming_harvest_10days', ['as' => 'dashboard.upcoming_harvest_10days', 'uses' => 'DashboardController@upcoming_harvest_10days']);
     Route::get('upcoming_harvest_30days', ['as' => 'dashboard.upcoming_harvest_30days', 'uses' => 'DashboardController@upcoming_harvest_30days']);
