@@ -60,7 +60,7 @@
         <div class="col-md-4">
             <div class="x_panel">
                 <div class="x_title">
-                    <h2>Total confirmed delivery</h2>
+                    <h2>Total Delivery Declared by SGC/A</h2>
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content form-horizontal form-label-left">
@@ -144,10 +144,7 @@
                                         <div class="sub-count" id="">
                                           <i class="fa fa-cube">  e-Binhi: {{number_format($paymaya_bags)}} </i> </div>
                                     </div>
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id="">
-                                        <i class="fa fa-registered" aria-hidden="true"> pre-registered: {{number_format($pre_registered_data->total_bags)}} </i></div>
-                                    </div>
+                                
                                 </div>
                             </div>
 
@@ -181,17 +178,14 @@
                                 <div class="row ml-3">
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id="">
-                                         <i class="fa fa-cubes">    Conventional (Regular): {{number_format($distributed->total_farmers)}} </i> </div>
+                                         <i class="fa fa-cubes">    Regular: {{number_format($distributed->total_farmers)}} </i> </div>
                                     </div>
 
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id="">
                                           <i class="fa fa-cube">   e-Binhi: {{number_format($paymaya_beneficiaries)}} </i></div>
                                     </div>
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id="">
-                                        <i class="fa fa-registered" aria-hidden="true"> pre-registered: {{number_format($pre_registered_data->total_farmers)}} </i></div>
-                                    </div>
+
                                 </div>
                             </div>
 						</div>
@@ -215,16 +209,13 @@
                                 <div class="row ml-3">
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id="">
-                                           <i class="fa fa-cubes">  Conventional (Regular): {{number_format($distributed->total_male)}} </i> </div>
+                                           <i class="fa fa-cubes">  Regular: {{number_format($distributed->total_male)}} </i> </div>
                                     </div>
 
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id=""> <i class="fa fa-cube">  e-Binhi: - </i> </div>
                                     </div>
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id="">
-                                        <i class="fa fa-registered" aria-hidden="true"> pre-registered: {{number_format($pre_registered_data->total_male)}} </i></div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -248,15 +239,11 @@
                                 <div class="row ml-3">
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id="">
-                                           <i class="fa fa-cubes">  Conventional (Regular): {{number_format($distributed->total_female)}} </i> </div>
+                                           <i class="fa fa-cubes">  Regular: {{number_format($distributed->total_female)}} </i> </div>
                                     </div>
 
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id=""> <i class="fa fa-cube"> e-Binhi: - </i> </div>
-                                    </div>
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id="">
-                                        <i class="fa fa-registered" aria-hidden="true"> pre-registered: {{number_format($pre_registered_data->total_female)}} </i></div>
                                     </div>
                                 </div>
                             </div>
@@ -525,116 +512,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Participating seed cooperatives</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0">
-                        <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                            <div class="count"><i class="fa fa-building"></i> {{number_format($total_coops)}}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Participating seed growers</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0">
-                        <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                            <div class="count"><i class="fa fa-users"></i> {{number_format($total_seed_growers)}}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Total seed tags</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0">
-                        <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                            <div class="count"><i class="fa fa-tags"></i> {{number_format($total_seed_tags)}}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!--DELIVERY SUMMAR -->
-    <div class="row">
-        <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Target Setting</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <select class="form-control" id="region_select" name="region_select" style="margin-bottom:10px;">
-                        <option value="0">Please select a Region</option>
-                        @foreach ($regions as $r_row)
-                            <option value="{{$r_row->region}}">{{$r_row->region}}</option>
-                        @endforeach
-                    </select>
-
-                    <select class="form-control" id="province_select" name="province_select" style="margin-bottom:10px;">
-                        <option value="0">Please select a province</option>
-                    </select>
-
-                    <select class="form-control" id="month_select" name="month_select" style="margin-bottom:10px;">
-                        <option value="0">Please select a month</option>
-                    </select>
-
-                    <button class="btn btn-success form-control" id="generate_delivery_btn"><i class="fa fa-bar-chart-o"></i> GENERATE DELIVERY DATA</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Generated `Target Setting` data</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-bordered table-striped" id="delivery_summary_table">
-                            <thead>
-                                    <tr>
-                                        <!-- <th style="width:250px; !important; display: none">Dropoff Point</th>
-                                        <th style=" display: none">Expected (20kg/bag)</th>
-                                        <th style=" display: none">Accepted (20kg/bag)</th> -->
-                                        <th style="width:150px; !important">Region</th>
-                                        <th style="width:150px; !important">Province</th>
-                                        <th>Actual Delivery</th>
-                                        <th>Target Delivery</th>
-                                        <th>Percent Completion</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>                    
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <div id="show_region_sched" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg" style="width: 1300px; margin: auto; position: relative; top: 10%;">
