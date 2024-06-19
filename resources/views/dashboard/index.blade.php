@@ -101,6 +101,10 @@
                                     <div class="sub-count" id="">
                                         <i class="fa fa-cube">   e-Binhi: {{number_format($paymaya_delivery)}} </i> </div>
                                 </div>
+                                <div class="col-md-12 col-sm-4 col-xs-4">
+                                    <div class="sub-count" id="">
+                                        <i class="fa fa-mail-forward">   Buffer: {{number_format($buffer)}} </i> </div>
+                                </div>
                             </div>
                         </div>
 
