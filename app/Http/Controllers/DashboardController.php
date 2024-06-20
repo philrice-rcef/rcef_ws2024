@@ -627,13 +627,19 @@ class DashboardController extends Controller {
                 $load = 100;
             }
 
-            $buffer = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
-            ->where('isBuffer',1)
-            ->sum('totalBagCount');
+            // $buffer = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+            // ->where('isBuffer',1)
+            // ->sum('totalBagCount');
             
+            $buffer = $distributed->total_buffer;
 
-            // dd($buffer);
-    
+            $totalMaleFemale = $distributed->total_male + $distributed->total_female;
+
+            $malePercentage = ($distributed->total_male/$totalMaleFemale) * 100;
+            $femalePercentage = ($distributed->total_female/$totalMaleFemale) * 100;
+
+            $total_yield = 0;
+            // dd($malePercentage,$femalePercentage);
             $confirmed = json_decode(json_encode(array("total_bag_count"=> $distributed->total_coop_confirmed,"commitment" => $distributed->total_coop_commitments)),false);
 
 
@@ -658,6 +664,9 @@ class DashboardController extends Controller {
 				->with(compact('buffer'))
 				->with(compact('transferred'))
                 ->with(compact('transferred_2'))
+                ->with(compact('malePercentage'))
+                ->with(compact('femalePercentage'))
+                ->with(compact('total_yield'))
                 ->with("yield_data",$yield_data)
                 ->with("yield_data_all",$yield_data_all)
 				->with(compact('distributed'))

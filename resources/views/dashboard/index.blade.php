@@ -19,6 +19,23 @@
         .buttons #genFMIS{
             
         }
+
+        .tile_stats_count::before{
+            display: none;
+        }
+
+        .flex {
+            padding: 0.6em;
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 1em; 
+            grid-template-rows: 1fr;
+        }
+
+        .flex .item .x_panel {
+            height: 100%;
+            border-radius: 0.6em;
+        }
     </style>
 @endsection
 
@@ -38,7 +55,6 @@
         <div id="id-auth" style="display: none">{{Auth::user()->roles->first()->name}}</div>
 
 
-        <div class="col-md-12">
             {{-- <div class="col-md-2">
                 <div class="x_panel">
                     <div class="x_title">
@@ -56,117 +72,113 @@
             </div>
      --}}
 
-        
-        <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Total Delivery Declared by SGC/A</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0">
-                        <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                            <div class="count" ><i class="fa fa-check-square-o" style="margin-right:3px;" aria-hidden="true"></i>{{number_format($confirmed->total_bag_count)}}</div>
+        <!-- Start Flex -->
+        <div class="flex" style="">
+            <div class="item">
+                <div class="x_panel" >
+                    <div class="x_title">
+                        <h2>Total Delivery Declared by SGC/A</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content form-horizontal form-label-left">
+                        <div class="row tile_count" style="margin: 0">
+                            <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
+                                <div class="count" ><i class="fa fa-check-square-o" style="margin-right:3px;" aria-hidden="true"></i>{{number_format($confirmed->total_bag_count)}}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Total actual delivery (20kg/bags)</h2> 
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0;">
-                        <div class="col-md-7 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0; ">
-                            <div class="count"><i class="fa fa-truck"></i> {{number_format($actual->total_bag_count +  $transferred_2 )}}
-                            </div>
-                        </div>
-
-                        <div class="col-md-5 col-sm-12 col-xs-12" style="padding-bottom: 0;padding-left: 0;">
-                            <div class="row ml-3">
-                                <div class="col-md-12 col-sm-4 col-xs-4">
-                                    <div class="sub-count" id=""> <i class="fa fa-eye"> Inspected: {{number_format($actual->total_bag_count - $paymaya_delivery)}}</i>
-                                      </div>
-                                </div>
-                                <div class="col-md-12 col-sm-4 col-xs-4">
-                                    <div class="sub-count" id=""> <i class="fa fa-refresh">   Transferred (PS): {{number_format($transferred_2)}}</i>
-                                      </div>
-                                </div>
-
-                                <div class="col-md-12 col-sm-4 col-xs-4">
-                                    <div class="sub-count" id="">
-                                        <i class="fa fa-cube">   e-Binhi: {{number_format($paymaya_delivery)}} </i> </div>
-                                </div>
-                                <div class="col-md-12 col-sm-4 col-xs-4">
-                                    <div class="sub-count" id="">
-                                        <i class="fa fa-mail-forward">   Buffer: {{number_format($buffer)}} </i> </div>
-                                </div>
-                            </div>
-                        </div>
-
+            <div class="item">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Total actual delivery (20kg/bags)</h2> 
+                        <div class="clearfix"></div>
                     </div>
-                </div>
-            </div>
-        </div>
-		
-		@if($distributed != "N/A")
-			<div class="col-md-4">
-				<div class="x_panel">
-					<div class="x_title">
-                        @if(isset($distributed->date_generated))
-                        <h2>Distributed (20kg/bags) - as of <i> {{date( 'm/d/y', strtotime($distributed->date_generated))}}  </i></h2>
-                            @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "rcef-finance")
-                        <button onclick="refresh_national();" style="float:right; margin-bottom:0px;" class="btn btn-success btn-sm"> <i class="fa fa-refresh" aria-hidden="true" ></i> REFRESH DATA</button>
-                            @endif
-
-                        @else
-                        <h2>Distributed (20kg/bags)</h2>
-                        @endif
-
-
-						
-						<div class="clearfix"></div>
-					</div>
-					<div class="x_content form-horizontal form-label-left">
-						<div class="row tile_count" style="margin: 0">
-							<div class="col-md-7 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-								<div class="count"><i class="fa fa-check-circle"></i> {{number_format($distributed->total_bags + $paymaya_bags)}}</div>
-							</div>
+                    <div class="x_content form-horizontal form-label-left">
+                        <div class="row tile_count" style="margin: 0;">
+                            <div class="col-md-7 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0; ">
+                                <div class="count"><i class="fa fa-truck"></i> {{number_format($actual->total_bag_count +  $transferred_2 )}}
+                                </div>
+                            </div>
 
                             <div class="col-md-5 col-sm-12 col-xs-12" style="padding-bottom: 0;padding-left: 0;">
                                 <div class="row ml-3">
                                     <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id=""> <i class="fa fa-cubes"> Regular: {{number_format($distributed->total_bags)}}</i>
-                                         </div>
+                                        <div class="sub-count" id=""> <i class="fa fa-eye"> Inspected: {{number_format($actual->total_bag_count - $paymaya_delivery)}}</i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-4 col-xs-4">
+                                        <div class="sub-count" id=""> <i class="fa fa-refresh">   Transferred (PS): {{number_format($transferred_2)}}</i>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id="">
-                                          <i class="fa fa-cube">  e-Binhi: {{number_format($paymaya_bags)}} </i> </div>
+                                            <i class="fa fa-cube">   e-Binhi: {{number_format($paymaya_delivery)}} </i> </div>
                                     </div>
-                                
+                                    <div class="col-md-12 col-sm-4 col-xs-4">
+                                        <div class="sub-count" id="">
+                                            <i class="fa fa-mail-forward">   Buffer: {{number_format($buffer)}} </i> </div>
+                                    </div>
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            @if($distributed != "N/A")
+                <div class="item">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            @if(isset($distributed->date_generated))
+                            <h2>Distributed (20kg/bags) - as of <i> {{date( 'm/d/y', strtotime($distributed->date_generated))}}  </i></h2>
+                                @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "rcef-finance")
+                            <button onclick="refresh_national();" style="float:right; margin-bottom:0px;" class="btn btn-success btn-sm"> <i class="fa fa-refresh" aria-hidden="true" ></i> REFRESH DATA</button>
+                                @endif
 
-						</div>
-					</div>
-				</div>
-			</div>
+                            @else
+                            <h2>Distributed (20kg/bags)</h2>
+                            @endif
 
 
+                            
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content form-horizontal form-label-left">
+                            <div class="row tile_count" style="margin: 0">
+                                <div class="col-md-7 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
+                                    <div class="count"><i class="fa fa-check-circle"></i> {{number_format($distributed->total_bags + $paymaya_bags)}}</div>
+                                </div>
+
+                                <div class="col-md-5 col-sm-12 col-xs-12" style="padding-bottom: 0;padding-left: 0;">
+                                    <div class="row ml-3">
+                                        <div class="col-md-12 col-sm-4 col-xs-4">
+                                            <div class="sub-count" id=""> <i class="fa fa-cubes"> Regular: {{number_format($distributed->total_bags)}}</i>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 col-sm-4 col-xs-4">
+                                            <div class="sub-count" id="">
+                                            <i class="fa fa-cube">  e-Binhi: {{number_format($paymaya_bags)}} </i> </div>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
 
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- End Flex -->
 
-
-        </div>
-
-        <div class="col-md-12">
-			<div class="col-md-4">
+        <div class="flex" style="">
+			<div class="item">
 				<div class="x_panel">
 					<div class="x_title">
 						<h2>Total seed beneficiaries</h2>
@@ -197,71 +209,27 @@
 				</div>
 			</div>
 			
-            <div class="col-md-4">
+            <div class="item">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2>Total Male</h2>
+                        <h2>Total seed beneficiaries percentage by sex</h2>
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content form-horizontal form-label-left">
                         <div class="row tile_count" style="margin: 0">
-                            <div class="col-md-7 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                                <div class="count"><i class="fa fa-users"></i> {{number_format($distributed->total_male)}}</div>
+                            <div class="col-md-5 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
+                                <div class="count"><i class="fa fa-male"></i> {{number_format($malePercentage, 2)}}% </div>
                             </div>
-
-                            <div class="col-md-5 col-sm-12 col-xs-12" style="padding-bottom: 0;padding-left: 0;">
-                                <div class="row ml-3">
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id="">
-                                           <i class="fa fa-cubes">  Regular: {{number_format($distributed->total_male)}} </i> </div>
-                                    </div>
-
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id=""> <i class="fa fa-cube">  e-Binhi: - </i> </div>
-                                    </div>
-
-                                </div>
+                            
+                            <div class="col-md-5 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
+                                <div class="count"><i class="fa fa-female"></i> {{number_format($femalePercentage, 2)}}% </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>Total Female</h2>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_content form-horizontal form-label-left">
-                        <div class="row tile_count" style="margin: 0">
-                            <div class="col-md-7 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                                <div class="count"><i class="fa fa-users"></i> {{number_format($distributed->total_female)}}</div>
-                            </div>
-
-                            <div class="col-md-5 col-sm-12 col-xs-12" style="padding-bottom: 0;padding-left: 0;">
-                                <div class="row ml-3">
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id="">
-                                           <i class="fa fa-cubes">  Regular: {{number_format($distributed->total_female)}} </i> </div>
-                                    </div>
-
-                                    <div class="col-md-12 col-sm-4 col-xs-4">
-                                        <div class="sub-count" id=""> <i class="fa fa-cube"> e-Binhi: - </i> </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="col-md-12">
-
-			 <div class="col-md-4">
+            <div class="item">
 				<div class="x_panel">
 					<div class="x_title">
 						<h2>Estimated area planted (ha)</h2>
@@ -276,76 +244,104 @@
 					</div>
 				</div>
 			</div> 
-            
 
-            <div class="col-md-8">
-            <div class="x_panel">
-                <div class="x_title">
-                    <!-- <h2> Yield t/ha (42 Provinces)</h2> -->
-                    <h2>Percent Accomplishment vs Target (All Regions) as of February 2024</h2><br><br>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0">
-                         <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0; text-align: center;">
-                            <div class="count"><i class="fa fa-bar-chart"></i>
-                                <!-- {{number_format($yield_data->yield,2)}}
-                                 {{-- @if($distributed->yield_ws2021 <= 0) N/A @else {{$distributed->yield_ws2021}} @endif --}} -->
-                                 {{ $percentage }}% out of {{ $targetSum }}
-                                <button style="float:right; margin-bottom:0px;" id="exportData" class="btn btn-success btn-sm"> <i class="fa fa-download" aria-hidden="true" ></i> REGIONAL ACCOMPLISHMENTS</button>
-                                <!-- <form method="POST" enctype="multipart/form-data">
-                                           
-                                    <div class="input-group-append"> 
-                                        <button type="submit" class="btn btn-warning btn-xs pull-right" style="margin-top: 9px;margin-right: 10px;">Upload Data</button>
-                                        <input type="file" class="btn-xs pull-right" id="uploadData" name="file" style="margin-top: 9px;margin-right: 10px;"> 
-                                    </div>
-                                </form> -->
+        </div>
+
+        @if(Auth::user()->roles->first()->name == "rcef-programmer")
+        <div class="flex" style="">
+            <div class="item">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Total Yield</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content form-horizontal form-label-left">
+                        <div class="row tile_count" style="margin: 0">
+                            <div class="col-md-7 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
+                                <div class="count"><i class="fa fa-pagelines"></i> {{number_format($total_yield,2)}}</div>
                             </div>
+
+                            <div class="col-md-5 col-sm-12 col-xs-12" style="padding-bottom: 0;padding-left: 0;">
+                                <div class="row ml-3">
+                                    <div class="col-md-12 col-sm-4 col-xs-4">
+                                        <div class="sub-count" id="">
+                                           <i class="fa fa-leaf">  42 Provinces: - </i> </div>
+                                    </div>
+
+                                    <div class="col-md-12 col-sm-4 col-xs-4">
+                                        <div class="sub-count" id=""> <i class="fa fa-leaf"> 15 Provinces: - </i> </div>
+                                    </div>
+                                    
+                                    <div class="col-md-12 col-sm-4 col-xs-4">
+                                        <div class="sub-count" id=""> <i class="fa fa-leaf"> 20 Provinces: - </i> </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+			 <div class="item">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>Average Landholding</h2>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content form-horizontal form-label-left">
+						<div class="row tile_count" style="margin: 0">
+							<div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
+								<div class="count"><i class="fa fa-group"></i></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> 
+			 <div class="item">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>CSS</h2>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content form-horizontal form-label-left">
+						<div class="row tile_count" style="margin: 0">
+							<div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
+								<div class="count"><i class="fa fa-edit"></i></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> 
+        </div>
+        @endif
+
+        <div class="col-md-12" >
+        <div class="x_panel" style="border-radius: 0.6em;">
+            <div class="x_title">
+                <!-- <h2> Yield t/ha (42 Provinces)</h2> -->
+                <h2>Percent Accomplishment vs Target (All Regions) as of February 2024</h2><br><br>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content form-horizontal form-label-left">
+                <div class="row tile_count" style="margin: 0">
+                     <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0; text-align: center;">
+                        <div class="count"><i class="fa fa-bar-chart"></i>
+                            <!-- {{number_format($yield_data->yield,2)}}
+                             {{-- @if($distributed->yield_ws2021 <= 0) N/A @else {{$distributed->yield_ws2021}} @endif --}} -->
+                             {{ $percentage }}% out of {{ $targetSum }}
+                            <button style="float:right; margin-bottom:0px;" id="exportData" class="btn btn-success btn-sm"> <i class="fa fa-download" aria-hidden="true" ></i> REGIONAL ACCOMPLISHMENTS</button>
+                            <!-- <form method="POST" enctype="multipart/form-data">
+                                       
+                                <div class="input-group-append"> 
+                                    <button type="submit" class="btn btn-warning btn-xs pull-right" style="margin-top: 9px;margin-right: 10px;">Upload Data</button>
+                                    <input type="file" class="btn-xs pull-right" id="uploadData" name="file" style="margin-top: 9px;margin-right: 10px;"> 
+                                </div>
+                            </form> -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-            <!-- <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2> Yield t/ha (42 Provinces)</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0">
-                      
-                         <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                            <div class="count"><i class="fa fa-bar-chart"></i>
-                                {{number_format($yield_data->yield,2)}}
-                                 {{-- @if($distributed->yield_ws2021 <= 0) N/A @else {{$distributed->yield_ws2021}} @endif --}}
-                                 </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Yield t/ha (All Provinces)</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content form-horizontal form-label-left">
-                    <div class="row tile_count" style="margin: 0">
-                         <div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count" style="padding-bottom: 0;padding-left: 0;">
-                            <div class="count"><i class="fa fa-bar-chart"></i> 
-                                {{number_format($yield_data_all->yield,2)}}
-                                {{-- @if($distributed->yield <= 0) N/A @else {{$distributed->yield}} @endif --}}
-                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
     </div>
 		@else
 			<div class="col-md-4">
@@ -476,8 +472,8 @@
 		
 		
     <div class="row">
-        <div class="col-md-12">
-            <div class="x_panel">
+        <div class="col-md-12" style="padding: 0 1.6em;">
+            <div class="x_panel" style="border-radius: 0.6em;">
                 <div class="x_title">
                     <h2 style="margin-top: 10px;">Delivery Schedule</h2>
                     <div class="input-group pull-right" style="width: 500px;">
