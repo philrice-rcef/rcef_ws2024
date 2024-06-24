@@ -640,7 +640,7 @@ class DashboardController extends Controller {
 
             $total_yield = 0;
             // dd($malePercentage,$femalePercentage);
-            $confirmed = json_decode(json_encode(array("total_bag_count"=> $distributed->total_coop_confirmed,"commitment" => $distributed->total_coop_commitments)),false);
+            $confirmed = json_decode(json_encode(array("total_bag_count"=> $distributed->total_coop_confirmed,"total_bag_count_RCEF"=> $distributed->total_coop_confirmed_RCEF,"total_bag_count_NRP"=> $distributed->total_coop_confirmed_NRP,"commitment" => $distributed->total_coop_commitments)),false);
 
 
 
@@ -657,6 +657,8 @@ class DashboardController extends Controller {
                             $pre_registered_data->total_actual_area = 0;
                             $pre_registered_data->total_bags = 0;
 
+            $rcefDelivery = 0;
+            $nrpDelivery = 0;
             // dd($percentage);
             return view('dashboard.index')
 				->with(compact('confirmed'))
