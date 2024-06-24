@@ -494,7 +494,7 @@
         <div class="actual_content">
           <div class="headings" style="display: grid; grid-template-columns: 3fr 3fr 3fr 2fr; gap: 2rem;">
 
-            <div class="_card1 slideFromRight" style="opacity: 0; display: flex; gap: 1.2em; background: rgba(143, 201, 255, 0.286); border-radius: 20px; padding: 0.4rem 1.2rem 0.4rem 0.4rem; overflow: hidden;">
+            <!-- <div class="_card1 slideFromRight" style="opacity: 0; display: flex; gap: 1.2em; background: rgba(143, 201, 255, 0.286); border-radius: 20px; padding: 0.4rem 1.2rem 0.4rem 0.4rem; overflow: hidden;">
               <div id="filterFetcherGenderBep" class="fetcher">
                 <div class="loadingDots"></div>
                 <div class="loadingDots"></div>
@@ -505,7 +505,7 @@
               </div>
               <div class="labels" style="gap: 0;display: flex; align-items: start; justify-content: space-between; flex-direction: column; overflow: hidden;">
                 <span style="font-size: 1.6rem; font-weight: 700;">Respondents</span>
-                <div style="font-size: 1.4rem; font-weight: 700;">{{$totalbep}} <span style="font-weight: 500; font-size: 1rem">Total Respondents</span></div>
+                <div style="font-size: 1.4rem; font-weight: 700;">{{$s_questions[0]['total_response']}} <span style="font-weight: 500; font-size: 1rem">Total Respondents</span></div>
                 <div style="font-size: 1.4rem; font-weight: 700;"><span id="femalePercBep">{{$femalePerc}}</span>% <span style="font-weight: 500; font-size: 1rem">Female</span></div>
                 <div style="font-size: 1.4rem; font-weight: 700;"><span id="malePercBep">{{$malePerc}}</span>% <span style="font-weight: 500; font-size: 1rem">Male</span></div>
               </div>
@@ -526,11 +526,11 @@
                 <div style="font-size: 1.4rem; font-weight: 700;"><span id="middle">0</span>% <span style="font-weight: 500; font-size: 1rem">30-59 y/o</span></div>
                 <div style="font-size: 1.4rem; font-weight: 700;"><span id="last">0</span>% <span style="font-weight: 500; font-size: 1rem">60+ y/o</span></div>
               </div>
-            </div>
+            </div> -->
             
             <div class="_card1 slideFromRight3" style="opacity: 0; display: flex; gap: 1.2em; background: rgba(112, 213, 137, 0.286); border-radius: 20px; padding: 0.4rem 1.2rem 0.4rem 0.4rem;">
               <div class="logo" style="aspect-ratio: 1; font-weight: 900; font-size: 3rem; display: flex; align-items: center; justify-content: center; background:rgba(0, 183, 89, 0.308); padding: 1em; border-radius: 20px;">
-                {{count($perc_questions)}}
+                {{count($survey_questions)}}
               </div>
               <div class="labels" style="gap: 0;display: flex; align-items: start; justify-content: center; flex-direction: column; overflow: hidden;">
                 <div style="font-size: 1.6rem; font-weight: 900;">Total Questions</div>
@@ -553,7 +553,7 @@
               <select id="munSelect" class="form-select" aria-label="municipalities" style="border-radius: 5px!important; font-size: 1.6rem; border: none;">
                 <option value="All">All Municipalities</option>
               </select>
-              <h2>with <span id="totalBep" style="font-weight: 700;">{{$totalbep}}</span> respondents</h2>
+              <h2>with <span id="totalBep" style="font-weight: 700;">{{$s_questions[0]['total_response']}}</span> respondents</h2>
             </div>
 
             <div class="div">
@@ -563,7 +563,7 @@
             </div>
             
           </div>
-          <div class="cards_questions shadow-inner" style="height: 55vh; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1em; overflow-y: auto; overflow-x: hidden; border-radius: 10px; padding: 1em;">
+          <div class="cards_questions shadow-inner" style="height: 55vh; display: grid; grid-template-columns: 1fr 1fr ; gap: 1em; overflow-y: auto; overflow-x: hidden; border-radius: 10px; padding: 1em;">
             
             <!-- <div class="_cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0;">
               <h5 style="margin: 1em 1em 0 1em; height: 4rem;"><strong>Gusto mo bang magpatuloy sa Binhi e-Padala na sistema ng pamimigay ng binhi?</strong></h5>
@@ -584,106 +584,203 @@
               </div>
             </div>
 
-          <div class="_cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0;">
-            <h5 style="margin: 1em 1em 0 1em; height: 4rem;"><strong>Nalaman ko ng mas maaga ang iskedyul dahil sa text.</strong></h5>
-            <hr>
-            <div class="percentages" style="display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
-              <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div>24%</div>
-                <span class="positive" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">agrees</span>
-              </div>
-              <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div>20%</div>
-                <span style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">neutral</span>
-              </div>
-              <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div>16%</div>
-                <span class="negative" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">disagrees</span>
-              </div>
-              <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div>36%</div>
-                <span style="font-size: 1.2rem;  background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+            <div class="_cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0;">
+              <h5 style="margin: 1em 1em 0 1em; height: 4rem;"><strong>Nalaman ko ng mas maaga ang iskedyul dahil sa text.</strong></h5>
+              <hr>
+              <div class="percentages" style="display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div>24%</div>
+                  <span class="positive" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">agrees</span>
+                </div>
+                <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div>20%</div>
+                  <span style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">neutral</span>
+                </div>
+                <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div>16%</div>
+                  <span class="negative" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">disagrees</span>
+                </div>
+                <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div>36%</div>
+                  <span style="font-size: 1.2rem;  background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="_cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0;">
-            <h5 style="margin: 1em 1em 0 1em; height: 4rem;"><strong>Gusto mo bang magpatuloy sa Binhi e-Padala na sistema ng pamimigay ng binhi?</strong></h5>
-            <hr>
-            <div class="percentages" style="display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
-              <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div>64%</div>
-                <span class="positive" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered YES</span>
+            <div class="_cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0;">
+              <h5 style="margin: 1em 1em 0 1em; height: 4rem;"><strong>Gusto mo bang magpatuloy sa Binhi e-Padala na sistema ng pamimigay ng binhi?</strong></h5>
+              <hr>
+              <div class="percentages" style="display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div>64%</div>
+                  <span class="positive" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered YES</span>
+                </div>
+                <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div>20%</div> 
+                  <span class="negative" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered NO</span>
+                </div>
+                <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div>16%</div>
+                  <span style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+                </div>
               </div>
-              <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div>20%</div> 
-                <span class="negative" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered NO</span>
-              </div>
-              <div style="font-size: 2.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div>16%</div>
-                <span style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
-              </div>
-            </div>
-          </div> -->
+            </div> -->
 
-          @foreach($perc_questions as $row)
-            @if($row['type'] == 'spec')
-              <a href="#container">
-                <div class="indiv_qs _cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
-                  <div class="question_cont" style="margin: 1em; color: black;">{{$row['qs']}}</div>
-                  <hr>
-                  <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_agree">{{$row['agree']}}%</div>
-                      <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">agrees</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_neutral">{{$row['neutral']}}%</div>
-                      <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">neutral</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_disagree">{{$row['disagree']}}%</div>
-                      <span class="negative line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">disagrees</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_none">{{$row['none']}}%</div>
-                      <span class="line-clamp-1" style="font-size: 1.2rem;  background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+            <!-- @foreach($perc_questions as $row)
+              @if($row['type'] == 'spec')
+                <a href="#container">
+                  <div class="indiv_qs _cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
+                    <div class="question_cont" style="margin: 1em; color: black;">{{$row['qs']}}</div>
+                    <hr>
+                    <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_agree">{{$row['agree']}}%</div>
+                        <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">agrees</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_neutral">{{$row['neutral']}}%</div>
+                        <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">neutral</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_disagree">{{$row['disagree']}}%</div>
+                        <span class="negative line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">disagrees</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_none">{{$row['none']}}%</div>
+                        <span class="line-clamp-1" style="font-size: 1.2rem;  background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
-            @else
-              <a href="#container">
-                <div class="indiv_qs _cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
-                  <div class="question_cont" style="margin: 1em; color: black">{{$row['qs']}}</div>
-                  <hr>
-                  <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_yes">{{$row['yes']}}%</div>
-                      <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered YES</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_no">{{$row['no']}}%</div> 
-                      <span class="negative line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered NO</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_maybe">{{$row['maybe']}}%</div>
-                      <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+                </a>
+              @else
+                <a href="#container">
+                  <div class="indiv_qs _cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
+                    <div class="question_cont" style="margin: 1em; color: black">{{$row['qs']}}</div>
+                    <hr>
+                    <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_yes">{{$row['yes']}}%</div>
+                        <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered YES</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_no">{{$row['no']}}%</div> 
+                        <span class="negative line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered NO</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_maybe">{{$row['maybe']}}%</div>
+                        <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
-            @endif
-          @endforeach
+                </a>
+              @endif
+            @endforeach -->
+          
+            @foreach($s_questions as $question)
+              @if($question['type'] == 'yesno')
+                <!-- <a href="#container"> -->
+                  <div class="indiv_qs _cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem;  border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$question['id']}}" data-qs="{{$question['question']}}">
+                    <div class="question_cont" style="margin: 1em; color: black;">{{$question['id']}}. {{ $question['question'] }}</div>
+                    <hr>
+                    <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                      @foreach($question['options'] as $loopIndex => $option)
+                        @php
+                            $backgroundColor = $loopIndex == 1 ? 'rgba(225, 114, 114, 0.184)' : 'rgba(63, 255, 63, 0.184)';
+                            $class = $loopIndex == 1 ? 'negative' : 'positive';
+                            $percentage = ($option['count']/$question['total_response'])* 100;
+                        @endphp
+                        <!-- <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <div id="{{$row['id']}}_agree"></div>
+                            <span class="{{ $class }} line-clamp-1" style="font-size: 2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
+                            <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 10px; position: relative;margin:1em;left: 0;">
+                              <span style="position: absolute; left: 50%; top: 150%; transform: translate(-50%, -50%); font-size: 1rem; font-weight: 700; color: #333;">
+                                  {{ $option['count'] }}/{{ $total_respoondents_conv }}
+                              </span>
+                            </div>
+                        </div> -->
+                        <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                              <div id="{{$question['id']}}_agree"></div>
+                              <span class="{{ $class }} line-clamp-1" style="font-size: 2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
+                              <div class="progress-bar-container" style="width: 100%; background: #f1f1f1; border-radius: 5px; margin-top: 0.5em; margin-left: 0.5em; position: relative; border: 2px solid {{ $backgroundColor }};">
+                                <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
+                                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
+                                {{ $option['count'] }} / {{ $question['total_response'] }}
+                                </span>
+                              </div>
+                              <!-- <div>{{number_format($percentage, 2)}}%</div> -->
+                          </div>
+                        <!-- <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                              <div id="{{$question['id']}}_agree"></div>
+                              <span class="{{ $class }} line-clamp-1" style="font-size: 2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
+                              <div class="progress-bar-container" style="width: 100%; background: #f1f1f1; border-radius: 10px; margin-top: 0.5em; position: relative;">
+                                  <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 1rem; border-radius: 10px; position: relative;">
+                                      <span style="position: absolute; left: 50%; top: 1.5rem; transform: translateX(-50%); font-size: 1rem; font-weight: 700; color: #333;">
+                                          {{ $option['count'] }}/{{ $total_respoondents_conv }}
+                                      </span>
+                                  </div>
+                              </div>
+                          </div> -->
+                      @endforeach
+                    </div>
+                  </div>
+                <!-- </a> -->
+              @else
+                <!-- <a href="#container"> -->
+                  <div class="indiv_qs _cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$question['id']}}" data-qs="{{$question['question']}}">
+                    <div class="question_cont" style="margin: 1em; color: black">{{$question['id']}}. {{$question['question']}}</div>
+                    <hr>
+                    <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                        @foreach($question['options'] as $loopIndex => $option)
+                          @php
+                            if ($loopIndex == 0) {
+                                $backgroundColor = 'rgba(63, 255, 63, 0.184)';
+                                $class = 'positive';
+                            } elseif ($loopIndex == 1) {
+                                $backgroundColor = 'rgba(16, 159, 64, 0.184)'; 
+                                $class = 'positive';
+                            } elseif ($loopIndex == 2) {
+                                $backgroundColor = 'rgba(225, 114, 114, 0.184)'; 
+                                $class = '';
+                            } elseif ($loopIndex == 3) {
+                                $backgroundColor = 'rgba(235, 75, 75, 0.184)'; 
+                                $class = 'negative';
+                            } elseif ($loopIndex == 4) {
+                                $backgroundColor = 'rgba(235, 75, 75, 0.184)'; 
+                                $class = 'negative';
+                            } else {
+                                $backgroundColor = 'rgba(182, 182, 182, 0.184)';
+                                $class = '';
+                            }
+
+                            
+                            $percentage = ($option['count']/$question['total_response'])* 100;
+                          @endphp
+                          <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                              <div id="{{$row['id']}}_agree"></div>
+                              <span class="{{ $class }} line-clamp-1" style="font-size: 1.2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
+                              <div class="progress-bar-container" style="width: 100%; background: #f1f1f1; border-radius: 5px; margin-top: 0.5em; margin-left: 0.5em; position: relative; border: 2px solid {{ $backgroundColor }};">
+                                <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
+                                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
+                                {{ $option['count'] }} / {{ $question['total_response'] }}
+                                </span>
+                              </div>
+                              <!-- <div>{{number_format($percentage, 2)}}%</div> -->
+                          </div>
+                        @endforeach
+                      </div>
+                  </div>
+                <!-- </a> -->
+              @endif
+            @endforeach
 
           </div>
-          <figure class="highcharts-figure mt-4 shadow-md" style="padding: 3rem 2rem; border-radius: 10px;">
+          <!-- <figure class="highcharts-figure mt-4 shadow-md" style="padding: 3rem 2rem; border-radius: 10px;">
             <div id="container" style="height: 35rem; position: relative;"></div>
             <p class="highcharts-description" style="font-size: 1.2rem; font-style: italic; margin-top: 1rem;">
                 *You may click one of the questions above to load their respective raw data.
                 *All of the data above are live. *You can refresh the page to see realtime updates.
             </p>
-          </figure>
+          </figure> -->
         </div>
     </div>
     <div class="section con_content slideFromRight">
@@ -691,7 +788,7 @@
         <div class="actual_content">
           <div class="headings" style="display: grid; grid-template-columns: 3fr 3fr 3fr 2fr; gap: 2rem;">
 
-            <div class="_card1 slideFromRight2" style="opacity: 0; display: flex; gap: 1.2em; background: rgba(143, 201, 255, 0.286); border-radius: 20px; padding: 0.4rem 1.2rem 0.4rem 0.4rem;">
+            <!-- <div class="_card1 slideFromRight2" style="opacity: 0; display: flex; gap: 1.2em; background: rgba(143, 201, 255, 0.286); border-radius: 20px; padding: 0.4rem 1.2rem 0.4rem 0.4rem;">
               <div class="logo" style="aspect-ratio: 1; font-size: 3rem; display: flex; align-items: center; justify-content: center; background:rgba(166, 150, 255, 0.308); padding: 1em; border-radius: 20px;">
                 <i class="fa fa-users" aria-hidden="true"></i>
               </div>
@@ -718,11 +815,11 @@
                 <div style="font-size: 1.4rem; font-weight: 700;"><span id="middle">0</span>% <span style="font-weight: 500; font-size: 1rem">30-59 y/o</span></div>
                 <div style="font-size: 1.4rem; font-weight: 700;"><span id="last">0</span>% <span style="font-weight: 500; font-size: 1rem">60+ y/o</span></div>
               </div>
-            </div>
+            </div> -->
             
             <div class="_card1 slideFromRight4  " style="opacity: 0; display: flex; gap: 1.2em; background: rgba(112, 213, 137, 0.286); border-radius: 20px; padding: 0.4rem 1.2rem 0.4rem 0.4rem;">
               <div class="logo" style="aspect-ratio: 1; font-weight: 900; font-size: 3rem; display: flex; align-items: center; justify-content: center; background:rgba(0, 183, 89, 0.308); padding: 1em; border-radius: 20px;">
-                {{count($perc_questions_conv)}}
+                {{count($survey_questions_con)}}
               </div>
               <div class="labels" style="gap: 0;display: flex; align-items: start; justify-content: center; flex-direction: column; overflow: hidden;">
                 <div style="font-size: 1.6rem; font-weight: 900;">Total Questions</div>
@@ -745,7 +842,7 @@
               <select id="munSelectConv" class="form-select" aria-label="municipalities" style="border-radius: 5px!important; font-size: 1.6rem; border: none;">
                 <option value="All">All Municipalities</option>
               </select>
-              <h2>with <span id="totalConv" style="font-weight: 700;">{{$totalconv}}</span> respondents</h2>
+              <h2>with <span id="totalConv" style="font-weight: 700;">{{$questions_con[0]['total_response']}}</span> respondents</h2>
             </div>
 
             <div class="div">
@@ -760,71 +857,120 @@
               Conventional has no data yet. Come back later, maybe?
             </div>
           </div> --}}
+          <!-- <div class="cards_questions shadow-inner" style="height: 55vh; display: grid; grid-template-columns: 1fr 1fr ; gap: 1em; overflow-y: auto; overflow-x: hidden; border-radius: 10px; padding: 1em;"> -->
+            <!-- @foreach($perc_questions_conv as $row)
+              @if($row['type'] == 'spec')
+                <a href="#containerConv">
+                  <div class="indiv_qs shadow-none convClick" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
+                    <div class="question_cont" style="margin: 1em; color: black;">{{$row['qs']}}</div>
+                    <hr>
+                    <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_yes_2">{{$row['yes_2']}}%</div>
+                        <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Strongly Agree</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_yes_1">{{$row['yes_1']}}%</div>
+                        <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(16, 159, 64, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Agree</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_neutral">{{$row['neutral']}}%</div>
+                        <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Neutral</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_no_1">{{$row['no_1']}}%</div>
+                        <span class="negative line-clamp-1" style="font-size: 1.2rem;  background: rgba(225, 114, 114, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Disagree</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_no_2">{{$row['no_2']}}%</div>
+                        <span class="negative line-clamp-1" style="font-size: 1.2rem;  background: rgba(235, 75, 75, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Strongly Disagree</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_none">{{$row['none']}}%</div>
+                        <span class="line-clamp-1" style="font-size: 1.2rem;  background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">None</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              @else
+                {{-- <a href="#container">
+                  <div class="indiv_qs _cardq shadow-none convClick" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
+                    <div class="question_cont" style="margin: 1em; color: black">{{$row['qs']}}</div>
+                    <hr>
+                    <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_yes">{{$row['yes']}}%</div>
+                        <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered YES</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_no">{{$row['no']}}%</div> 
+                        <span class="negative line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered NO</span>
+                      </div>
+                      <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="{{$row['id']}}_maybe">{{$row['maybe']}}%</div>
+                        <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
+                      </div>
+                    </div>
+                  </div>
+                </a> --}}
+              @endif
+            @endforeach -->
+            <!-- <div class="cards_questions shadow-inner" style="height: 55vh; display: grid; grid-template-columns: 1fr  ; gap: 1em; overflow-y: auto; overflow-x: hidden; border-radius: 10px; padding: 1em;"> -->
+              @foreach($questions_con as $row)
+                <!-- <a href="#containerConv"> -->
+                  <div class="indiv_qs shadow-none " style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$question['id']}}" data-qs="{{ $question['question'] }}">
+                    <div class="question_cont" style="margin: 1em; color: black;">{{$row['id']}}. {{ $row['question'] }}</div>
+                    <hr>
+                    <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
+                    @foreach($row['options'] as $loopIndex => $option)
+                        @php
+                          if ($loopIndex == 0) {
+                              $backgroundColor = 'rgba(63, 255, 63, 0.184)';
+                              $class = 'positive';
+                          } elseif ($loopIndex == 1) {
+                              $backgroundColor = 'rgba(16, 159, 64, 0.184)'; 
+                              $class = 'positive';
+                          } elseif ($loopIndex == 2) {
+                              $backgroundColor = 'rgba(225, 114, 114, 0.184)'; 
+                              $class = '';
+                          } elseif ($loopIndex == 3) {
+                              $backgroundColor = 'rgba(235, 75, 75, 0.184)'; 
+                              $class = 'negative';
+                          } elseif ($loopIndex == 4) {
+                              $backgroundColor = 'rgba(235, 75, 75, 0.184)'; 
+                              $class = 'negative';
+                          } else {
+                              $backgroundColor = 'rgba(182, 182, 182, 0.184)';
+                              $class = '';
+                          }
 
-          @foreach($perc_questions_conv as $row)
-            @if($row['type'] == 'spec')
-              <a href="#containerConv">
-                <div class="indiv_qs shadow-none convClick" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
-                  <div class="question_cont" style="margin: 1em; color: black;">{{$row['qs']}}</div>
-                  <hr>
-                  <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_yes_2">{{$row['yes_2']}}%</div>
-                      <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Strongly Agree</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_yes_1">{{$row['yes_1']}}%</div>
-                      <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(16, 159, 64, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Agree</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_neutral">{{$row['neutral']}}%</div>
-                      <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Neutral</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_no_1">{{$row['no_1']}}%</div>
-                      <span class="negative line-clamp-1" style="font-size: 1.2rem;  background: rgba(225, 114, 114, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Disagree</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_no_2">{{$row['no_2']}}%</div>
-                      <span class="negative line-clamp-1" style="font-size: 1.2rem;  background: rgba(235, 75, 75, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">Strongly Disagree</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_none">{{$row['none']}}%</div>
-                      <span class="line-clamp-1" style="font-size: 1.2rem;  background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">None</span>
+                          $percentage = ($option['count']/$row['total_response'])* 100;
+                        @endphp
+                        <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                              <div id="{{$row['id']}}_agree"></div>
+                              <span class="{{ $class }} line-clamp-1" style="font-size: 1.2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
+                              <div class="progress-bar-container" style="width: 100%; background: #f1f1f1; border-radius: 5px; margin-top: 0.5em; margin-left: 0.5em; position: relative; border: 2px solid {{ $backgroundColor }};">
+                                <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
+                                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
+                                {{ $option['count'] }} / {{ $row['total_response'] }}
+                                </span>
+                              </div>
+                              <!-- <div>{{number_format($percentage, 2)}}%</div> -->
+                          </div>
+                    @endforeach
+                    
                     </div>
                   </div>
-                </div>
-              </a>
-            @else
-              {{-- <a href="#container">
-                <div class="indiv_qs _cardq shadow-none convClick" style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$row['id']}}" data-qs="{{$row['qs']}}">
-                  <div class="question_cont" style="margin: 1em; color: black">{{$row['qs']}}</div>
-                  <hr>
-                  <div class="percentages" style="padding: 1rem; display: flex; gap: 1em; align-items: center; justify-content: space-evenly;">
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_yes">{{$row['yes']}}%</div>
-                      <span class="positive line-clamp-1" style="font-size: 1.2rem; background: rgba(63, 255, 63, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered YES</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_no">{{$row['no']}}%</div> 
-                      <span class="negative line-clamp-1" style="font-size: 1.2rem; background: rgba(255, 86, 86, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">answered NO</span>
-                    </div>
-                    <div style="font-size: 2rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                      <div id="{{$row['id']}}_maybe">{{$row['maybe']}}%</div>
-                      <span class="line-clamp-1" style="font-size: 1.2rem; background: rgba(182, 182, 182, 0.184); padding: 0.2em 0.4em; border-radius: 10px;">no answer</span>
-                    </div>
-                  </div>
-                </div>
-              </a> --}}
-            @endif
-          @endforeach
-          <figure class="highcharts-figure mt-4 shadow-md" style="padding: 3rem 2rem; border-radius: 10px;">
-            <div id="containerConv" style="height: 35rem; position: relative;"></div>
-            <p class="highcharts-description" style="font-size: 1.2rem; font-style: italic; margin-top: 1rem;">
-                *You may click one of the questions above to load their respective raw data.
-                *All of the data above are live. *You can refresh the page to see realtime updates.
-            </p>
-          </figure>
+                <!-- </a> -->
+              @endforeach
+            <!-- </div> -->
+            <!-- <figure class="highcharts-figure mt-4 shadow-md" style="padding: 3rem 2rem; border-radius: 10px;">
+              <div id="containerConv" style="height: 35rem; position: relative;"></div>
+              <p class="highcharts-description" style="font-size: 1.2rem; font-style: italic; margin-top: 1rem;">
+                  *You may click one of the questions above to load their respective raw data.
+                  *All of the data above are live. *You can refresh the page to see realtime updates.
+              </p>
+            </figure> -->
         </div>
       </div>
       <div class="section nrp_content slideFromRight">
