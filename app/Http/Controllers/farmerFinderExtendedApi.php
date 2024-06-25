@@ -527,10 +527,18 @@ class farmerFinderExtendedApi extends Controller{
             ->where('municipality','LIKE',$locationString[0])
             ->first();
             
-        
+            if(!$getPrv)
+            {
+                $getPrv = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+                ->where('regionName','LIKE',$locationString[0])
+                ->where('province','LIKE',$locationString[1])
+                ->where('municipality','LIKE',$locationString[2])
+                ->first();
+            }
+
+            
             $prv = $getPrv->prv_code;
             // $parsed_prv = explode('-',$row->rsbsa_control_no);
-
             // if(count($parsed_prv) == 1 || strlen($parsed_prv[0])>4)
             // {
             //     $prv = substr($parsed_prv[0], 0, 4);

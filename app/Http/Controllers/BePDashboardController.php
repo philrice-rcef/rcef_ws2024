@@ -133,7 +133,7 @@ class BePDashboardController extends Controller
             "area" => number_format($provTarget[0]->area,2),
             "actualBeneficiaries" =>number_format($provTgtBeneficiaries),
             "actualBags"=>number_format($provTgtBags),
-            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
+            "amount"=>"₱".(number_format($amount,2))." (₱".(number_format(($amount*.99),2)).")",
             "actualArea"=>number_format($provTgtArea,2)
             )); 
             }            
@@ -217,7 +217,7 @@ class BePDashboardController extends Controller
                 "area" => number_format($munTarget[0]->area,2),
                 "actualBeneficiaries" =>number_format($munTgtBeneficiaries[0]->beneficiaries),
                 "actualBags"=>number_format($munTgtBags[0]->bags),
-                "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
+                "amount"=>"₱".(number_format($amount,2))." (₱".(number_format(($amount*.99),2)).")",
                 "actualArea"=>number_format($munTgtArea2,2)
             )); 
         }
@@ -306,7 +306,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($munTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($munTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($munTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
+                            "amount"=>"₱".(number_format($amount,2))." (₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($munTgtArea2,2),
                             "selectedView" => $request->selectedView
                         ));
@@ -432,7 +432,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($munTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($munTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($munTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
+                            "amount"=>"₱".(number_format($amount,2))." (₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($actualArea,2),
                             "selectedView" => $request->selectedView
                         ));
@@ -545,7 +545,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($provTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($provTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($provTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
+                            "amount"=>"₱".(number_format($amount,2))." (₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($provTgtArea2,2)
                         )); 
                     }
@@ -671,7 +671,7 @@ class BePDashboardController extends Controller
                             "area" => number_format($provTarget[0]->area,2),
                             "actualBeneficiaries" =>number_format($provTgtBeneficiaries[0]->beneficiaries),
                             "actualBags"=>number_format($provTgtBags[0]->bags),
-                            "amount"=>"₱".(number_format($amount,2))."<br>(₱".(number_format(($amount*.99),2)).")",
+                            "amount"=>"₱".(number_format($amount,2))." (₱".(number_format(($amount*.99),2)).")",
                             "actualArea"=>number_format($actualArea,2)
                         )); 
                     // }

@@ -44,6 +44,13 @@ class DashboardController extends Controller {
         );
     }
 
+    public function pageClosed(){
+        $mss = "TEMPORARY CLOSED";
+
+        return view('utility.pageClosed')
+            ->with("mss", $mss);
+    }
+
     public function index() {
 
 		// if(Auth::user()->roles->first()->name == "da-icts"){
@@ -190,15 +197,15 @@ class DashboardController extends Controller {
         //         $distributed = "N/A";
         //     }
 
-        //     $regions = DB::connection("delivery_inspection_db")->table("tbl_delivery")
+        //     $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
         //         ->where('region', '!=', '')
         //         ->groupBy('region')
         //         ->orderBy('region')
         //         ->get();
             
-		// 	$total_coops =  DB::connection("delivery_inspection_db")->table("tbl_delivery")->groupBy('coopAccreditation')->get();
-        //     $total_seed_growers = DB::connection("delivery_inspection_db")->table("tbl_seed_grower")->get();
-        //     $total_seed_tags = DB::connection("delivery_inspection_db")->table("tbl_rla_details")->get();
+		// 	$total_coops =  DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")->groupBy('coopAccreditation')->get();
+        //     $total_seed_growers = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_seed_grower")->get();
+        //     $total_seed_tags = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_rla_details")->get();
             
      
             
@@ -527,15 +534,15 @@ class DashboardController extends Controller {
                 $distributed = "N/A";
             }
 
-            $regions = DB::connection("delivery_inspection_db")->table("tbl_delivery")
+            $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
                 ->where('region', '!=', '')
                 ->groupBy('region')
                 ->orderBy('region')
                 ->get();
             
-			$total_coops =  DB::connection("delivery_inspection_db")->table("tbl_delivery")->groupBy('coopAccreditation')->get();
-            $total_seed_growers = DB::connection("delivery_inspection_db")->table("tbl_seed_grower")->get();
-            $total_seed_tags = DB::connection("delivery_inspection_db")->table("tbl_rla_details")->get();
+			$total_coops =  DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")->groupBy('coopAccreditation')->get();
+            $total_seed_growers = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_seed_grower")->get();
+            $total_seed_tags = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_rla_details")->get();
             
      
             
@@ -620,8 +627,20 @@ class DashboardController extends Controller {
                 $load = 100;
             }
 
-    
-            $confirmed = json_decode(json_encode(array("total_bag_count"=> $distributed->total_coop_confirmed,"commitment" => $distributed->total_coop_commitments)),false);
+            // $buffer = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+            // ->where('isBuffer',1)
+            // ->sum('totalBagCount');
+            
+            $buffer = $distributed->total_buffer;
+
+            $totalMaleFemale = $distributed->total_male + $distributed->total_female;
+
+            $malePercentage = ($distributed->total_male/$totalMaleFemale) * 100;
+            $femalePercentage = ($distributed->total_female/$totalMaleFemale) * 100;
+
+            $total_yield = 0;
+            // dd($malePercentage,$femalePercentage);
+            $confirmed = json_decode(json_encode(array("total_bag_count"=> $distributed->total_coop_confirmed,"total_bag_count_RCEF"=> $distributed->total_coop_confirmed_RCEF,"total_bag_count_NRP"=> $distributed->total_coop_confirmed_NRP,"commitment" => $distributed->total_coop_commitments)),false);
 
 
 
@@ -638,12 +657,18 @@ class DashboardController extends Controller {
                             $pre_registered_data->total_actual_area = 0;
                             $pre_registered_data->total_bags = 0;
 
+            $rcefDelivery = 0;
+            $nrpDelivery = 0;
             // dd($percentage);
             return view('dashboard.index')
 				->with(compact('confirmed'))
 				->with(compact('actual'))
+				->with(compact('buffer'))
 				->with(compact('transferred'))
                 ->with(compact('transferred_2'))
+                ->with(compact('malePercentage'))
+                ->with(compact('femalePercentage'))
+                ->with(compact('total_yield'))
                 ->with("yield_data",$yield_data)
                 ->with("yield_data_all",$yield_data_all)
 				->with(compact('distributed'))
@@ -892,15 +917,15 @@ class DashboardController extends Controller {
                 $distributed = "N/A";
             }
 
-            $regions = DB::connection("delivery_inspection_db")->table("tbl_delivery")
+            $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
                 ->where('region', '!=', '')
                 ->groupBy('region')
                 ->orderBy('region')
                 ->get();
             
-			$total_coops =  DB::connection("delivery_inspection_db")->table("tbl_delivery")->groupBy('coopAccreditation')->get();
-            $total_seed_growers = DB::connection("delivery_inspection_db")->table("tbl_seed_grower")->get();
-            $total_seed_tags = DB::connection("delivery_inspection_db")->table("tbl_rla_details")->get();
+			$total_coops =  DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")->groupBy('coopAccreditation')->get();
+            $total_seed_growers = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_seed_grower")->get();
+            $total_seed_tags = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_rla_details")->get();
             
      
             
@@ -1020,7 +1045,7 @@ class DashboardController extends Controller {
 
 
 	public function show_delivery_summary(){
-        $regions = DB::connection("delivery_inspection_db")->table("tbl_delivery")
+        $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
                 ->where('region', '!=', '')
                 ->groupBy('region')
                 ->orderBy('region')

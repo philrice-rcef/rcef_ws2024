@@ -329,7 +329,7 @@ class Inspmonitoring extends Model {
                 ->select('dropOffPoint', 'prv_dropoff_id', 'prv')
                 ->where('province', $province)
                 ->where('municipality', $municipality)
-                ->where("is_cancelled", 0)
+                // ->where("is_cancelled", 0)
                 ->orderBy('dropOffPoint', 'asc')
                 ->groupBy("prv_dropoff_id")
                 ->get();

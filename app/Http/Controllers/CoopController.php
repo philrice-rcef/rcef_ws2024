@@ -428,94 +428,121 @@ class CoopController extends Controller
     }
 
     public function newUpdatedCommitment(Request $request){
+
+        // dd($request->all());
         
         $tbl_commitment = DB::connection('seed_coop_db')->table('tbl_commitment')
                 ->where("id", $request->id)
                 ->first();
                 
             if($tbl_commitment != null){
-                $tbl_regional = DB::connection('seed_coop_db')->table('tbl_commitment_regional')
-                    ->where('commitmentID', $request->id)
-                    ->where("coop_name", 'LIKE','%'.$request->commitment_coop.'%')
-                    ->where("region_name", $request->orig_region)
-                    ->first();
 
-                    
+                $getCoop = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')
+                ->where('coopId',$tbl_commitment->coopID)
+                ->pluck('accreditation_no');
 
+                $getDelivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
+                ->where('coopAccreditation',$getCoop)
+                ->where('seedVariety',$tbl_commitment->commitment_variety)
+                ->pluck('seedTag');
 
-                    if($tbl_regional != null){
-                        $coopId = $tbl_commitment->coopID;
-                        $region_from = $tbl_regional->region_name;
-                        $region_to =  $request->new_region;
-                        $seedvariety_from = $tbl_regional->seed_variety;
-                        $seedvariety_to = $request->variety;
-                        $volume_from = $tbl_regional->volume;
-                        $volume_to = $request->volume;
-                        $tbl_commitment_id = $tbl_commitment->id;
-                        $user_updated = Auth::user()->username;
-                        $date_created = date("Y-m-d H:i:s");
-                        
-
-                        $totals = DB::connection('seed_coop_db')->table('tbl_total_commitment')
-                            ->where("coopID", $request->coop_id)
-                            ->first();
-
-                            if($totals != null){
-                                    //UPDATE
-                                    DB::connection('seed_coop_db')->table('tbl_commitment')
-                                    ->where("id", $tbl_commitment->id)
-                                    ->update([
-                                        "commitment_variety" => $request->variety,
-                                        "commitment_value" => $request->volume
-                                    ]);
-
-                                    DB::connection('seed_coop_db')->table('tbl_commitment_regional')
-                                        ->where("id", $tbl_regional->id)
-                                        ->update([
-                                            "region_name" => $request->new_region,
-                                            "volume" => $request->volume,
-                                            "seed_variety" => $request->variety
-                                        ]);
-
-                                      $totals_variety = DB::connection('seed_coop_db')->table('tbl_commitment_regional')    
-                                            ->where("coop_Id", $request->coop_id)
-                                            ->sum("volume");
-
-                                            DB::connection('seed_coop_db')->table('tbl_total_commitment')
-                                               ->where("coopID", $request->coop_id)
-                                               ->update([
-                                                    "total_value" => $totals_variety
-                                               ]);
-                                    
-
-                                               DB::connection('seed_coop_db')->table("tbl_adjustment_logs")
-                                                ->insert([
-                                                    'coopId' => $coopId,
-                                                    'region_from' => $region_from,
-                                                    'region_to' => $region_to,
-                                                    'seedvariety_from' => $seedvariety_from,
-                                                    'seedvariety_to' => $seedvariety_to,
-                                                    'volume_from' => $volume_from,
-                                                    'volume_to' => $volume_to,
-                                                    'tbl_commitment_id' => $tbl_commitment_id,
-                                                    'user_updated' => $user_updated,
-                                                    'date_created' => $date_created
-                                                ]);
-                                               
-                                        return json_encode("Commitment Updated");
-
-                            }else{
-                                return json_encode("Tables not synced"); 
-                            }
-
-                    
-
-
-
-
-                    }else{
-                        return json_encode("Tables not synced");
+                $getActualDelivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
+                ->select(DB::raw("SUM(totalBagCount) as bags"))
+                ->whereIn('seedTag',$getDelivery)
+                ->where('seedVariety',$tbl_commitment->commitment_variety)
+                ->where('region',$request->orig_region)
+                ->first();
+                
+                if($getActualDelivery)
+                {
+                    if($getActualDelivery->bags > $request->volume)
+                    {
+                        return json_encode("Volume cannot be less than ".$getActualDelivery->bags); 
                     }
+                    else{
+                        
+                        $tbl_regional = DB::connection('seed_coop_db')->table('tbl_commitment_regional')
+                            ->where('commitmentID', $request->id)
+                            ->where("coop_name", 'LIKE','%'.$request->commitment_coop.'%')
+                            ->where("region_name", $request->orig_region)
+                            ->first();
+        
+        
+                            if($tbl_regional != null){
+                                $coopId = $tbl_commitment->coopID;
+                                $region_from = $tbl_regional->region_name;
+                                $region_to =  $request->new_region;
+                                $seedvariety_from = $tbl_regional->seed_variety;
+                                $seedvariety_to = $request->variety;
+                                $volume_from = $tbl_regional->volume;
+                                $volume_to = $request->volume;
+                                $tbl_commitment_id = $tbl_commitment->id;
+                                $user_updated = Auth::user()->username;
+                                $date_created = date("Y-m-d H:i:s");
+                                
+        
+                                $totals = DB::connection('seed_coop_db')->table('tbl_total_commitment')
+                                    ->where("coopID", $request->coop_id)
+                                    ->first();
+        
+                                    if($totals != null){
+                                            //UPDATE
+                                            DB::connection('seed_coop_db')->table('tbl_commitment')
+                                            ->where("id", $tbl_commitment->id)
+                                            ->update([
+                                                "commitment_variety" => $request->variety,
+                                                "commitment_value" => $request->volume
+                                            ]);
+        
+                                            DB::connection('seed_coop_db')->table('tbl_commitment_regional')
+                                                ->where("id", $tbl_regional->id)
+                                                ->update([
+                                                    "region_name" => $request->new_region,
+                                                    "volume" => $request->volume,
+                                                    "seed_variety" => $request->variety
+                                                ]);
+        
+                                            $totals_variety = DB::connection('seed_coop_db')->table('tbl_commitment_regional')    
+                                                    ->where("coop_Id", $request->coop_id)
+                                                    ->sum("volume");
+        
+                                                    DB::connection('seed_coop_db')->table('tbl_total_commitment')
+                                                    ->where("coopID", $request->coop_id)
+                                                    ->update([
+                                                            "total_value" => $totals_variety
+                                                    ]);
+                                            
+        
+                                                    DB::connection('seed_coop_db')->table("tbl_adjustment_logs")
+                                                        ->insert([
+                                                            'coopId' => $coopId,
+                                                            'region_from' => $region_from,
+                                                            'region_to' => $region_to,
+                                                            'seedvariety_from' => $seedvariety_from,
+                                                            'seedvariety_to' => $seedvariety_to,
+                                                            'volume_from' => $volume_from,
+                                                            'volume_to' => $volume_to,
+                                                            'tbl_commitment_id' => $tbl_commitment_id,
+                                                            'user_updated' => $user_updated,
+                                                            'date_created' => $date_created
+                                                        ]);
+                                                    
+                                                return json_encode("Commitment Updated");
+        
+                                    }else{
+                                        return json_encode("Tables not synced"); 
+                                    }
+        
+                            
+        
+        
+        
+        
+                            }else{
+                                return json_encode("Tables not synced");
+                            }
+                    }
+                }
 
             }else{
                 return json_encode("Tables not synced");
