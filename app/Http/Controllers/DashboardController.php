@@ -341,13 +341,13 @@ class DashboardController extends Controller {
 
 
         if(Auth::user()->roles->first()->name == "da-icts"){
-            $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection_mirror.tbl_delivery")
+            $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
                 ->where('region', '!=', '')
                 ->groupBy('region')
                 ->orderBy('region')
                 ->get();
 
-            $confirmed = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection_mirror.tbl_delivery")
+            $confirmed = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
                     ->select(\DB::RAW('SUM(totalBagCount) as total_bag_count'))
                     ->where('batchTicketNumber', 'NOT LIKE', '%void%')
                     ->where('dropOffPoint', 'NOT LIKE', '%void%')
@@ -355,7 +355,7 @@ class DashboardController extends Controller {
                     ->first();
 
             // Get total actual deliveries of dropoff point
-            $actual = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection_mirror.tbl_actual_delivery")
+            $actual = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
                     ->select(\DB::RAW('SUM(totalBagCount) as total_bag_count'))
                     ->where('batchTicketNumber',"!=","TRANSFER")
                     ->first();
@@ -366,7 +366,7 @@ class DashboardController extends Controller {
                     ->first();
 
 
-            $target = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection_mirror.tbl_delivery_sum")
+            $target = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery_sum")
                     ->selectRaw('SUM(targetVolume) as total_target_volume')
                     ->where('region', 'LIKE', $request->region)
                     ->where('province', 'LIKE', $request->province)
