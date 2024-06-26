@@ -9374,6 +9374,7 @@ class ReportController extends Controller
 
                 $accepted = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
                     ->whereIn("batchTicketNumber", $confirmed_batches)
+                    ->where("isRejected", 0)
                     ->sum("totalBagCount");
                     
 
@@ -9381,6 +9382,7 @@ class ReportController extends Controller
                     ->where("transferCategory", "T")
                     ->where("province", $request->province)
                     ->where("municipality", $municipality)
+                    ->where("isRejected", 0)
                     ->sum("totalBagCount");
                     
 
@@ -9391,6 +9393,7 @@ class ReportController extends Controller
                     ->where("transferCategory", "P") 
                     ->where("province", $request->province)
                     ->where("municipality", $municipality)
+                    ->where("isRejected", 0)
                     ->groupBy("batchTicketNumber")
                     ->get();
                 $transfered_batches2 = json_decode(json_encode($transfered_batches2),true);
@@ -9399,12 +9402,14 @@ class ReportController extends Controller
                 ->orWhereIn("remarks", $transfered_batches2)
                 ->where("province", $request->province)
                 ->where("municipality", $municipality)
+                ->where("isRejected", 0)
                 ->sum("totalBagCount");
 
                 $transfer = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
                     ->where("transferCategory", "P") 
                     ->where("province", $request->province)
                     ->where("municipality", $municipality)
+                    ->where("isRejected", 0)
                     ->sum("totalBagCount");
                 $transferred = $add_transferred + $transfer ;
 
