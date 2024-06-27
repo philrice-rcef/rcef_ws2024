@@ -1733,7 +1733,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 								</ul>
 							</li>
 
-						
+							@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "data-officer")
 							<li><a><i class=""></i> Monitoring <span class="fa fa-chevron-down"></span></a>
 								<ul class="nav child_menu">
 									<li class="sub_menu"><a href="{{route('pendingBatch.index')}}">Pending Deliveries</a></li> 
@@ -1741,6 +1741,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 									<li><a href="{{route('HistoryMonitoring.index')}}"> Transfer Data List </a></li>
 								</ul>
 							</li>
+							@endif
 							
 
 							{{-- @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "data-officer")
