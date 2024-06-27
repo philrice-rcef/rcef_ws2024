@@ -1711,7 +1711,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 
 						
 
-			@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "system-admin")
+			@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "system-admin"||Auth::user()->roles->first()->name == "data-officer")
             {{-- <li><a href="{{route('distribution.replacement')}}"><i class="fa fa-stack-exchange"></i> Open for Replacement</a></li> --}}
 			<li><a><i class="fa fa-cogs"></i> Utility <span class="fa fa-chevron-down"></span></a>
 						<ul class="nav child_menu">
