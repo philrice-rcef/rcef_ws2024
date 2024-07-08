@@ -79,7 +79,32 @@ class cssDashboardController extends Controller
 
         $total_respoondents = count($raw_results);
         $total_respoondents_conv = count($raw_results2);
-        
+        //Province
+        // $includedProvince = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+        //     ->select(DB::raw('LEFT(claim_code, 4) as prvCode'))
+        //     ->groupBy(DB::raw('LEFT(claim_code, 4)'))
+        //     ->get();
+        // $prvC = array();
+
+        // foreach($includedProvince as $row){
+        //     array_push($prvC, $row->prvCode);
+        // }
+        // $includedProvinceName = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+        //     ->select('prv_code', 'province')
+        //     ->whereIn('prv_code', $prvC)
+        //     ->groupBy('province')
+        //     ->get();
+            
+        // $provinces = array();
+        // foreach($includedProvinceName as $row){
+        //     // array_push($provinces, $row->province);
+        //     $provinces[] = [
+        //         // 'prv' => $row->prv,
+        //         'prvCode' => $row->prv_code,
+        //         'province' => $row->province,
+        //     ];
+        // }
+            // dd($provinces);
         //BEP
         $survey_questions = [];
         $survey_questions = DB::table('rcef_ionic_db.survey_questions')
@@ -107,7 +132,7 @@ class cssDashboardController extends Controller
             foreach ($options as $index => $item) {
                 $code = $item['code'];
                 $column = $question->q_id;
-                $counts = DB::table('ws2024_rcep_css.updated_bep_responses')
+                $counts = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
                         ->where($column, $code)
                         ->count();
                 $options[$index]["count"] = $counts;
@@ -1787,7 +1812,7 @@ class cssDashboardController extends Controller
         $municipality = $request->mun;
         $province_name = $request->prv;
         $municipality_name = $request->mun;
-
+        // dd($province);
         if ($province == "All") {
             $province = "%";
             $province_name = "ALL";
@@ -1820,10 +1845,27 @@ class cssDashboardController extends Controller
                 $code = $item['code'];
                 $display = $item['display'];
                 $column = $question->q_id;
-                $counts = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
-                    ->where($column, $code)
-                    ->where('claim_code', 'LIKE', $str_temp)
-                    ->count();
+                // $counts = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                //     ->where($column, $code)
+                //     ->where('claim_code', 'LIKE', $province.'%')
+                //     ->count();
+                    
+                if($municipality == "%"){
+                    $counts = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses as ubr')
+                        ->leftJoin('ws2024_rcep_paymaya.tbl_claim as tc', 'ubr.claim_code', '=', 'tc.paymaya_code')
+                        ->where('ubr.claim_code', 'LIKE', $province.'%')
+                        ->where('ubr.'.$column, $code)
+                        ->distinct('ubr.claim_code')
+                        ->count('ubr.claim_code');
+                } else {
+                    $counts = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses as ubr')
+                        ->leftJoin('ws2024_rcep_paymaya.tbl_claim as tc', 'ubr.claim_code', '=', 'tc.paymaya_code')
+                        ->where('tc.municipality', $municipality)
+                        ->where('ubr.claim_code', 'LIKE', $province.'%')
+                        ->where('ubr.'.$column, $code)
+                        ->distinct('ubr.claim_code')
+                        ->count('ubr.claim_code');
+                }
                 $options[$index]["count"] = $counts;
                 $total += $counts;
                 $option_counts[$display] = $counts;
@@ -2334,71 +2376,186 @@ class cssDashboardController extends Controller
     //         })->download('xlsx');
     // }
 
+    // public function getIncludedProvinces(){
+    //     $includedRegions = DB::table($GLOBALS['season_prefix'].'rcep_css.ebinhi_response')
+    //         ->select(DB::raw('LEFT(rcef_id, 4) as prvCode'))
+    //         ->groupBy(DB::raw('LEFT(rcef_id, 4)'))
+    //         ->get();
+    //     // dd($includedRegions);
+
+    //     $prvC = array();
+
+    //     foreach($includedRegions as $row){
+    //         array_push($prvC, $row->prvCode);
+    //     }
+
+    //     $includedRegionsName = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+    //         ->select('province')
+    //         ->whereIn('prv_code', $prvC)
+    //         ->groupBy('province')
+    //         ->get();
+
+    //     $provinces = array();
+    //     foreach($includedRegionsName as $row){
+    //         array_push($provinces, $row->province);
+    //     }
+
+    //     return $provinces;
+    // }
+    
     public function getIncludedProvinces(){
-        $includedRegions = DB::table($GLOBALS['season_prefix'].'rcep_css.ebinhi_response')
-            ->select(DB::raw('LEFT(rcef_id, 4) as prvCode'))
-            ->groupBy(DB::raw('LEFT(rcef_id, 4)'))
+        $includedRegions = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+            ->select(DB::raw('LEFT(claim_code, 4) as prvCode'))
+            ->groupBy(DB::raw('LEFT(claim_code, 4)'))
             ->get();
-        // dd($includedRegions);
 
         $prvC = array();
 
         foreach($includedRegions as $row){
             array_push($prvC, $row->prvCode);
         }
-
         $includedRegionsName = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
-            ->select('province')
+            ->select('prv_code', 'province')
             ->whereIn('prv_code', $prvC)
             ->groupBy('province')
             ->get();
-
         $provinces = array();
         foreach($includedRegionsName as $row){
-            array_push($provinces, $row->province);
+            $provinces[] = [
+                // 'prv' => $row->prv,
+                'prvCode' => $row->prv_code,
+                'province' => $row->province,
+            ];
         }
-
+        // dd($provinces);
         return $provinces;
+        // return response()->json($provinces);
     }
 
     public function getIncludedProvincesConv(){
-        $includedRegions = DB::table($GLOBALS['season_prefix'].'rcep_css.conv_response')
-            ->select(DB::raw('LEFT(rcef_id, 4) as prvCode'))
-            ->groupBy(DB::raw('LEFT(rcef_id, 4)'))
-            ->get();
-
-        $prvC = array();
-
-        foreach($includedRegions as $row){
-            array_push($prvC, $row->prvCode);
-        }
-
-        $includedRegionsName = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+        $includedRegions = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_conv_responses')
             ->select('province')
-            ->whereIn('prv_code', $prvC)
             ->groupBy('province')
             ->get();
 
+        // $prvC = array();
+
+        // foreach($includedRegions as $row){
+        //     array_push($prvC, $row->prvCode);
+        // }
+
+        // $includedRegionsName = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+        //     ->select('province')
+        //     ->whereIn('prv_code', $prvC)
+        //     ->groupBy('province')
+        //     ->get();
+
         $provinces = array();
-        foreach($includedRegionsName as $row){
+        foreach($includedRegions as $row){
             array_push($provinces, $row->province);
         }
 
         return $provinces;
     }
+    // public function getIncludedProvincesConv(){
+    //     $includedRegions = DB::table($GLOBALS['season_prefix'].'rcep_css.conv_response')
+    //         ->select(DB::raw('LEFT(rcef_id, 4) as prvCode'))
+    //         ->groupBy(DB::raw('LEFT(rcef_id, 4)'))
+    //         ->get();
 
+    //     $prvC = array();
+
+    //     foreach($includedRegions as $row){
+    //         array_push($prvC, $row->prvCode);
+    //     }
+
+    //     $includedRegionsName = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+    //         ->select('province')
+    //         ->whereIn('prv_code', $prvC)
+    //         ->groupBy('province')
+    //         ->get();
+
+    //     $provinces = array();
+    //     foreach($includedRegionsName as $row){
+    //         array_push($provinces, $row->province);
+    //     }
+
+    //     return $provinces;
+    // }
+
+    // public function getIncludedMunicipality(Request $request){
+    //     $province = $request->prv;
+        
+    //     $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_css.ebinhi_response')
+    //         ->select('municipality')
+    //         ->where('province', $province)
+    //         ->groupBy('municipality')
+    //         ->get();
+        
+    //     $muniArray = array();
+    //     foreach($includedMunicipalities as $row){
+    //         array_push($muniArray, $row->municipality);
+    //     }
+
+    //     return $muniArray;
+    // }
     public function getIncludedMunicipality(Request $request){
         $province = $request->prv;
+        // dd($province);
+        // $provinceCodes = explode(',', $request->prv); 
+        // dd($province);
+        // $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+        //     ->select('municipality')
+        //     ->where('province', $province)
+        //     ->groupBy('municipality')
+        //     ->get();
+        // if (!is_array($provinceCodes)) {
+        //     $provinceCodes = [$provinceCodes]; // Convert to array if it's not already
+        // }
         
-        $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_css.ebinhi_response')
-            ->select('municipality')
-            ->where('province', $province)
-            ->groupBy('municipality')
-            ->get();
-        
+        // $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+        //         ->select('prv','municipality','prv_code')
+        //         ->where('prv_code', $province)
+        //         // ->groupBy('province')
+        //         ->get();
+    
+            $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
+                            ->join($GLOBALS['season_prefix']."rcep_css.updated_bep_responses", $GLOBALS['season_prefix']."rcep_css.updated_bep_responses.claim_code", "=", $GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                            ->select($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.municipality')
+                            ->whereRaw("LEFT(paymaya_code, 4) = ?", [$province])
+                            ->distinct($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.municipality')
+                            ->get();
+
+        // $distinctRecords = DB::table('ws2024_rcep_paymaya.tbl_claim')
+        //     ->join('ws2024_rcep_css.updated_bep_responses', 'ws2024_rcep_css.updated_bep_responses.claim_code', '=', 'ws2024_rcep_paymaya.tbl_claim.paymaya_code')
+        //     ->select(DB::raw('DISTINCT ws2024_rcep_paymaya.tbl_claim.*, ws2024_rcep_css.updated_bep_responses.*'))
+        //     ->get();
+        // $prvValues = $includedMunicipalities->pluck('prv_code');
+        // dd($includedMunicipalities);
+
         $muniArray = array();
         foreach($includedMunicipalities as $row){
-            array_push($muniArray, $row->municipality);
+            // $temp = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+            //     ->select('*')
+            //     ->where("claim_code", "=", $row->paymaya_code)
+            //     ->get();
+
+            $muniCount = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                    ->whereRaw("LEFT(claim_code, 4) = ?", [$province])
+                    ->count();
+                    // dd($muniCount);
+            // $muniCount = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
+            // ->whereRaw("LEFT(paymaya_code, 4) = ?", [$row->prv_code])
+            // ->count();
+            // dd($row);
+            $mun_code  = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")->where("municipality", $row->municipality)->first();
+            
+            $muniArray[] = [
+                // 'prv' => $row->prv,
+                'municipality' => $row->municipality,
+                'count' => $muniCount,
+                'mun_code' => $mun_code->munCode,
+            ];
         }
 
         return $muniArray;
@@ -2407,23 +2564,48 @@ class cssDashboardController extends Controller
     public function getIncludedMunicipalityConv(Request $request){
         $province = $request->prv;
         
-        $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_css.conv_response')
-            ->select('municipality')
+        $muniCount = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_conv_responses')
+                    ->where('province', $province)
+                    ->count();
+        $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_conv_responses')
             ->where('province', $province)
             ->groupBy('municipality')
             ->get();
-        
         $muniArray = array();
         foreach($includedMunicipalities as $row){
-            array_push($muniArray, $row->municipality);
+            // array_push($muniArray, $row->municipality);
+            $muniArray[] = [
+                'municipality' => $row->municipality,
+                'count' => $muniCount,
+            ];
         }
 
         return $muniArray;
     }
+    // public function getIncludedMunicipalityConv(Request $request){
+    //     $province = $request->prv;
+        
+    //     $includedMunicipalities = DB::table($GLOBALS['season_prefix'].'rcep_css.conv_response')
+    //         ->select('municipality')
+    //         ->where('province', $province)
+    //         ->groupBy('municipality')
+    //         ->get();
+        
+    //     $muniArray = array();
+    //     foreach($includedMunicipalities as $row){
+    //         array_push($muniArray, $row->municipality);
+    //     }
+
+    //     return $muniArray;
+    // }
 
     public function filterLocation(Request $request){
         $province = $request->prv;
         $municipality = $request->mun;
+
+        // dd([
+        //     $province, $municipality
+        // ]);
 
         if($province == "All"){
             $province = "%";
@@ -2432,341 +2614,599 @@ class cssDashboardController extends Controller
         if($municipality == "All"){
             $municipality = "%";
         }
-
-        $raw_results = DB::table($GLOBALS['season_prefix'].'rcep_css.ebinhi_response')
-            ->where('province', 'LIKE', $province)
-            ->where('municipality', 'LIKE', $municipality)
+        
+        $survey_questions = [];
+        $survey_questions = DB::table('rcef_ionic_db.survey_questions')
+            ->select('survey_questions.body as question',
+                     'survey_questions.options_en', 
+                     'survey_questions.q_id', 
+                     'survey_questions.type')
+            ->where('mode', '=', 'bep')
+            ->where('type', '!=', 'input')
             ->get();
+            
+        $s_questions = [];
+        // $s_questions_count = 0;
+        foreach ($survey_questions as $question) {
+            preg_match('/(\d+)/', $question->q_id, $matches);
+            $id_number = isset($matches[1]) ? $matches[1] : null;
+            if (isset($question->options_en)) {
+                $options = json_decode($question->options_en, true); 
 
-        $total_respoondents = count($raw_results);
-        $q1 = array(
-            "id" => "q_1",
-            "qs" => "1. Gusto mo bang magpatuloy sa Binhi e-Padala na sistema ng pamimigay ng binhi?",
-            "type" => "bin",
-            "yes" => 0,
-            "no" => 0,
-            "maybe" => 0,
-        );
-        $q2 = array(
-            "id" => "q_2",
-            "qs" => "2. Nalaman ko ng mas maaga ang skedyul dahil sa text.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q3 = array(
-            "id" => "q_3",
-            "qs" => "3. Mas tugma sa oras ko ang iskedyul ng pamimigay ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q4 = array(
-            "id" => "q_4",
-            "qs" => "4. Mas malapit ang pinagkuhanan ko ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q5 = array(
-            "id" => "q_5",
-            "qs" => "5. Mas maikli na ang pila sa pagkuha ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q6 = array(
-            "id" => "q_6",
-            "qs" => "6. Mas mabilis ang pagkuha ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q7 = array(
-            "id" => "q_7",
-            "qs" => "7. Mas patas ang pamimigay ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q8 = array(
-            "id" => "q_8",
-            "qs" => "8. Mas nasunod ang tamang alokasyon ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q9 = array(
-            "id" => "q_9",
-            "qs" => "9. Mas lumaki ang tsansang makuha ang gusto kong variety ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q10 = array(
-            "id" => "q_10",
-            "qs" => "10. Mas panatag ang loob ko sa namimigay ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q11 = array(
-            "id" => "q_11",
-            "qs" => "11. Mas maayos ang sistema ng pamimigay ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q12 = array(
-            "id" => "q_12",
-            "qs" => "12. Mas mabuti ang kabuuang karanasan ko sa pamimigay ng binhi ngayon.",
-            "type" => "spec",
-            "agree" => 0,
-            "disagree" => 0,
-            "neutral" => 0,
-            "none" => 0,
-        );
-        $q15 = array(
-            "id" => "q_15",
-            "qs" => "14. Nakatanggap ka rin ba ng kalendaryo at leaflet ngayon galing sa RCEF?",
-            "type" => "bin",
-            "yes" => 0,
-            "no" => 0,
-            "maybe" => 0,
-        );
-
-        foreach($raw_results as $row){
-            if($row->q_1 == "oo"){
-                $q1["yes"]++;
-            }else if($row->q_1 == "hindi"){
-                $q1["no"]++;
-            }else{
-                $q1["maybe"]++;
+            } else {
+                $options = [];
             }
 
-            if($row->q_2 == "sang-ayon"){
-                $q2["agree"]++;
-            }else if($row->q_2 == "hindi_sang-ayon"){
-                $q2["disagree"]++;
-            }else if($row->q_2 == "walang_kinikilingan"){
-                $q2["neutral"]++;
-            }else{
-                $q2["none"]++;
-            }
+            $total = 0;
+            foreach ($options as $index => $item) {
+                $code = $item['code'];
+                $column = $question->q_id;
+                // $counts = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                //         ->where('claim_code', 'LIKE', $province.'%')
+                //         ->where('claim_code', 'LIKE', $municipality.'%')
+                //         ->where($column, $code)
+                //         ->count();
+                // $counts2 = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                //     ->join($GLOBALS['season_prefix']."rcep_paymaya.tbl_claim", $GLOBALS['season_prefix']."rcep_paymaya.tbl_claim.paymaya_code", "=", $GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.claim_code')
+                //     ->select($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.*')
+                //     ->where($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.municipality', 'LIKE', $municipality)
+                //     // ->distinct($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.municipality')
+                //     ->count();
 
-            if($row->q_3 == "sang-ayon"){
-                $q3["agree"]++;
-            }else if($row->q_3 == "hindi_sang-ayon"){
-                $q3["disagree"]++;
-            }else if($row->q_3 == "walang_kinikilingan"){
-                $q3["neutral"]++;
-            }else{
-                $q3["none"]++;
-            }
+                if($municipality == "%"){
+                    // $counts2 = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                    //         ->where('claim_code', 'LIKE', $province.'%')
+                    //         ->where('claim_code', 'LIKE', $municipality.'%')
+                    //         ->where($column, $code)
+                    //         ->count();
 
-            if($row->q_4 == "sang-ayon"){
-                $q4["agree"]++;
-            }else if($row->q_4 == "hindi_sang-ayon"){
-                $q4["disagree"]++;
-            }else if($row->q_4 == "walang_kinikilingan"){
-                $q4["neutral"]++;
-            }else{
-                $q4["none"]++;
+                    $prov_name = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+                        ->where('prv', 'like', $province.'%')
+                        ->first()->province;
+                    // $counts2 = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                    //     ->leftJoin($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim', $GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.claim_code', '=', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                    //     ->where($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.province', $prov_name)
+                    //     ->where($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.'.$column, $code)
+                    //     ->count();
+                    $counts2 = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses as ubr')
+                    ->leftJoin('ws2024_rcep_paymaya.tbl_claim as tc', 'ubr.claim_code', '=', 'tc.paymaya_code')
+                    // ->where('tc.municipality', $municipality)
+                    ->where('ubr.claim_code', 'LIKE', $province.'%')
+                    ->where('ubr.'.$column, $code)
+                    ->distinct('ubr.claim_code')
+                    ->count('ubr.claim_code');
+                } else {
+                    $prov_name = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+                        ->where('prv', 'like', $province.'%')
+                        ->where('municipality', $municipality)
+                        ->first()->province;
+                    // $counts2 = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                    //     ->leftJoin($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim', $GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.claim_code', '=', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                    //     ->where($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.municipality', $municipality)
+                    //     ->where($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.province', $prov_name)
+                    //     ->where($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.'.$column, $code)
+                    //     ->count();
+                    
+                    // $counts2 = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+                    //     ->leftJoin($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim', $GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.claim_code', '=', $GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.paymaya_code')
+                    //     ->where($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim.municipality', $municipality)
+                    //     ->where($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.claim_code', $prov_name)
+                    //     ->where($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.'.$column, $code)
+                    //     ->distinct($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses.claim_code')
+                    //     ->count();
+                    $counts2 = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses as ubr')
+                    ->leftJoin('ws2024_rcep_paymaya.tbl_claim as tc', 'ubr.claim_code', '=', 'tc.paymaya_code')
+                    ->where('tc.municipality', $municipality)
+                    ->where('ubr.claim_code', 'LIKE', $province.'%')
+                    ->where('ubr.'.$column, $code)
+                    ->distinct('ubr.claim_code')
+                    ->count('ubr.claim_code');
+                }
+                // dd($counts2);
+                $options[$index]["count"] = $counts2;
+                $total += $counts2;
             }
-
-            if($row->q_5 == "sang-ayon"){
-                $q5["agree"]++;
-            }else if($row->q_5 == "hindi_sang-ayon"){
-                $q5["disagree"]++;
-            }else if($row->q_5 == "walang_kinikilingan"){
-                $q5["neutral"]++;
-            }else{
-                $q5["none"]++;
-            }
-
-            if($row->q_6 == "sang-ayon"){
-                $q6["agree"]++;
-            }else if($row->q_6 == "hindi_sang-ayon"){
-                $q6["disagree"]++;
-            }else if($row->q_6 == "walang_kinikilingan"){
-                $q6["neutral"]++;
-            }else{
-                $q6["none"]++;
-            }
-
-            if($row->q_7 == "sang-ayon"){
-                $q7["agree"]++;
-            }else if($row->q_7 == "hindi_sang-ayon"){
-                $q7["disagree"]++;
-            }else if($row->q_7 == "walang_kinikilingan"){
-                $q7["neutral"]++;
-            }else{
-                $q7["none"]++;
-            }
-
-            if($row->q_8 == "sang-ayon"){
-                $q8["agree"]++;
-            }else if($row->q_8 == "hindi_sang-ayon"){
-                $q8["disagree"]++;
-            }else if($row->q_8 == "walang_kinikilingan"){
-                $q8["neutral"]++;
-            }else{
-                $q8["none"]++;
-            }
-
-            if($row->q_9 == "sang-ayon"){
-                $q9["agree"]++;
-            }else if($row->q_9 == "hindi_sang-ayon"){
-                $q9["disagree"]++;
-            }else if($row->q_9 == "walang_kinikilingan"){
-                $q9["neutral"]++;
-            }else{
-                $q9["none"]++;
-            }
-
-            if($row->q_10 == "sang-ayon"){
-                $q10["agree"]++;
-            }else if($row->q_10 == "hindi_sang-ayon"){
-                $q10["disagree"]++;
-            }else if($row->q_10 == "walang_kinikilingan"){
-                $q10["neutral"]++;
-            }else{
-                $q10["none"]++;
-            }
-
-            if($row->q_11 == "sang-ayon"){
-                $q11["agree"]++;
-            }else if($row->q_11 == "hindi_sang-ayon"){
-                $q11["disagree"]++;
-            }else if($row->q_11 == "walang_kinikilingan"){
-                $q11["neutral"]++;
-            }else{
-                $q11["none"]++;
-            }
-
-            if($row->q_12 == "sang-ayon"){
-                $q12["agree"]++;
-            }else if($row->q_12 == "hindi_sang-ayon"){
-                $q12["disagree"]++;
-            }else if($row->q_12 == "walang_kinikilingan"){
-                $q12["neutral"]++;
-            }else{
-                $q12["none"]++;
-            }
-
-            if($row->q_15 == "oo"){
-                $q15["yes"]++;
-            }else if($row->q_15 == "hindi"){
-                $q15["no"]++;
-            }else{
-                $q15["maybe"]++;
-            }
+            $s_questions[] = [
+                'id' => $id_number,
+                'q_id' => $question->q_id,
+                'question' => $question->question,
+                'options' => $options,
+                'type' => $question->type,
+                'total_response' => $total,
+            ];
+                    
         }
+        // dd($survey_questions);
+        // $raw_results = DB::table($GLOBALS['season_prefix'].'rcep_css.updated_bep_responses')
+        //     ->where('claim_code', 'LIKE', $province.'%')
+        //     // ->where('claim_code', 'LIKE', $municipality.'%')
+        //     ->get();
+        // $total_respoondents = count($raw_results);
+        // $perc_questions = array(
+        //     "total" => $total_respoondents,
+        // );
 
-        $q1["yes"] = number_format((($q1["yes"] / $total_respoondents) * 100), 2);
-        $q1["no"] = number_format((($q1["no"] / $total_respoondents) * 100), 2);
-        $q1["maybe"] = number_format((($q1["maybe"] / $total_respoondents) * 100), 2);
-        
-        $q2["agree"] = number_format((($q2["agree"] / $total_respoondents) * 100), 2);
-        $q2["disagree"] = number_format((($q2["disagree"] / $total_respoondents) * 100), 2);
-        $q2["neutral"] = number_format((($q2["neutral"] / $total_respoondents) * 100), 2);
-        $q2["none"] = number_format((($q2["none"] / $total_respoondents) * 100), 2);
-        
-        $q3["agree"] = number_format((($q3["agree"] / $total_respoondents) * 100), 2);
-        $q3["disagree"] = number_format((($q3["disagree"] / $total_respoondents) * 100), 2);
-        $q3["neutral"] = number_format((($q3["neutral"] / $total_respoondents) * 100), 2);
-        $q3["none"] = number_format((($q3["none"] / $total_respoondents) * 100), 2);
-        
-        $q4["agree"] = number_format((($q4["agree"] / $total_respoondents) * 100), 2);
-        $q4["disagree"] = number_format((($q4["disagree"] / $total_respoondents) * 100), 2);
-        $q4["neutral"] = number_format((($q4["neutral"] / $total_respoondents) * 100), 2);
-        $q4["none"] = number_format((($q4["none"] / $total_respoondents) * 100), 2);
-
-        $q5["agree"] = number_format((($q5["agree"] / $total_respoondents) * 100), 2);
-        $q5["disagree"] = number_format((($q5["disagree"] / $total_respoondents) * 100), 2);
-        $q5["neutral"] = number_format((($q5["neutral"] / $total_respoondents) * 100), 2);
-        $q5["none"] = number_format((($q5["none"] / $total_respoondents) * 100), 2);
-
-        $q6["agree"] = number_format((($q6["agree"] / $total_respoondents) * 100), 2);
-        $q6["disagree"] = number_format((($q6["disagree"] / $total_respoondents) * 100), 2);
-        $q6["neutral"] = number_format((($q6["neutral"] / $total_respoondents) * 100), 2);
-        $q6["none"] = number_format((($q6["none"] / $total_respoondents) * 100), 2);
-
-        $q7["agree"] = number_format((($q7["agree"] / $total_respoondents) * 100), 2);
-        $q7["disagree"] = number_format((($q7["disagree"] / $total_respoondents) * 100), 2);
-        $q7["neutral"] = number_format((($q7["neutral"] / $total_respoondents) * 100), 2);
-        $q7["none"] = number_format((($q7["none"] / $total_respoondents) * 100), 2);
-
-        $q8["agree"] = number_format((($q8["agree"] / $total_respoondents) * 100), 2);
-        $q8["disagree"] = number_format((($q8["disagree"] / $total_respoondents) * 100), 2);
-        $q8["neutral"] = number_format((($q8["neutral"] / $total_respoondents) * 100), 2);
-        $q8["none"] = number_format((($q8["none"] / $total_respoondents) * 100), 2);
-        
-        $q9["agree"] = number_format((($q9["agree"] / $total_respoondents) * 100), 2);
-        $q9["disagree"] = number_format((($q9["disagree"] / $total_respoondents) * 100), 2);
-        $q9["neutral"] = number_format((($q9["neutral"] / $total_respoondents) * 100), 2);
-        $q9["none"] = number_format((($q9["none"] / $total_respoondents) * 100), 2);
-        
-        $q10["agree"] = number_format((($q10["agree"] / $total_respoondents) * 100), 2);
-        $q10["disagree"] = number_format((($q10["disagree"] / $total_respoondents) * 100), 2);
-        $q10["neutral"] = number_format((($q10["neutral"] / $total_respoondents) * 100), 2);
-        $q10["none"] = number_format((($q10["none"] / $total_respoondents) * 100), 2);
-        
-        $q11["agree"] = number_format((($q11["agree"] / $total_respoondents) * 100), 2);
-        $q11["disagree"] = number_format((($q11["disagree"] / $total_respoondents) * 100), 2);
-        $q11["neutral"] = number_format((($q11["neutral"] / $total_respoondents) * 100), 2);
-        $q11["none"] = number_format((($q11["none"] / $total_respoondents) * 100), 2);
-        
-        $q12["agree"] = number_format((($q12["agree"] / $total_respoondents) * 100), 2);
-        $q12["disagree"] = number_format((($q12["disagree"] / $total_respoondents) * 100), 2);
-        $q12["neutral"] = number_format((($q12["neutral"] / $total_respoondents) * 100), 2);
-        $q12["none"] = number_format((($q12["none"] / $total_respoondents) * 100), 2);
-        
-        $q15["yes"] = number_format((($q15["yes"] / $total_respoondents) * 100), 2);
-        $q15["no"] = number_format((($q15["no"] / $total_respoondents) * 100), 2);
-        $q15["maybe"] = number_format((($q15["maybe"] / $total_respoondents) * 100), 2);
-        
-
-        $perc_questions = array(
-            "q1" => $q1,
-            "q2" => $q2,
-            "q3" => $q3,
-            "q4" => $q4,
-            "q5" => $q5,
-            "q6" => $q6,
-            "q7" => $q7,
-            "q8" => $q8,
-            "q9" => $q9,
-            "q10" => $q10,
-            "q11" => $q11,
-            "q12" => $q12,
-            "q15" => $q15,
-            "total" => $total_respoondents,
-        );
-
-        return $perc_questions;
+        return $s_questions;
+        // return view('cssDashboard.index2', compact(
+        // // return response()->json([
+        //     'survey_questions',
+        //     's_questions',
+        //     'options'
+        // ));
     }
+    // public function filterLocation(Request $request){
+    //     $province = $request->prv;
+    //     $municipality = $request->mun;
 
+    //     if($province == "All"){
+    //         $province = "%";
+    //     }
+
+    //     if($municipality == "All"){
+    //         $municipality = "%";
+    //     }
+
+    //     $raw_results = DB::table($GLOBALS['season_prefix'].'rcep_css.ebinhi_response')
+    //         ->where('province', 'LIKE', $province)
+    //         ->where('municipality', 'LIKE', $municipality)
+    //         ->get();
+
+    //     $total_respoondents = count($raw_results);
+    //     $q1 = array(
+    //         "id" => "q_1",
+    //         "qs" => "1. Gusto mo bang magpatuloy sa Binhi e-Padala na sistema ng pamimigay ng binhi?",
+    //         "type" => "bin",
+    //         "yes" => 0,
+    //         "no" => 0,
+    //         "maybe" => 0,
+    //     );
+    //     $q2 = array(
+    //         "id" => "q_2",
+    //         "qs" => "2. Nalaman ko ng mas maaga ang skedyul dahil sa text.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q3 = array(
+    //         "id" => "q_3",
+    //         "qs" => "3. Mas tugma sa oras ko ang iskedyul ng pamimigay ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q4 = array(
+    //         "id" => "q_4",
+    //         "qs" => "4. Mas malapit ang pinagkuhanan ko ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q5 = array(
+    //         "id" => "q_5",
+    //         "qs" => "5. Mas maikli na ang pila sa pagkuha ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q6 = array(
+    //         "id" => "q_6",
+    //         "qs" => "6. Mas mabilis ang pagkuha ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q7 = array(
+    //         "id" => "q_7",
+    //         "qs" => "7. Mas patas ang pamimigay ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q8 = array(
+    //         "id" => "q_8",
+    //         "qs" => "8. Mas nasunod ang tamang alokasyon ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q9 = array(
+    //         "id" => "q_9",
+    //         "qs" => "9. Mas lumaki ang tsansang makuha ang gusto kong variety ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q10 = array(
+    //         "id" => "q_10",
+    //         "qs" => "10. Mas panatag ang loob ko sa namimigay ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q11 = array(
+    //         "id" => "q_11",
+    //         "qs" => "11. Mas maayos ang sistema ng pamimigay ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q12 = array(
+    //         "id" => "q_12",
+    //         "qs" => "12. Mas mabuti ang kabuuang karanasan ko sa pamimigay ng binhi ngayon.",
+    //         "type" => "spec",
+    //         "agree" => 0,
+    //         "disagree" => 0,
+    //         "neutral" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q15 = array(
+    //         "id" => "q_15",
+    //         "qs" => "14. Nakatanggap ka rin ba ng kalendaryo at leaflet ngayon galing sa RCEF?",
+    //         "type" => "bin",
+    //         "yes" => 0,
+    //         "no" => 0,
+    //         "maybe" => 0,
+    //     );
+
+    //     foreach($raw_results as $row){
+    //         if($row->q_1 == "oo"){
+    //             $q1["yes"]++;
+    //         }else if($row->q_1 == "hindi"){
+    //             $q1["no"]++;
+    //         }else{
+    //             $q1["maybe"]++;
+    //         }
+
+    //         if($row->q_2 == "sang-ayon"){
+    //             $q2["agree"]++;
+    //         }else if($row->q_2 == "hindi_sang-ayon"){
+    //             $q2["disagree"]++;
+    //         }else if($row->q_2 == "walang_kinikilingan"){
+    //             $q2["neutral"]++;
+    //         }else{
+    //             $q2["none"]++;
+    //         }
+
+    //         if($row->q_3 == "sang-ayon"){
+    //             $q3["agree"]++;
+    //         }else if($row->q_3 == "hindi_sang-ayon"){
+    //             $q3["disagree"]++;
+    //         }else if($row->q_3 == "walang_kinikilingan"){
+    //             $q3["neutral"]++;
+    //         }else{
+    //             $q3["none"]++;
+    //         }
+
+    //         if($row->q_4 == "sang-ayon"){
+    //             $q4["agree"]++;
+    //         }else if($row->q_4 == "hindi_sang-ayon"){
+    //             $q4["disagree"]++;
+    //         }else if($row->q_4 == "walang_kinikilingan"){
+    //             $q4["neutral"]++;
+    //         }else{
+    //             $q4["none"]++;
+    //         }
+
+    //         if($row->q_5 == "sang-ayon"){
+    //             $q5["agree"]++;
+    //         }else if($row->q_5 == "hindi_sang-ayon"){
+    //             $q5["disagree"]++;
+    //         }else if($row->q_5 == "walang_kinikilingan"){
+    //             $q5["neutral"]++;
+    //         }else{
+    //             $q5["none"]++;
+    //         }
+
+    //         if($row->q_6 == "sang-ayon"){
+    //             $q6["agree"]++;
+    //         }else if($row->q_6 == "hindi_sang-ayon"){
+    //             $q6["disagree"]++;
+    //         }else if($row->q_6 == "walang_kinikilingan"){
+    //             $q6["neutral"]++;
+    //         }else{
+    //             $q6["none"]++;
+    //         }
+
+    //         if($row->q_7 == "sang-ayon"){
+    //             $q7["agree"]++;
+    //         }else if($row->q_7 == "hindi_sang-ayon"){
+    //             $q7["disagree"]++;
+    //         }else if($row->q_7 == "walang_kinikilingan"){
+    //             $q7["neutral"]++;
+    //         }else{
+    //             $q7["none"]++;
+    //         }
+
+    //         if($row->q_8 == "sang-ayon"){
+    //             $q8["agree"]++;
+    //         }else if($row->q_8 == "hindi_sang-ayon"){
+    //             $q8["disagree"]++;
+    //         }else if($row->q_8 == "walang_kinikilingan"){
+    //             $q8["neutral"]++;
+    //         }else{
+    //             $q8["none"]++;
+    //         }
+
+    //         if($row->q_9 == "sang-ayon"){
+    //             $q9["agree"]++;
+    //         }else if($row->q_9 == "hindi_sang-ayon"){
+    //             $q9["disagree"]++;
+    //         }else if($row->q_9 == "walang_kinikilingan"){
+    //             $q9["neutral"]++;
+    //         }else{
+    //             $q9["none"]++;
+    //         }
+
+    //         if($row->q_10 == "sang-ayon"){
+    //             $q10["agree"]++;
+    //         }else if($row->q_10 == "hindi_sang-ayon"){
+    //             $q10["disagree"]++;
+    //         }else if($row->q_10 == "walang_kinikilingan"){
+    //             $q10["neutral"]++;
+    //         }else{
+    //             $q10["none"]++;
+    //         }
+
+    //         if($row->q_11 == "sang-ayon"){
+    //             $q11["agree"]++;
+    //         }else if($row->q_11 == "hindi_sang-ayon"){
+    //             $q11["disagree"]++;
+    //         }else if($row->q_11 == "walang_kinikilingan"){
+    //             $q11["neutral"]++;
+    //         }else{
+    //             $q11["none"]++;
+    //         }
+
+    //         if($row->q_12 == "sang-ayon"){
+    //             $q12["agree"]++;
+    //         }else if($row->q_12 == "hindi_sang-ayon"){
+    //             $q12["disagree"]++;
+    //         }else if($row->q_12 == "walang_kinikilingan"){
+    //             $q12["neutral"]++;
+    //         }else{
+    //             $q12["none"]++;
+    //         }
+
+    //         if($row->q_15 == "oo"){
+    //             $q15["yes"]++;
+    //         }else if($row->q_15 == "hindi"){
+    //             $q15["no"]++;
+    //         }else{
+    //             $q15["maybe"]++;
+    //         }
+    //     }
+
+    //     $q1["yes"] = number_format((($q1["yes"] / $total_respoondents) * 100), 2);
+    //     $q1["no"] = number_format((($q1["no"] / $total_respoondents) * 100), 2);
+    //     $q1["maybe"] = number_format((($q1["maybe"] / $total_respoondents) * 100), 2);
+        
+    //     $q2["agree"] = number_format((($q2["agree"] / $total_respoondents) * 100), 2);
+    //     $q2["disagree"] = number_format((($q2["disagree"] / $total_respoondents) * 100), 2);
+    //     $q2["neutral"] = number_format((($q2["neutral"] / $total_respoondents) * 100), 2);
+    //     $q2["none"] = number_format((($q2["none"] / $total_respoondents) * 100), 2);
+        
+    //     $q3["agree"] = number_format((($q3["agree"] / $total_respoondents) * 100), 2);
+    //     $q3["disagree"] = number_format((($q3["disagree"] / $total_respoondents) * 100), 2);
+    //     $q3["neutral"] = number_format((($q3["neutral"] / $total_respoondents) * 100), 2);
+    //     $q3["none"] = number_format((($q3["none"] / $total_respoondents) * 100), 2);
+        
+    //     $q4["agree"] = number_format((($q4["agree"] / $total_respoondents) * 100), 2);
+    //     $q4["disagree"] = number_format((($q4["disagree"] / $total_respoondents) * 100), 2);
+    //     $q4["neutral"] = number_format((($q4["neutral"] / $total_respoondents) * 100), 2);
+    //     $q4["none"] = number_format((($q4["none"] / $total_respoondents) * 100), 2);
+
+    //     $q5["agree"] = number_format((($q5["agree"] / $total_respoondents) * 100), 2);
+    //     $q5["disagree"] = number_format((($q5["disagree"] / $total_respoondents) * 100), 2);
+    //     $q5["neutral"] = number_format((($q5["neutral"] / $total_respoondents) * 100), 2);
+    //     $q5["none"] = number_format((($q5["none"] / $total_respoondents) * 100), 2);
+
+    //     $q6["agree"] = number_format((($q6["agree"] / $total_respoondents) * 100), 2);
+    //     $q6["disagree"] = number_format((($q6["disagree"] / $total_respoondents) * 100), 2);
+    //     $q6["neutral"] = number_format((($q6["neutral"] / $total_respoondents) * 100), 2);
+    //     $q6["none"] = number_format((($q6["none"] / $total_respoondents) * 100), 2);
+
+    //     $q7["agree"] = number_format((($q7["agree"] / $total_respoondents) * 100), 2);
+    //     $q7["disagree"] = number_format((($q7["disagree"] / $total_respoondents) * 100), 2);
+    //     $q7["neutral"] = number_format((($q7["neutral"] / $total_respoondents) * 100), 2);
+    //     $q7["none"] = number_format((($q7["none"] / $total_respoondents) * 100), 2);
+
+    //     $q8["agree"] = number_format((($q8["agree"] / $total_respoondents) * 100), 2);
+    //     $q8["disagree"] = number_format((($q8["disagree"] / $total_respoondents) * 100), 2);
+    //     $q8["neutral"] = number_format((($q8["neutral"] / $total_respoondents) * 100), 2);
+    //     $q8["none"] = number_format((($q8["none"] / $total_respoondents) * 100), 2);
+        
+    //     $q9["agree"] = number_format((($q9["agree"] / $total_respoondents) * 100), 2);
+    //     $q9["disagree"] = number_format((($q9["disagree"] / $total_respoondents) * 100), 2);
+    //     $q9["neutral"] = number_format((($q9["neutral"] / $total_respoondents) * 100), 2);
+    //     $q9["none"] = number_format((($q9["none"] / $total_respoondents) * 100), 2);
+        
+    //     $q10["agree"] = number_format((($q10["agree"] / $total_respoondents) * 100), 2);
+    //     $q10["disagree"] = number_format((($q10["disagree"] / $total_respoondents) * 100), 2);
+    //     $q10["neutral"] = number_format((($q10["neutral"] / $total_respoondents) * 100), 2);
+    //     $q10["none"] = number_format((($q10["none"] / $total_respoondents) * 100), 2);
+        
+    //     $q11["agree"] = number_format((($q11["agree"] / $total_respoondents) * 100), 2);
+    //     $q11["disagree"] = number_format((($q11["disagree"] / $total_respoondents) * 100), 2);
+    //     $q11["neutral"] = number_format((($q11["neutral"] / $total_respoondents) * 100), 2);
+    //     $q11["none"] = number_format((($q11["none"] / $total_respoondents) * 100), 2);
+        
+    //     $q12["agree"] = number_format((($q12["agree"] / $total_respoondents) * 100), 2);
+    //     $q12["disagree"] = number_format((($q12["disagree"] / $total_respoondents) * 100), 2);
+    //     $q12["neutral"] = number_format((($q12["neutral"] / $total_respoondents) * 100), 2);
+    //     $q12["none"] = number_format((($q12["none"] / $total_respoondents) * 100), 2);
+        
+    //     $q15["yes"] = number_format((($q15["yes"] / $total_respoondents) * 100), 2);
+    //     $q15["no"] = number_format((($q15["no"] / $total_respoondents) * 100), 2);
+    //     $q15["maybe"] = number_format((($q15["maybe"] / $total_respoondents) * 100), 2);
+        
+
+    //     $perc_questions = array(
+    //         "q1" => $q1,
+    //         "q2" => $q2,
+    //         "q3" => $q3,
+    //         "q4" => $q4,
+    //         "q5" => $q5,
+    //         "q6" => $q6,
+    //         "q7" => $q7,
+    //         "q8" => $q8,
+    //         "q9" => $q9,
+    //         "q10" => $q10,
+    //         "q11" => $q11,
+    //         "q12" => $q12,
+    //         "q15" => $q15,
+    //         "total" => $total_respoondents,
+    //     );
+
+    //     return $perc_questions;
+    // }
+
+    // public function filterLocationConv(Request $request){
+    //     $province = $request->prv;
+    //     $municipality = $request->mun;
+
+    //     if($province == "All"){
+    //         $province = "%";
+    //     }
+
+    //     if($municipality == "All"){
+    //         $municipality = "%";
+    //     }
+
+    //     $raw_results = DB::table($GLOBALS['season_prefix'].'rcep_css.conv_response')
+    //         ->where('province', 'LIKE', $province)
+    //         ->where('municipality', 'LIKE', $municipality)
+    //         ->get();
+
+    //     $total_respoondents_conv = count($raw_results);
+    //     $q1_conv = array(
+    //         "id" => "q_1c",
+    //         "qs" => "1. Maayos ba ang proseso ng pagtala?",
+    //         "type" => "spec",
+    //         "yes_2" => 0,
+    //         "yes_1" => 0,
+    //         "neutral" => 0,
+    //         "no_1" => 0,
+    //         "no_2" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q2_conv = array(
+    //         "id" => "q_2c",
+    //         "qs" => "2. Maayos ba at madaling intindihin ang technical briefing?",
+    //         "type" => "spec",
+    //         "yes_2" => 0,
+    //         "yes_1" => 0,
+    //         "neutral" => 0,
+    //         "no_1" => 0,
+    //         "no_2" => 0,
+    //         "none" => 0,
+    //     );
+    //     $q3_conv = array(
+    //         "id" => "q_3c",
+    //         "qs" => "3. Maayos at mabilis ba ang pagkuha ng inyong binhi?",
+    //         "type" => "spec",
+    //         "yes_2" => 0,
+    //         "yes_1" => 0,
+    //         "neutral" => 0,
+    //         "no_1" => 0,
+    //         "no_2" => 0,
+    //         "none" => 0,
+    //     );
+
+    //     foreach($raw_results as $row){
+    //         if($row->q_1 == "lubos_sang-ayon"){
+    //             $q1_conv["yes_2"]++;
+    //         }else if($row->q_1 == "sang-ayon"){
+    //             $q1_conv["yes_1"]++;
+    //         }else if($row->q_1 == "walang_kinikilingan"){
+    //             $q1_conv["neutral"]++;
+    //         }else if($row->q_1 == "hindi_sang-ayon"){
+    //             $q1_conv["no_1"]++;
+    //         }else if($row->q_1 == "lubos_hindi_sang-ayon"){
+    //             $q1_conv["no_2"]++;
+    //         }else{
+    //             $q1_conv["none"]++;
+    //         }
+
+    //         if($row->q_2 == "lubos_sang-ayon"){
+    //             $q2_conv["yes_2"]++;
+    //         }else if($row->q_2 == "sang-ayon"){
+    //             $q2_conv["yes_1"]++;
+    //         }else if($row->q_2 == "walang_kinikilingan"){
+    //             $q2_conv["neutral"]++;
+    //         }else if($row->q_2 == "hindi_sang-ayon"){
+    //             $q2_conv["no_1"]++;
+    //         }else if($row->q_2 == "lubos_hindi_sang-ayon"){
+    //             $q2_conv["no_2"]++;
+    //         }else{
+    //             $q2_conv["none"]++;
+    //         }
+
+    //         if($row->q_3 == "lubos_sang-ayon"){
+    //             $q3_conv["yes_2"]++;
+    //         }else if($row->q_3 == "sang-ayon"){
+    //             $q3_conv["yes_1"]++;
+    //         }else if($row->q_3 == "walang_kinikilingan"){
+    //             $q3_conv["neutral"]++;
+    //         }else if($row->q_3 == "hindi_sang-ayon"){
+    //             $q3_conv["no_1"]++;
+    //         }else if($row->q_3 == "lubos_hindi_sang-ayon"){
+    //             $q3_conv["no_2"]++;
+    //         }else{
+    //             $q3_conv["none"]++;
+    //         }
+    //     }
+
+    //     $q1_conv["yes_2"] = number_format((($q1_conv["yes_2"] / $total_respoondents_conv) * 100), 2);
+    //     $q1_conv["yes_1"] = number_format((($q1_conv["yes_1"] / $total_respoondents_conv) * 100), 2);
+    //     $q1_conv["neutral"] = number_format((($q1_conv["neutral"] / $total_respoondents_conv) * 100), 2);
+    //     $q1_conv["no_1"] = number_format((($q1_conv["no_1"] / $total_respoondents_conv) * 100), 2);
+    //     $q1_conv["no_2"] = number_format((($q1_conv["no_2"] / $total_respoondents_conv) * 100), 2);
+    //     $q1_conv["none"] = number_format((($q1_conv["none"] / $total_respoondents_conv) * 100), 2);
+        
+    //     $q2_conv["yes_2"] = number_format((($q2_conv["yes_2"] / $total_respoondents_conv) * 100), 2);
+    //     $q2_conv["yes_1"] = number_format((($q2_conv["yes_1"] / $total_respoondents_conv) * 100), 2);
+    //     $q2_conv["neutral"] = number_format((($q2_conv["neutral"] / $total_respoondents_conv) * 100), 2);
+    //     $q2_conv["no_1"] = number_format((($q2_conv["no_1"] / $total_respoondents_conv) * 100), 2);
+    //     $q2_conv["no_2"] = number_format((($q2_conv["no_2"] / $total_respoondents_conv) * 100), 2);
+    //     $q2_conv["none"] = number_format((($q2_conv["none"] / $total_respoondents_conv) * 100), 2);
+        
+    //     $q3_conv["yes_2"] = number_format((($q3_conv["yes_2"] / $total_respoondents_conv) * 100), 2);
+    //     $q3_conv["yes_1"] = number_format((($q3_conv["yes_1"] / $total_respoondents_conv) * 100), 2);
+    //     $q3_conv["neutral"] = number_format((($q3_conv["neutral"] / $total_respoondents_conv) * 100), 2);
+    //     $q3_conv["no_1"] = number_format((($q3_conv["no_1"] / $total_respoondents_conv) * 100), 2);
+    //     $q3_conv["no_2"] = number_format((($q3_conv["no_2"] / $total_respoondents_conv) * 100), 2);
+    //     $q3_conv["none"] = number_format((($q3_conv["none"] / $total_respoondents_conv) * 100), 2);
+
+    //     $perc_questions = array(
+    //         "q1" => $q1_conv,
+    //         "q2" => $q2_conv,
+    //         "q3" => $q3_conv,
+    //         "total" => $total_respoondents_conv
+    //     );
+
+    //     return $perc_questions;
+    // }
+    
     public function filterLocationConv(Request $request){
         $province = $request->prv;
         $municipality = $request->mun;
@@ -2778,119 +3218,48 @@ class cssDashboardController extends Controller
         if($municipality == "All"){
             $municipality = "%";
         }
-
-        $raw_results = DB::table($GLOBALS['season_prefix'].'rcep_css.conv_response')
-            ->where('province', 'LIKE', $province)
-            ->where('municipality', 'LIKE', $municipality)
+        $survey_questions_con = [];
+        $survey_questions_con = DB::table('rcef_ionic_db.survey_questions')
+            ->select('survey_questions.body as question',
+                     'survey_questions.options_en', 
+                     'survey_questions.q_id', 
+                     'survey_questions.type')
+            ->where('mode', '=', 'con')
+            ->where('type', '!=', 'input')
             ->get();
+        $questions_con = [];
+        // $questions_con_count = 0;
+        foreach ($survey_questions_con as $question_con) {
+            preg_match('/(\d+)/', $question_con->q_id, $matches);
+            $id_number = isset($matches[1]) ? $matches[1] : null;
+            if (isset($question_con->options_en)) {
+                $options_con = json_decode($question_con->options_en, true); 
 
-        $total_respoondents_conv = count($raw_results);
-        $q1_conv = array(
-            "id" => "q_1c",
-            "qs" => "1. Maayos ba ang proseso ng pagtala?",
-            "type" => "spec",
-            "yes_2" => 0,
-            "yes_1" => 0,
-            "neutral" => 0,
-            "no_1" => 0,
-            "no_2" => 0,
-            "none" => 0,
-        );
-        $q2_conv = array(
-            "id" => "q_2c",
-            "qs" => "2. Maayos ba at madaling intindihin ang technical briefing?",
-            "type" => "spec",
-            "yes_2" => 0,
-            "yes_1" => 0,
-            "neutral" => 0,
-            "no_1" => 0,
-            "no_2" => 0,
-            "none" => 0,
-        );
-        $q3_conv = array(
-            "id" => "q_3c",
-            "qs" => "3. Maayos at mabilis ba ang pagkuha ng inyong binhi?",
-            "type" => "spec",
-            "yes_2" => 0,
-            "yes_1" => 0,
-            "neutral" => 0,
-            "no_1" => 0,
-            "no_2" => 0,
-            "none" => 0,
-        );
-
-        foreach($raw_results as $row){
-            if($row->q_1 == "lubos_sang-ayon"){
-                $q1_conv["yes_2"]++;
-            }else if($row->q_1 == "sang-ayon"){
-                $q1_conv["yes_1"]++;
-            }else if($row->q_1 == "walang_kinikilingan"){
-                $q1_conv["neutral"]++;
-            }else if($row->q_1 == "hindi_sang-ayon"){
-                $q1_conv["no_1"]++;
-            }else if($row->q_1 == "lubos_hindi_sang-ayon"){
-                $q1_conv["no_2"]++;
-            }else{
-                $q1_conv["none"]++;
+            } else {
+                $options_con = []; 
             }
 
-            if($row->q_2 == "lubos_sang-ayon"){
-                $q2_conv["yes_2"]++;
-            }else if($row->q_2 == "sang-ayon"){
-                $q2_conv["yes_1"]++;
-            }else if($row->q_2 == "walang_kinikilingan"){
-                $q2_conv["neutral"]++;
-            }else if($row->q_2 == "hindi_sang-ayon"){
-                $q2_conv["no_1"]++;
-            }else if($row->q_2 == "lubos_hindi_sang-ayon"){
-                $q2_conv["no_2"]++;
-            }else{
-                $q2_conv["none"]++;
+            $total = 0;
+            foreach ($options_con as $index => $item) {
+                $code_con = $item['code'];
+                $column_con = $question_con->q_id;
+                $counts_con = DB::table('ws2024_rcep_css.updated_conv_responses')
+                        ->where('municipality', 'LIKE', $municipality.'%')
+                        ->where('province', 'LIKE', $province.'%')
+                        ->where($column_con, $code_con)
+                        ->count();
+                $options_con[$index]["count"] = $counts_con;
+                $total += $counts_con;
             }
-
-            if($row->q_3 == "lubos_sang-ayon"){
-                $q3_conv["yes_2"]++;
-            }else if($row->q_3 == "sang-ayon"){
-                $q3_conv["yes_1"]++;
-            }else if($row->q_3 == "walang_kinikilingan"){
-                $q3_conv["neutral"]++;
-            }else if($row->q_3 == "hindi_sang-ayon"){
-                $q3_conv["no_1"]++;
-            }else if($row->q_3 == "lubos_hindi_sang-ayon"){
-                $q3_conv["no_2"]++;
-            }else{
-                $q3_conv["none"]++;
-            }
+            $questions_con[] = [
+                'id' => $id_number,
+                'q_id' => $question_con->q_id,
+                'question' => $question_con->question,
+                'options' => $options_con,
+                'type' => $question_con->type,
+                'total_response' => $total,
+            ];
         }
-
-        $q1_conv["yes_2"] = number_format((($q1_conv["yes_2"] / $total_respoondents_conv) * 100), 2);
-        $q1_conv["yes_1"] = number_format((($q1_conv["yes_1"] / $total_respoondents_conv) * 100), 2);
-        $q1_conv["neutral"] = number_format((($q1_conv["neutral"] / $total_respoondents_conv) * 100), 2);
-        $q1_conv["no_1"] = number_format((($q1_conv["no_1"] / $total_respoondents_conv) * 100), 2);
-        $q1_conv["no_2"] = number_format((($q1_conv["no_2"] / $total_respoondents_conv) * 100), 2);
-        $q1_conv["none"] = number_format((($q1_conv["none"] / $total_respoondents_conv) * 100), 2);
-        
-        $q2_conv["yes_2"] = number_format((($q2_conv["yes_2"] / $total_respoondents_conv) * 100), 2);
-        $q2_conv["yes_1"] = number_format((($q2_conv["yes_1"] / $total_respoondents_conv) * 100), 2);
-        $q2_conv["neutral"] = number_format((($q2_conv["neutral"] / $total_respoondents_conv) * 100), 2);
-        $q2_conv["no_1"] = number_format((($q2_conv["no_1"] / $total_respoondents_conv) * 100), 2);
-        $q2_conv["no_2"] = number_format((($q2_conv["no_2"] / $total_respoondents_conv) * 100), 2);
-        $q2_conv["none"] = number_format((($q2_conv["none"] / $total_respoondents_conv) * 100), 2);
-        
-        $q3_conv["yes_2"] = number_format((($q3_conv["yes_2"] / $total_respoondents_conv) * 100), 2);
-        $q3_conv["yes_1"] = number_format((($q3_conv["yes_1"] / $total_respoondents_conv) * 100), 2);
-        $q3_conv["neutral"] = number_format((($q3_conv["neutral"] / $total_respoondents_conv) * 100), 2);
-        $q3_conv["no_1"] = number_format((($q3_conv["no_1"] / $total_respoondents_conv) * 100), 2);
-        $q3_conv["no_2"] = number_format((($q3_conv["no_2"] / $total_respoondents_conv) * 100), 2);
-        $q3_conv["none"] = number_format((($q3_conv["none"] / $total_respoondents_conv) * 100), 2);
-
-        $perc_questions = array(
-            "q1" => $q1_conv,
-            "q2" => $q2_conv,
-            "q3" => $q3_conv,
-            "total" => $total_respoondents_conv
-        );
-
-        return $perc_questions;
+        return $questions_con;
     }
 }
