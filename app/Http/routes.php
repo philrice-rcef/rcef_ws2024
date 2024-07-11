@@ -2220,6 +2220,8 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
     
     //Farmer Verification
     Route::get('/farmerVerification/home', ['as' => 'farmerVerification', 'uses' => 'farmerVerificationController@index']);
+    Route::post('/farmerVerification/getMuni', ['as' => 'farmerVerification.getMuni', 'uses' => 'farmerVerificationController@getMuni']);
+    Route::post('/farmerVerification/getProfiles', ['as' => 'farmerVerification.getProfiles', 'uses' => 'farmerVerificationController@getProfiles']);
 
     //RSMS Dashboard update
     Route::post('delivery_summary/month', ['as' => 'delivery_summary.month', 'uses' => 'Summarycontroller@get_delivery_month']);

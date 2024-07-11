@@ -1351,7 +1351,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 								<!-- <li><a href="{{route('onlineEncodingNew')}}">Online Encoding for New Farmers</a></li> -->
 								{{-- <li><a href="{{route('new_farmer_vs')}}">New Farmer Encoded</a></li> --}}
 							@endif
-							  @if(Auth::user()->roles->first()->name == "rcef-programmer" ||  Auth::user()->username == "mt.garcia" ||  Auth::user()->username == "jpalileo" || Auth::user()->username == "aquino.rr" || Auth::user()->username == "jragos_pc" || Auth::user()->username == "p.landasan")
+							  @if(Auth::user()->roles->first()->name == "rcef-programmer" ||  Auth::user()->username == "mt.garcia" ||  Auth::user()->username == "jpalileo" || Auth::user()->username == "aquino.rr" || Auth::user()->username == "jragos_pc" || Auth::user()->username == "p.landasan" || Auth::user()->roles->first()->name == "administrator")
 							  <li><a>Encoding <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li><a href="{{route('encoding_vs')}}">From Verifier</a></li>
