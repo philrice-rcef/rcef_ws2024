@@ -93,7 +93,7 @@ class DeliveryDashboardController extends Controller
         
                 // dd($coop_delivery_batches);
             $total_inspected = 0;
-            $total_inspected2 = 0;
+        
             $total_forwarded = 0;
             foreach($coop_delivery_batches as $batch_row){
                 $total_inspected += $delivery->gad_total($batch_row->batchTicketNumber);
@@ -122,8 +122,8 @@ class DeliveryDashboardController extends Controller
                         ->where('transferCategory', 'T')
                         ->sum('totalBagCount');
 
-                        //  $total_inspected += $re_trans;
-                         $total_inspected2 += $re_trans;
+                         $total_inspected += $re_trans;
+                         
                     }
 
 
