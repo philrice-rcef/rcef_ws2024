@@ -91,8 +91,9 @@ class DeliveryDashboardController extends Controller
             
 
         
-                //dd($seedTag_arr);
+                // dd($coop_delivery_batches);
             $total_inspected = 0;
+            $total_inspected2 = 0;
             $total_forwarded = 0;
             foreach($coop_delivery_batches as $batch_row){
                 $total_inspected += $delivery->gad_total($batch_row->batchTicketNumber);
@@ -121,32 +122,33 @@ class DeliveryDashboardController extends Controller
                         ->where('transferCategory', 'T')
                         ->sum('totalBagCount');
 
-                         $total_inspected += $re_trans;
+                        //  $total_inspected += $re_trans;
+                         $total_inspected2 += $re_trans;
                     }
 
 
                        
                 }
-            
 
-
-
-
-
-                    
                 
-           
+                
+                
+                
+                
+                
+                
                 
                 // $nxt_season_data = DB::connection("nxt_inspection_db")->table("tbl_actual_delivery")
                 //     ->where('remarks','like', '%'.$batch_row->batchTicketNumber.'%')
                 //     ->where('is_transferred', 1)
                 //     ->sum("totalBagCount");
-
+                
                 $nxt_season_data = 0;
-
+                
                 $total_forwarded += $nxt_season_data;
-           
+                
             }
+            // dd($total_inspected,$total_inspected2);
             
 
 
@@ -809,7 +811,16 @@ class DeliveryDashboardController extends Controller
 
                 $batchTicketNumber = $batch_row->batchTicketNumber; //NEW BATCH TICKET
                 $oldBatchTicketNumber = trim(str_replace("transferred from batch:", "", $batch_row->remarks));
+
+                $bags = 0;
                   
+                $batch_deliveries_retransfer = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
+                            ->where('remarks', 'like', '%'.$batchTicketNumber.'%')
+                            ->where('seedVariety', $seed_variety)
+                            ->where('is_transferred', 1)
+                            ->where('transferCategory', 'T')
+                            ->where('seedTag', 'like', '%'.$seedTag.'%')
+                            ->sum('totalBagCount');
                      if($batch_row->transferCategory == 'T'){
                                   $originInfo = DB::table($GLOBALS['season_prefix'].'rcep_transfers.transfer_logs as t')
                                         ->select('t.batch_number', 't.origin_province', 't.origin_municipality', 'l.dropOffPoint as dopName')
@@ -837,6 +848,15 @@ class DeliveryDashboardController extends Controller
                     $sdt = '';
                 }
 
+                if($batch_deliveries_retransfer)
+                {
+                    $bags = $batch_row->totalBagCount+$batch_deliveries_retransfer;
+                }
+                else
+                {
+                    $bags = $batch_row->totalBagCount;
+                }
+
                 $batch_data = array(
                 'batch_num' =>$batchTicketNumber,
                 'origin' => $originData,
@@ -844,7 +864,7 @@ class DeliveryDashboardController extends Controller
                 'seedVariety' => $batch_row->seedVariety,
                 'seedTag' => $batch_row->seedTag,
                 'seedType' => $sdt,
-                'bags' => $batch_row->totalBagCount. ' bag(s)',
+                'bags' => $bags. ' bag(s)',
                 'dateCreated' => date("Y-m-d", strtotime($batch_row->dateCreated)),
                 'transferType' => $categoryTrans,
             );
@@ -2069,12 +2089,15 @@ class DeliveryDashboardController extends Controller
 
         $return_arr = array();
         foreach($batch_deliveries as $batch_row){
+
+            
             $binhi_padala = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
             ->where('batchTicketNumber', $batch_row->batchTicketNumber)
             ->where('seedVariety', $batch_row->seedVariety)
             ->where('seedTag', $batch_row->seedTag)
             ->where("qrValStart", "!=", "")
             ->first();
+            
             if($binhi_padala != null){
                     continue;
             }
@@ -2297,10 +2320,6 @@ class DeliveryDashboardController extends Controller
              
             );
 
-        
-
-
-            
             array_push($return_arr, $batch_data);
 
          }
@@ -2390,11 +2409,8 @@ class DeliveryDashboardController extends Controller
                            
                     );
 
-
                     array_push($return_arr, $batch_data);   
                     $inspected_bags += $bg;
-
-
 
                         $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
                             if(count($retransferred)>0){
@@ -2431,40 +2447,14 @@ class DeliveryDashboardController extends Controller
                                             
                                     );
 
-
-
-                                 
-                
-
-
                                     array_push($return_arr, $batch_data);   
                                     $inspected_bags += $bg;
                                 }
 
-
-
-
-
-
-                            
-
-
-
-
-
                             }
-
-
-
-
-
-
                     
              }
          } //PARTIAL COUNT
-
-
-
 
           if($nxt_season > 0){
                     $arr = $this->getNextSeasonData($batch_row->batchTicketNumber,$batch_row->seedVariety,$batch_row->seedTag);
@@ -2538,46 +2528,20 @@ class DeliveryDashboardController extends Controller
                             'seedVariety2' => $batch_row->seedVariety,
                             'dropOffPoint' => $or_dropoff.' => '.$dt_dropoff,
                             'region' => $or_region.' => '.$dt_region,
-                           
-                           
+                               
                            
                     );
-
-
-            
-
-
-
-
 
                     array_push($return_arr, $batch_data);   
                     $inspected_bags += $bg;
              }
          } //NEXT SEASON COUNT
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             $total_confirmed += $confirmed_bags;
             $total_inspected += $inspected_bags;
         }
 
-
+        // dd($total_inspected);
 
 
 
