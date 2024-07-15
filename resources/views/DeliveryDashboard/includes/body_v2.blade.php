@@ -127,7 +127,35 @@
                         &nbsp;
                     </div>
                     <div class="">
-                       Name and Signature
+                        @php
+                            $signatories = array(
+                                "ABRA" => "Rouella S. Melegrito",
+                                "APAYAO" => "Rouella S. Melegrito",
+                                "BENGUET" => "Kristine M. Paggao",
+                                "IFUGAO" => "Kristine M. Paggao",
+                                "KALINGA" => "Hiyasmin R. Mandac",
+                                "MOUNTAIN PROVINCE" => "Hiyasmin R. Mandac",
+                                "ISABELA" => "Kevin G. Reyes",
+                                "CAGAYAN" => "Kevin G. Reyes",
+                                "QUIRINO" => "Maria Aster Joy A. Garcia",
+                                "NUEVA VIZCAYA" => "Maria Aster Joy A. Garcia"
+                            );
+
+                            $designation = array(
+                                "ABRA" => "GASS Coordinator",
+                                "APAYAO" => "GASS Coordinator",
+                                "BENGUET" => "GASS Coordinator",
+                                "IFUGAO" => "GASS Coordinator",
+                                "KALINGA" => "GASS Coordinator",
+                                "MOUNTAIN PROVINCE" => "GASS Coordinator",
+                                "ISABELA" => "GASS Coordinator",
+                                "CAGAYAN" => "GASS Coordinator",
+                                "QUIRINO" => "GASS Coordinator",
+                                "NUEVA VIZCAYA" => "GASS Coordinator"
+                            );
+                        @endphp
+                        
+                        {{$signatories[$province] ?? 'Name and Signature'}}
                     </div>
                 </div>
             </div>
@@ -138,7 +166,7 @@
                         &nbsp;
                     </div>
                     <div class="">
-                       Designation and Office
+                        {{$signatories[$province] ?? 'Designation and Office'}}
                     </div>
                 </div>
             </div>
