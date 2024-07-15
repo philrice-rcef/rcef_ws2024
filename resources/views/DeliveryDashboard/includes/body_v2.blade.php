@@ -162,10 +162,10 @@
                                 $result_name = 'Name and Signature';
                             }
 
-                            if (isset($signatories[$province])) {
-                                $result_desg = $signatories[$province];
+                            if (isset($designation[$province])) {
+                                $result_desg = $designation[$province];
                             } else {
-                                $result_desg = 'Name and Signature';
+                                $result_desg = 'Designation and Office';
                             }
 
                         @endphp
