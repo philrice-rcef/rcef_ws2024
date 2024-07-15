@@ -153,9 +153,24 @@
                                 "QUIRINO" => "GASS Coordinator",
                                 "NUEVA VIZCAYA" => "GASS Coordinator"
                             );
+                            $result_name = 'Name and Signature';
+                            $result_desg = 'Designation and Office';
+
+                            if (isset($signatories[$province])) {
+                                $result_name = $signatories[$province];
+                            } else {
+                                $result_name = 'Name and Signature';
+                            }
+
+                            if (isset($signatories[$province])) {
+                                $result_desg = $signatories[$province];
+                            } else {
+                                $result_desg = 'Name and Signature';
+                            }
+
                         @endphp
                         
-                        {{$signatories[$province] ?? 'Name and Signature'}}
+                        {{$result_name}}
                     </div>
                 </div>
             </div>
@@ -166,7 +181,7 @@
                         &nbsp;
                     </div>
                     <div class="">
-                        {{$signatories[$province] ?? 'Designation and Office'}}
+                        {{$result_desg}}
                     </div>
                 </div>
             </div>
