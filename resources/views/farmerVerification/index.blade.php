@@ -212,6 +212,9 @@
         stroke-dashoffset: -262.2723388671875;
         }
 
+        i.checked-add {
+            color: green;
+        }
 
        
     </style>
@@ -286,39 +289,18 @@
                 </div>
 
                 <div id="customSearch" style="display:none;">
-                    <div class="col-md-3" style="padding-top: 1em">
-                        <div  class="boxes shadow-md" style="text-align: center;">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8" style="padding-top: 1em">
+                        <div  class="" style="text-align: center;">
                             <h1><i class="fas fa-arrow-left" style="font-size: 0.75em;"></i> 1/1,000 <i class="fas fa-arrow-right" style="font-size: 0.75em;"></i></h1>
                             <h4>Farmer Profiles</h4>
                             <hr>
-                            <div class="form-field">
-                                <label for="firstName">*First Name</label>
-                                <input type="text" id="firstName" readonly>
-                            </div>
-                            <div class="form-field">
-                                <label for="midName">*Middle Name</label>
-                                <input type="text" id="midName" readonly>
-                            </div>
-                            <div class="form-field">
-                                <label for="lastName">*Last Name</label>
-                                <input type="text" id="lastName" readonly>
-                            </div>
-                            <div class="form-field">
-                                <label for="extName">Ext Name</label>
-                                <input type="text" id="extName">
-                            </div>
-                            <div class="form-field">
-                                <label for="birthdate">Date of Birth</label>
-                                <input type="text" id="birthdate" readonly>
-                            </div>
-                            <button class="custom-search-button">CUSTOM SEARCH</button>
                         </div>
                     </div>
+                    <div class="col-md-2"></div>
                 </div>
                 
-                <div id="profiles" style="display:none;">
-                    
-                </div>
+                <div id="profiles" style="display:none;"></div>
 
 
 
@@ -432,13 +414,14 @@
                                             <li id="mother">Mother Name: ${proc.mother_name}</li>
                                         </ul>
                                     </div>
-                                    <div>
+                                    <div style="display: flex; align-items: center; gap: 2em;">
                                         <label class="container">
                                             <input type="checkbox" class="profile-checkbox" id="${proc.id}">
                                             <svg viewBox="0 0 64 64" height="2em" width="2em">
                                                 <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
                                             </svg>
                                         </label>
+                                        <i data-id="${proc.id}" class="fa fa-user-plus clickable-add" aria-hidden="true" style="font-size: 2.2em; margin-block-end: 0.2em;" ></i>
                                     </div>
                                 </div>
                             </div>
@@ -464,6 +447,10 @@
             }
         });
 
+        $(document).on("click", ".clickable-add", function() {
+            console.log($(this).data("id"));
+            $(this).toggleClass("checked-add");
+        });
 
     </script>
 @endpush

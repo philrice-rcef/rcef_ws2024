@@ -25,7 +25,17 @@ class farmerVerificationController extends Controller
         foreach($getPrvs as $prv)
         {
             $code = str_replace('prv_','',$prv->TABLE_NAME);
-            array_push($prvCodes,$code);
+            $checkTbl = DB::table('mongodb_data.prv_'.$code.'_ai')
+            ->where('status','FOR VERIFICATION')
+            ->first();
+            if($checkTbl)
+            {
+                array_push($prvCodes,$code);
+            }
+            else
+            {
+                continue;
+            }
         }
 
         // $forValidation = DB::select(DB::raw("SELECT SUM(total) as total FROM (SELECT COUNT(*) as total FROM mongodb_data.prv_0128_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
@@ -135,11 +145,15 @@ class farmerVerificationController extends Controller
     public function getProfiles(Request $request)
     {
         $code = substr(str_replace('-','',$request->mun),0,4);
-        $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->limit(3)
-        ->get();
+        // dd($code);
+        $getCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','FOR VERIFICATION')
+        ->first();
 
-        // dd($getClusterProfile);
+        $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','FOR VERIFICATION')
+        ->where('cluster_id',$getCluster->cluster_id)
+        ->get();
         
         return $getClusterProfile;
     }
