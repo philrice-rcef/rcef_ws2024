@@ -1120,6 +1120,7 @@ class BePDashboardController extends Controller
             $getBags = count(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')
             ->where('paymaya_code',$row->eBinhiCode)
             ->where('coopAccreditation','=', $row->Cooperative_Name)
+            ->whereBetween('date_created', [$date1, $date2])
             ->get());
 
 

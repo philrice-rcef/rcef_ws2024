@@ -257,7 +257,7 @@
                             <i style="padding-inline: 1em">*Please select province and municipality to begin verification.</i>
                         </div>
                         <div>
-                            <button type="button" id='submit' class="btn btn-success submit" disabled>Submit</button> 
+                            <button type="button" id='submit' class="btn btn-success submit" disabled>Begin Verification</button> 
                             <button type="button" id="reset" class="btn btn-secondary" style="display:none">Reset</button> 
                         </div>
                             
@@ -295,6 +295,7 @@
                             <h1><i class="fas fa-arrow-left" style="font-size: 0.75em;"></i> 1/1,000 <i class="fas fa-arrow-right" style="font-size: 0.75em;"></i></h1>
                             <h4>Farmer Profiles</h4>
                             <hr>
+                            <button type="button" id='submit2' class="btn btn-success submit" disabled>Submit Verification</button> 
                         </div>
                     </div>
                     <div class="col-md-2"></div>
@@ -322,6 +323,10 @@
     <script src="public/js/HoldOn.min.js"></script>
 
     <script>
+
+    var main_profile ='';
+    var sub_profiles = [];
+    var new_profiles = [];
 
     $('#provinces').change(() => {
             $('#municipality').removeAttr('disabled');
@@ -417,11 +422,11 @@
                                     <div style="display: flex; align-items: center; gap: 2em;">
                                         <label class="container">
                                             <input type="checkbox" class="profile-checkbox" id="${proc.id}">
-                                            <svg viewBox="0 0 64 64" height="2em" width="2em">
+                                            <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
                                                 <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
                                             </svg>
                                         </label>
-                                        <i data-id="${proc.id}" class="fa fa-user-plus clickable-add" aria-hidden="true" style="font-size: 2.2em; margin-block-end: 0.2em;" ></i>
+                                        <i data-id="${proc.id}" class="fa fa-user-plus clickable-add" aria-hidden="true" style="font-size: 2.2em; display:none; margin-block-end: 0.2em;" ></i>
                                     </div>
                                 </div>
                             </div>
@@ -429,12 +434,28 @@
                     });
                     $('.profile-checkbox').on('change', function() {
                     if ($(this).is(':checked')) {
+                        main_profile = this.id;
+                        $('#submit2').prop('disabled',false);
                         console.log(`Checkbox with ID ${this.id} is checked`);
+                        $('.profile-checkbox').prop('disabled', true);
+                        $('.profile-checkbox2').hide();
+                        $(this).closest('.profiles').find('.profile-checkbox2').show();
+                        $(this).prop('disabled', false);
                         $(this).closest('.profiles').css('background-color', '#3ed655');
+                        $(".clickable-add").show();
+                        $(this).closest('.profiles').find(".clickable-add").hide();
                         
                     } else {
+                        main_profile = '';
+                        sub_profiles = [];
+                        new_profiles = [];
+                        $('#submit2').prop('disabled',true);
                         console.log(`Checkbox with ID ${this.id} is unchecked`);
-                        $(this).closest('.profiles').css('background-color', '');
+                        $('.profiles').css('background-color', '');
+                        $(".clickable-add").hide();
+                        $(".clickable-add").removeClass("checked-add");
+                        $('.profile-checkbox').prop('disabled', false);
+                        $('.profile-checkbox2').show();
                         
                     }
                 });
@@ -448,9 +469,26 @@
         });
 
         $(document).on("click", ".clickable-add", function() {
-            console.log($(this).data("id"));
-            $(this).toggleClass("checked-add");
+            if ($(this).closest('.profiles').find('.profile-checkbox').is(':checked')) {
+            }
+            else
+            {
+                $(this).toggleClass("checked-add");
+                if ($(this).hasClass("checked-add")) {
+                    $(this).closest('.profiles').css('background-color', '##ffa600');
+                    new_profiles.push($(this).data('id'));
+                } else {
+                    $(this).closest('.profiles').css('background-color', '');
+                    const index = new_profiles.indexOf($(this).data('id'));
+                    if (index > -1) {
+                        new_profiles.splice(index, 1);
+                    }
+                }
+            }
         });
 
+        $('#submit2').on('click', () =>{
+            console.log(main_profile,sub_profiles,new_profiles);
+        });
     </script>
 @endpush
