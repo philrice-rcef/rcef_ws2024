@@ -125,7 +125,9 @@
     .selector[disabled]{
       cursor: not-allowed;
     }
-
+    /* #munSelect:disabled {
+      cursor: not-allowed;
+    } */
     @keyframes fadein{
       0%{
         /* width: 45%; */
@@ -676,7 +678,7 @@
               @endif
             @endforeach -->
           
-            @foreach($s_questions as $question)
+            @foreach($s_questions as $key => $question)
               @if($question['type'] == 'yesno')
                 <!-- <a href="#container"> -->
                   <div class="indiv_qs _cardq shadow-none" style="background: rgba(130, 161, 187, 0.064); height: 20rem;  border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$question['id']}}" data-qs="{{$question['question']}}">
@@ -702,8 +704,8 @@
                               <div id="{{$question['id']}}_agree"></div>
                               <span class="{{ $class }} line-clamp-1" style="font-size: 2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
                               <div class="progress-bar-container" style="width: 100%; background: #f1f1f1; border-radius: 5px; margin-top: 0.5em; margin-left: 0.5em; position: relative; border: 2px solid {{ $backgroundColor }};">
-                                <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
-                                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
+                                <div id="bep_bar_<?php echo $key; ?>_<?php echo $loopIndex; ?>" class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
+                                <span id="bep_question_<?php echo $key; ?>_<?php echo $loopIndex; ?>" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
                                 {{ $option['count'] }} / {{ $question['total_response'] }}
                                 </span>
                               </div>
@@ -759,8 +761,8 @@
                               <div id="{{$row['id']}}_agree"></div>
                               <span class="{{ $class }} line-clamp-1" style="font-size: 1.2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
                               <div class="progress-bar-container" style="width: 100%; background: #f1f1f1; border-radius: 5px; margin-top: 0.5em; margin-left: 0.5em; position: relative; border: 2px solid {{ $backgroundColor }};">
-                                <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
-                                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
+                                <div id="bep_bar_<?php echo $key; ?>_<?php echo $loopIndex; ?>" class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
+                                <span  id="bep_question_<?php echo $key; ?>_<?php echo $loopIndex; ?>" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
                                 {{ $option['count'] }} / {{ $question['total_response'] }}
                                 </span>
                               </div>
@@ -916,7 +918,7 @@
               @endif
             @endforeach -->
             <!-- <div class="cards_questions shadow-inner" style="height: 55vh; display: grid; grid-template-columns: 1fr  ; gap: 1em; overflow-y: auto; overflow-x: hidden; border-radius: 10px; padding: 1em;"> -->
-              @foreach($questions_con as $row)
+              @foreach($questions_con as $key => $row)
                 <!-- <a href="#containerConv"> -->
                   <div class="indiv_qs shadow-none " style="background: rgba(130, 161, 187, 0.064); height: 20rem; border-radius: 10px; padding: 0; cursor: pointer;" data-data="{{$question['id']}}" data-qs="{{ $question['question'] }}">
                     <div class="question_cont" style="margin: 1em; color: black;">{{$row['id']}}. {{ $row['question'] }}</div>
@@ -950,8 +952,8 @@
                               <div id="{{$row['id']}}_agree"></div>
                               <span class="{{ $class }} line-clamp-1" style="font-size: 1.2rem; background: {{ $backgroundColor }}; padding: 0.2em 0.4em; border-radius: 10px;">{{ $option['display'] }}</span>
                               <div class="progress-bar-container" style="width: 100%; background: #f1f1f1; border-radius: 5px; margin-top: 0.5em; margin-left: 0.5em; position: relative; border: 2px solid {{ $backgroundColor }};">
-                                <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
-                                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
+                                <div id="con_bar_<?php echo $key; ?>_<?php echo $loopIndex; ?>" class="progress-bar" style="width: {{ $percentage }}%; background: {{ $backgroundColor }}; height: 2rem; border-radius: 5px; position: relative; left: 0;"></div> 
+                                <span id="con_question_<?php echo $key; ?>_<?php echo $loopIndex; ?>" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; color: (182, 182, 182, 0.184);">
                                 {{ $option['count'] }} / {{ $row['total_response'] }}
                                 </span>
                               </div>
@@ -1412,28 +1414,137 @@
         window.open("paymaya/ebinhi/css", '_blank');
       });
 
-      function loadProvinces(){
-        $.ajax({
-          type: 'GET',
-          url: "{{ route('getIncludedProvinces') }}",
-          success: function(source){
-            $('#prSelect option:gt(0)').remove(); 
-            $counter = 0;
-            $.each(source, function(){
-                $("#prvSelect").append('<option value="'+source[$counter]+'">'+source[$counter]+'</option>');
-                $counter++;
-            });
-            $('#munSelect option:gt(0)').remove();
-          }
-        });
+      // function loadProvinces(){
+      //   $.ajax({
+      //     type: 'GET',
+      //     url: "{{ route('getIncludedProvinces') }}",
+      //     success: function(source){
+      //       $('#prSelect option:gt(0)').remove(); 
+      //       $counter = 0;
+      //       $.each(source, function(){
+      //           $("#prvSelect").append('<option value="'+source[$counter]+'">'+source[$counter]+'</option>');
+      //           $counter++;
+      //       });
+      //       $('#munSelect option:gt(0)').remove();
+      //     }
+      //   });
+      // }
+
+      // function loadProvinces() {
+      //     $.ajax({
+      //         type: 'GET',
+      //         url: "{{ route('getIncludedProvinces') }}",
+      //         success: function(source) {
+      //             if (Array.isArray(source) && source.length > 0) {
+      //                 // Clear existing options except the first one
+      //                 $('#prvSelect option:gt(0)').remove();
+
+      //                 // Iterate through the source and append new options
+      //                 $.each(source, function(index, value) {
+      //                     $("#prvSelect").append('<option value="' + value + '">' + value + '</option>');
+      //                 });
+
+      //                 // Clear the municipality select options except the first one
+      //                 $('#munSelect option:gt(0)').remove();
+      //             } else {
+      //                 console.log("No provinces returned", source);
+      //             }
+      //         },
+      //         error: function(xhr, status, error) {
+      //             console.error("Error loading provinces:", status, error);
+      //         }
+      //     });
+      // }
+      function loadProvinces() {
+          $.ajax({
+              type: 'GET',
+              url: "{{ route('getIncludedProvinces') }}",
+              success: function(provinces) {
+                  // Clear existing options except the first one
+                  $('#prvSelect option:gt(0)').remove();
+
+                  // Iterate through the provinces array and append options
+                  provinces.forEach(function(province) {
+                      $("#prvSelect").append('<option value="' + province.prvCode + '">' + province.province + '</option>');
+                  });
+              },
+              error: function(xhr, status, error) {
+                  console.error('Error loading provinces:', status, error);
+              }
+          });
       }
 
+      // Call loadProvinces function when the page is ready
+      $(document).ready(function() {
+          loadProvinces();
+      });
+
+      function loadMunicipalities(prv) {
+          $.ajax({
+              type: 'GET',
+              url: "{{ url('/getIncludedMunicipality') }}/" + prv,
+              success: function(muniArray) {
+                // console.log(muniArray);
+                  // if (Array.isArray(source) && source.length > 0) {
+                      // Clear existing options except the first one
+                      $('#munSelect option:gt(0)').remove();
+
+                      muniArray.forEach(function(muni) {
+                        $("#munSelect").append('<option value="' + muni.municipality + '">' + muni.municipality + '</option>');
+                      });
+
+                          // var totalCount = muniArray[0].count;
+                          $('#totalBep').text(muniArray[0].count);
+                  // } else {
+                      // console.log("No municipalities returned", source);
+                  // }
+              },
+              error: function(xhr, status, error) {
+                  console.error("Error loading municipalities:", status, error);
+              }
+          });
+      }
+      // function loadMunicipalities(prv) {
+      //     $.ajax({
+      //         type: 'GET',
+      //         url: "{{ url('/getIncludedMunicipality') }}/" + prv,
+      //         success: function(muniArray) {
+      //           console.log(muniArray);
+      //             // if (Array.isArray(source) && source.length > 0) {
+      //                 // Clear existing options except the first one
+      //                 $('#munSelect option:gt(0)').remove();
+
+      //                 // Iterate through the source and append new options
+      //                 // $.each(source, function(index, value) {
+      //                 //     $("#munSelect").append('<option value="' + value + '">' + value + '</option>');
+      //                 // });
+      //                 muniArray.forEach(function(muni) {
+      //                   // $("#munSelect").append('<option value="' + muni.prv + '">' + muni.municipality + '</option>');
+      //                 });
+
+      //                 // if (muniArray.length > 0) {
+      //                 //     let totalCount = muniArray[0].count;
+      //                     // $('#totalBep').text(totalCount);
+      //                     $('#totalBep').text(muniArray[0].count);
+      //                     // console.log('Total count for the first municipality:', totalCount);
+      //                     // Do something with the totalCount if needed
+      //                 // }
+      //             // } else {
+      //                 // console.log("No municipalities returned", source);
+      //             // }
+      //         },
+      //         error: function(xhr, status, error) {
+      //             console.error("Error loading municipalities:", status, error);
+      //         }
+      //     });
+      // }
       function loadProvincesConv(){
         $.ajax({
           type: 'GET',
           url: "{{ route('getIncludedProvincesConv') }}",
           success: function(source){
-            $('#prSelectConv option:gt(0)').remove(); 
+            // console.log(source);
+            $('#prvSelectConv option:gt(0)').remove(); 
             $counter = 0;
             $.each(source, function(){
                 $("#prvSelectConv").append('<option value="'+source[$counter]+'">'+source[$counter]+'</option>');
@@ -1443,133 +1554,192 @@
           }
         });
       }
-
-      $("#prvSelect").on('change', function() {
-        $selected_prv = $("#prvSelect").val();
-        $.ajax({
-          type: 'GET',
-          url: "getIncludedMunicipality/"+$selected_prv,
-          success: function(source){
-            $('#munSelect option:gt(0)').remove();
-            filterRes(); 
-            $counter = 0;
-            $.each(source, function(){
-              $("#munSelect").append('<option value="'+source[$counter]+'">'+source[$counter]+'</option>');
-              $counter++;
-            });
-          }
-        });
-        filterRes();
+      // Event listener for province select change
+      $('#prvSelect').on('change', function() {
+          var selected_prv = $(this).val();
+          // console.log(selected_prv);
+          if (selected_prv && selected_prv !== 'All') {
+              loadMunicipalities(selected_prv);
+          } else {
+              // Clear the municipality select options except the first one
+              $('#munSelect option:gt(0)').remove();  
+            }
+          filterRes();
       });
+      // $("#prvSelect").on('change', function() {
+      //   $selected_prv = $("#prvSelect").val();
+      //   $.ajax({
+      //     type: 'GET',
+      //     url: "getIncludedMunicipality/"+$selected_prv,
+      //     success: function(source){
+      //       $('#munSelect option:gt(0)').remove();
+      //       filterRes(); 
+      //       $counter = 0;
+      //       $.each(source, function(){
+      //         $("#munSelect").append('<option value="'+source[$counter]+'">'+source[$counter]+'</option>');
+      //         $counter++;
+      //       });
+      //     }
+      //   });
+      //   filterRes();
+      // });
 
       $("#prvSelectConv").on('change', function() {
-        $selected_prv = $("#prvSelectConv").val();
+        var selected_prv = $("#prvSelectConv").val();
+        // console.log(selected_prv);
         $.ajax({
           type: 'GET',
-          url: "getIncludedMunicipalityConv/"+$selected_prv,
+          url: "getIncludedMunicipalityConv/"+selected_prv,
           success: function(source){
+            // console.log(source);
             $('#munSelectConv option:gt(0)').remove();
-            filterResConv();
-            $counter = 0;
-            $.each(source, function(){
-              $("#munSelectConv").append('<option value="'+source[$counter]+'">'+source[$counter]+'</option>');
-              $counter++;
+            $('#totalConv').text(source[0].count);
+            // filterResConv();
+            // $counter = 0;
+            // $.each(source, function(){
+              source.forEach(function(muni) {
+              $("#munSelectConv").append('<option value="'+muni.municipality+'">'+muni.municipality+'</option>');
             });
+            filterResConv();
+
           }
         });
-        filterResConv();
+        // filterResConv();
       });
 
       $("#munSelect").on('change', function() {
+        // $selected_prv = $("#munSelect").val();
+        // console.log($selec);
         filterRes();
       });
 
       $("#munSelectConv").on('change', function() {
         filterResConv();
+        // console.log(filterResConv());
       });
+
+      // function filterRes(){
+      //   $('#filterFetcher').removeClass('gone');
+      //   $('#filterFetcher').css('display', 'flex');
+      //   $selected_prv = $("#prvSelect").val();
+      //   $selected_mun = $("#munSelect").val();
+      //   // console.log($selected_prv +' '+$selected_mun);
+      //   $.ajax({
+      //       type: 'POST',
+      //       url: "{{ route('filterLocation') }}",
+      //       data: {
+      //         _token: "{{ csrf_token() }}",
+      //         prv: $selected_prv,
+      //         mun: $selected_mun,
+      //       },
+      //       success: function(source){
+      //         // console.log(source["q1"]);
+      //         $("#"+source["q1"].id+"_yes").text(source["q1"].yes+"%");
+      //         $("#"+source["q1"].id+"_no").text(source["q1"].no+"%");
+      //         $("#"+source["q1"].id+"_maybe").text(source["q1"].maybe+"%");
+
+      //         $("#"+source["q2"].id+"_agree").text(source["q2"].agree+"%");
+      //         $("#"+source["q2"].id+"_neutral").text(source["q2"].neutral+"%");
+      //         $("#"+source["q2"].id+"_disagree").text(source["q2"].disagree+"%");
+      //         $("#"+source["q2"].id+"_none").text(source["q2"].none+"%");
+              
+      //         $("#"+source["q3"].id+"_agree").text(source["q3"].agree+"%");
+      //         $("#"+source["q3"].id+"_neutral").text(source["q3"].neutral+"%");
+      //         $("#"+source["q3"].id+"_disagree").text(source["q3"].disagree+"%");
+      //         $("#"+source["q3"].id+"_none").text(source["q3"].none+"%");
+
+      //         $("#"+source["q4"].id+"_agree").text(source["q4"].agree+"%");
+      //         $("#"+source["q4"].id+"_neutral").text(source["q4"].neutral+"%");
+      //         $("#"+source["q4"].id+"_disagree").text(source["q4"].disagree+"%");
+      //         $("#"+source["q4"].id+"_none").text(source["q4"].none+"%");
+
+      //         $("#"+source["q5"].id+"_agree").text(source["q5"].agree+"%");
+      //         $("#"+source["q5"].id+"_neutral").text(source["q5"].neutral+"%");
+      //         $("#"+source["q5"].id+"_disagree").text(source["q5"].disagree+"%");
+      //         $("#"+source["q5"].id+"_none").text(source["q5"].none+"%");
+
+      //         $("#"+source["q6"].id+"_agree").text(source["q6"].agree+"%");
+      //         $("#"+source["q6"].id+"_neutral").text(source["q6"].neutral+"%");
+      //         $("#"+source["q6"].id+"_disagree").text(source["q6"].disagree+"%");
+      //         $("#"+source["q6"].id+"_none").text(source["q6"].none+"%");
+
+      //         $("#"+source["q7"].id+"_agree").text(source["q7"].agree+"%");
+      //         $("#"+source["q7"].id+"_neutral").text(source["q7"].neutral+"%");
+      //         $("#"+source["q7"].id+"_disagree").text(source["q7"].disagree+"%");
+      //         $("#"+source["q7"].id+"_none").text(source["q7"].none+"%");
+
+      //         $("#"+source["q8"].id+"_agree").text(source["q8"].agree+"%");
+      //         $("#"+source["q8"].id+"_neutral").text(source["q8"].neutral+"%");
+      //         $("#"+source["q8"].id+"_disagree").text(source["q8"].disagree+"%");
+      //         $("#"+source["q8"].id+"_none").text(source["q8"].none+"%");
+
+      //         $("#"+source["q9"].id+"_agree").text(source["q9"].agree+"%");
+      //         $("#"+source["q9"].id+"_neutral").text(source["q9"].neutral+"%");
+      //         $("#"+source["q9"].id+"_disagree").text(source["q9"].disagree+"%");
+      //         $("#"+source["q9"].id+"_none").text(source["q9"].none+"%");
+
+      //         $("#"+source["q10"].id+"_agree").text(source["q10"].agree+"%");
+      //         $("#"+source["q10"].id+"_neutral").text(source["q10"].neutral+"%");
+      //         $("#"+source["q10"].id+"_disagree").text(source["q10"].disagree+"%");
+      //         $("#"+source["q10"].id+"_none").text(source["q10"].none+"%");
+
+      //         $("#"+source["q11"].id+"_agree").text(source["q11"].agree+"%");
+      //         $("#"+source["q11"].id+"_neutral").text(source["q11"].neutral+"%");
+      //         $("#"+source["q11"].id+"_disagree").text(source["q11"].disagree+"%");
+      //         $("#"+source["q11"].id+"_none").text(source["q11"].none+"%");
+
+      //         $("#"+source["q12"].id+"_agree").text(source["q12"].agree+"%");
+      //         $("#"+source["q12"].id+"_neutral").text(source["q12"].neutral+"%");
+      //         $("#"+source["q12"].id+"_disagree").text(source["q12"].disagree+"%");
+      //         $("#"+source["q12"].id+"_none").text(source["q12"].none+"%");
+
+      //         $("#"+source["q15"].id+"_yes").text(source["q15"].yes+"%");
+      //         $("#"+source["q15"].id+"_no").text(source["q15"].no+"%");
+      //         $("#"+source["q15"].id+"_maybe").text(source["q15"].maybe+"%");
+
+      //         $("#totalBep").text(source["total"]);
+
+
+
+      //         $('#filterFetcher').addClass('gone');
+
+      //         setTimeout(() => {
+      //           $('#filterFetcher').css('display', 'none');
+      //         }, 1000);
+      //       }
+      //     });
+      // }
 
       function filterRes(){
         $('#filterFetcher').removeClass('gone');
         $('#filterFetcher').css('display', 'flex');
-        $selected_prv = $("#prvSelect").val();
-        $selected_mun = $("#munSelect").val();
-        console.log($selected_prv +' '+$selected_mun);
+        selected_prv = $("#prvSelect").val();
+        selected_mun = $("#munSelect").val();
+        // console.log(selected_prv + selected_mun);
         $.ajax({
             type: 'POST',
             url: "{{ route('filterLocation') }}",
             data: {
               _token: "{{ csrf_token() }}",
-              prv: $selected_prv,
-              mun: $selected_mun,
+              prv: selected_prv,
+              mun: selected_mun,
             },
             success: function(source){
-              // console.log(source["q1"]);
-              $("#"+source["q1"].id+"_yes").text(source["q1"].yes+"%");
-              $("#"+source["q1"].id+"_no").text(source["q1"].no+"%");
-              $("#"+source["q1"].id+"_maybe").text(source["q1"].maybe+"%");
+              // console.log(source);
 
-              $("#"+source["q2"].id+"_agree").text(source["q2"].agree+"%");
-              $("#"+source["q2"].id+"_neutral").text(source["q2"].neutral+"%");
-              $("#"+source["q2"].id+"_disagree").text(source["q2"].disagree+"%");
-              $("#"+source["q2"].id+"_none").text(source["q2"].none+"%");
-              
-              $("#"+source["q3"].id+"_agree").text(source["q3"].agree+"%");
-              $("#"+source["q3"].id+"_neutral").text(source["q3"].neutral+"%");
-              $("#"+source["q3"].id+"_disagree").text(source["q3"].disagree+"%");
-              $("#"+source["q3"].id+"_none").text(source["q3"].none+"%");
-
-              $("#"+source["q4"].id+"_agree").text(source["q4"].agree+"%");
-              $("#"+source["q4"].id+"_neutral").text(source["q4"].neutral+"%");
-              $("#"+source["q4"].id+"_disagree").text(source["q4"].disagree+"%");
-              $("#"+source["q4"].id+"_none").text(source["q4"].none+"%");
-
-              $("#"+source["q5"].id+"_agree").text(source["q5"].agree+"%");
-              $("#"+source["q5"].id+"_neutral").text(source["q5"].neutral+"%");
-              $("#"+source["q5"].id+"_disagree").text(source["q5"].disagree+"%");
-              $("#"+source["q5"].id+"_none").text(source["q5"].none+"%");
-
-              $("#"+source["q6"].id+"_agree").text(source["q6"].agree+"%");
-              $("#"+source["q6"].id+"_neutral").text(source["q6"].neutral+"%");
-              $("#"+source["q6"].id+"_disagree").text(source["q6"].disagree+"%");
-              $("#"+source["q6"].id+"_none").text(source["q6"].none+"%");
-
-              $("#"+source["q7"].id+"_agree").text(source["q7"].agree+"%");
-              $("#"+source["q7"].id+"_neutral").text(source["q7"].neutral+"%");
-              $("#"+source["q7"].id+"_disagree").text(source["q7"].disagree+"%");
-              $("#"+source["q7"].id+"_none").text(source["q7"].none+"%");
-
-              $("#"+source["q8"].id+"_agree").text(source["q8"].agree+"%");
-              $("#"+source["q8"].id+"_neutral").text(source["q8"].neutral+"%");
-              $("#"+source["q8"].id+"_disagree").text(source["q8"].disagree+"%");
-              $("#"+source["q8"].id+"_none").text(source["q8"].none+"%");
-
-              $("#"+source["q9"].id+"_agree").text(source["q9"].agree+"%");
-              $("#"+source["q9"].id+"_neutral").text(source["q9"].neutral+"%");
-              $("#"+source["q9"].id+"_disagree").text(source["q9"].disagree+"%");
-              $("#"+source["q9"].id+"_none").text(source["q9"].none+"%");
-
-              $("#"+source["q10"].id+"_agree").text(source["q10"].agree+"%");
-              $("#"+source["q10"].id+"_neutral").text(source["q10"].neutral+"%");
-              $("#"+source["q10"].id+"_disagree").text(source["q10"].disagree+"%");
-              $("#"+source["q10"].id+"_none").text(source["q10"].none+"%");
-
-              $("#"+source["q11"].id+"_agree").text(source["q11"].agree+"%");
-              $("#"+source["q11"].id+"_neutral").text(source["q11"].neutral+"%");
-              $("#"+source["q11"].id+"_disagree").text(source["q11"].disagree+"%");
-              $("#"+source["q11"].id+"_none").text(source["q11"].none+"%");
-
-              $("#"+source["q12"].id+"_agree").text(source["q12"].agree+"%");
-              $("#"+source["q12"].id+"_neutral").text(source["q12"].neutral+"%");
-              $("#"+source["q12"].id+"_disagree").text(source["q12"].disagree+"%");
-              $("#"+source["q12"].id+"_none").text(source["q12"].none+"%");
-
-              $("#"+source["q15"].id+"_yes").text(source["q15"].yes+"%");
-              $("#"+source["q15"].id+"_no").text(source["q15"].no+"%");
-              $("#"+source["q15"].id+"_maybe").text(source["q15"].maybe+"%");
-
-              $("#totalBep").text(source["total"]);
-
-
+              Object.keys(source).forEach(key => {
+                // console.log(source);
+                 let str = "";
+                 let counter_percent = 0.0;
+                Object.keys(source[key].options).forEach(key2 => {
+                  str = source[key].options[key2].count + " / " + source[key].total_response ;
+                  $(`#bep_question_${key}_${key2}`).empty().append(str);
+                  counter_percent = (parseInt(source[key].options[key2].count) / parseInt(source[key].total_response)) * 100;
+                  $(`#bep_bar_${key}_${key2}`).css("width", counter_percent + "%");
+                  
+                  $('#totalBep').text(source[key].total_response);
+                });
+              });
 
               $('#filterFetcher').addClass('gone');
 
@@ -1579,13 +1749,12 @@
             }
           });
       }
-
       function filterResConv(){
         $('#filterFetcherConv').removeClass('gone');
         $('#filterFetcherConv').css('display', 'flex');
         $selected_prv = $("#prvSelectConv").val();
         $selected_mun = $("#munSelectConv").val();
-        console.log($selected_prv +' '+$selected_mun);
+        // console.log($selected_prv +' '+$selected_mun);
         $.ajax({
             type: 'POST',
             url: "{{ route('filterLocationConv') }}",
@@ -1595,39 +1764,76 @@
               mun: $selected_mun,
             },
             success: function(source){
-              console.log(source);
-
-              $("#totalConv").text(source["total"]);
-
-              $("#"+source["q1"].id+"_yes_2").text(source["q1"].yes_2+"%");
-              $("#"+source["q1"].id+"_yes_1").text(source["q1"].yes_1+"%");
-              $("#"+source["q1"].id+"_neutral").text(source["q1"].neutral+"%");
-              $("#"+source["q1"].id+"_no_1").text(source["q1"].no_1+"%");
-              $("#"+source["q1"].id+"_no_2").text(source["q1"].no_2+"%");
-              $("#"+source["q1"].id+"_none").text(source["q1"].none+"%");
-              
-              $("#"+source["q2"].id+"_yes_2").text(source["q2"].yes_2+"%");
-              $("#"+source["q2"].id+"_yes_1").text(source["q2"].yes_1+"%");
-              $("#"+source["q2"].id+"_neutral").text(source["q2"].neutral+"%");
-              $("#"+source["q2"].id+"_no_1").text(source["q2"].no_1+"%");
-              $("#"+source["q2"].id+"_no_2").text(source["q2"].no_2+"%");
-              $("#"+source["q2"].id+"_none").text(source["q2"].none+"%");
-              
-              $("#"+source["q3"].id+"_yes_2").text(source["q3"].yes_2+"%");
-              $("#"+source["q3"].id+"_yes_1").text(source["q3"].yes_1+"%");
-              $("#"+source["q3"].id+"_neutral").text(source["q3"].neutral+"%");
-              $("#"+source["q3"].id+"_no_1").text(source["q3"].no_1+"%");
-              $("#"+source["q3"].id+"_no_2").text(source["q3"].no_2+"%");
-              $("#"+source["q3"].id+"_none").text(source["q3"].none+"%");
+              // console.log(source);
+              Object.keys(source).forEach(key => {
+                 let str = "";
+                 let counter_percent = 0.0;
+                Object.keys(source[key].options).forEach(key2 => {
+                  $('#totalConv').text(source[key].total_response);
+                  str = source[key].options[key2].count + " / " + source[key].total_response ;
+                  $(`#con_question_${key}_${key2}`).empty().append(str);
+                  counter_percent = (parseInt(source[key].options[key2].count) / parseInt(source[key].total_response)) * 100;
+                  $(`#con_bar_${key}_${key2}`).css("width", counter_percent + "%");
+                });
+              });
               
               $('#filterFetcherConv').addClass('gone');
 
               setTimeout(() => {
                 $('#filterFetcherConv').css('display', 'none');
               }, 1000);
+              
             }
           });
       }
+      // function filterResConv(){
+      //   $('#filterFetcherConv').removeClass('gone');
+      //   $('#filterFetcherConv').css('display', 'flex');
+      //   $selected_prv = $("#prvSelectConv").val();
+      //   $selected_mun = $("#munSelectConv").val();
+      //   console.log($selected_prv +' '+$selected_mun);
+      //   $.ajax({
+      //       type: 'POST',
+      //       url: "{{ route('filterLocationConv') }}",
+      //       data: {
+      //         _token: "{{ csrf_token() }}",
+      //         prv: $selected_prv,
+      //         mun: $selected_mun,
+      //       },
+      //       success: function(source){
+      //         console.log(source);
+
+      //         $("#totalConv").text(source["total"]);
+
+      //         $("#"+source["q1"].id+"_yes_2").text(source["q1"].yes_2+"%");
+      //         $("#"+source["q1"].id+"_yes_1").text(source["q1"].yes_1+"%");
+      //         $("#"+source["q1"].id+"_neutral").text(source["q1"].neutral+"%");
+      //         $("#"+source["q1"].id+"_no_1").text(source["q1"].no_1+"%");
+      //         $("#"+source["q1"].id+"_no_2").text(source["q1"].no_2+"%");
+      //         $("#"+source["q1"].id+"_none").text(source["q1"].none+"%");
+              
+      //         $("#"+source["q2"].id+"_yes_2").text(source["q2"].yes_2+"%");
+      //         $("#"+source["q2"].id+"_yes_1").text(source["q2"].yes_1+"%");
+      //         $("#"+source["q2"].id+"_neutral").text(source["q2"].neutral+"%");
+      //         $("#"+source["q2"].id+"_no_1").text(source["q2"].no_1+"%");
+      //         $("#"+source["q2"].id+"_no_2").text(source["q2"].no_2+"%");
+      //         $("#"+source["q2"].id+"_none").text(source["q2"].none+"%");
+              
+      //         $("#"+source["q3"].id+"_yes_2").text(source["q3"].yes_2+"%");
+      //         $("#"+source["q3"].id+"_yes_1").text(source["q3"].yes_1+"%");
+      //         $("#"+source["q3"].id+"_neutral").text(source["q3"].neutral+"%");
+      //         $("#"+source["q3"].id+"_no_1").text(source["q3"].no_1+"%");
+      //         $("#"+source["q3"].id+"_no_2").text(source["q3"].no_2+"%");
+      //         $("#"+source["q3"].id+"_none").text(source["q3"].none+"%");
+              
+      //         $('#filterFetcherConv').addClass('gone');
+
+      //         setTimeout(() => {
+      //           $('#filterFetcherConv').css('display', 'none');
+      //         }, 1000);
+      //       }
+      //     });
+      // }
 
       function showEasterEgg(){
         setTimeout(() => {

@@ -459,6 +459,7 @@ class CoopController extends Controller
                 ->where('coopId',$tbl_commitment->coopID)
                 ->pluck('accreditation_no');
 
+
                 $getDelivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery')
                 ->where('coopAccreditation',$getCoop)
                 ->where('seedVariety',$tbl_commitment->commitment_variety)
