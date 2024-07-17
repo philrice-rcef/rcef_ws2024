@@ -857,11 +857,11 @@ private function search_to_array($array, $key, $value) {
   
 
       public function coop_table(Request $request){
-        // $date1 = $request->date1;
-        // $date2 = $request->date2;
+        $date1 = $request->date1;
+        $date2 = $request->date2;
         
-        $date1 = '07/16/2024';
-        $date2 = '07/16/2024';
+        // $date1 = '07/16/2024';
+        // $date2 = '07/16/2024';
         $date1 = date("Y-m-d", strtotime($date1));
         $date2 = date("Y-m-d", strtotime($date2));
         // $date1 = Carbon::createFromFormat('m/d/Y H:i:s', $request->date1 . ' 00:00:00')->format('Y-m-d H:i:s');
