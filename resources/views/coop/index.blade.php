@@ -200,6 +200,14 @@
 												@endforeach
 											</select>
                                         </div>
+                                        <div class="form-group">
+                                            <select class="form-control" name="tagged_category" id="tagged_category">
+                                                <option value="">Select category</option>
+                                                <option value="RCEF">RCEF</option>
+                                                <option value="NRP">NRP</option>
+                                                <option value="GQS">GQS</option>
+											</select>
+                                        </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
@@ -224,6 +232,7 @@
                                         <th>Variety</th>
                                         <th>Volume (20kg/bag)</th>
 										<th>Region</th>
+										<th>Category</th>
                                         <th>Date Added</th>
                                         <th>Action</th>
                                     </thead>
@@ -258,6 +267,7 @@
 										<th>Variety</th>
 										<th>Volume (20kg/bag)</th>
 										<th>Region</th>
+										<th>Category</th>
 										<th>Status</th>
 										<th>Date Added</th>
 										<th>Action</th>
@@ -285,10 +295,19 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control form-select" id="additional_category_select">
+                                                <option value="">Select category</option>
+                                                <option value="RCEF">RCEF</option>
+                                                <option value="NRP">NRP</option>
+                                                <option value="GQS">GQS</option>
+                                        </select>
+
+                                    </div>
 									<div class="col-md-3" style="display:none" id="add_more_value_fld">
 										<input type="number" name="add_more_value" id="add_more_value" class="form-control" placeholder="Please enter a value">
 									</div>
-									<div class="col-md-2" style="display:none" id="add_submit_btn_fld">
+									<div class="col-md-1" style="display:none" id="add_submit_btn_fld">
 										<button class="btn btn-success btn-block" id="add_submit_btn">ADD</button>
 									</div>
 								</div>
@@ -395,6 +414,18 @@
                             
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-5" class="btn btn-success"> <label class="btn btn-success" style="width: 10vw;"> Category</label>  </div>
+                        <div class="col-md-7" id="adjust_category">
+                            <select class="form-control form-select" id="update_category_select">
+                                    <option value="">Select Category</option>
+                                    <option value="RCEF">RCEF</option>
+                                    <option value="NRP">NRP</option>
+                                    <option value="GQS">GQS</option>
+                            </select>
+                            
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-5" class="btn btn-success"> <label class="btn btn-success" style="width: 10vw;"> Volume  </label> </div>
@@ -432,12 +463,10 @@
             var seed_variety = $(e.relatedTarget).data('seed_variety');
             var volume = $(e.relatedTarget).data('volume');
             var region_name = $(e.relatedTarget).data('region_name');
-
             var commitment_id = $(e.relatedTarget).data('commitment_id');
             var coop_id = $(e.relatedTarget).data('coop_id');
-
+            var category = $(e.relatedTarget).data('category');
             
-        
             $("#adjust_coop_name").empty().text(coop_name);
             $("#adjust_region_select").val(region_name).change();
             $("#adjust_seed_variety_select").val(seed_variety).change();
@@ -446,17 +475,18 @@
             $("#commitment_region").val(region_name);
             $("#commitment_coop").val(coop_name);
             $("#coop_id").val(coop_id);
-
-            
-
+            $("#category").val(category);
+            $('#update_category_select').val(category);
 
         });
+
         $("#seed_variety").select2();
 		
         function update_commitment(){
             var yesno = confirm("Adjust Coop Commitment");
 
             if(yesno){
+
                 var id = $("#commitment_id").val();
                 var orig_region = $("#commitment_region").val();
                 var commitment_coop = $("#commitment_coop").val();
@@ -464,7 +494,7 @@
                 var variety = $("#adjust_seed_variety_select").val();
                 var new_region = $("#adjust_region_select").val();
                 var coop_id =  $("#coop_id").val();
-
+                var category = $("#update_category_select").val();
 
                 $.ajax({
                     type: 'POST',
@@ -477,7 +507,8 @@
                         volume: volume,
                         variety: variety,
                         new_region: new_region,
-                        coop_id: coop_id
+                        coop_id: coop_id,
+                        category: category
                     },
                     success: function(data){
                         alert(data);
@@ -505,6 +536,7 @@
                                 {"data": "commitment_variety"},
                                 {"data": "variety_bags"},
                                 {"data": "region"},
+                                {"data": "category"},
                                 {"data": "status_btn"},
                                 {"data": "date_add"},
                                 {"data": "action"}
@@ -653,6 +685,7 @@
                     $("#seed_variety").append(data);
                 }
             });
+
 		});
 
         function removeRecord(data) {      
@@ -686,6 +719,8 @@
                         "columns":[
                             {"data": "commitment_variety"},
                             {"data": "variety_bags"},
+                            {"data": "region"},
+                            {"data": "category"},
                             {"data": "date_add"},
                             {"data": "action"}
                         ]
@@ -790,6 +825,7 @@
                             "columns":[
                                 {"data": "commitment_variety"},
                                 {"data": "variety_bags"},
+                                {"data": "category"},
                                 {"data": "status_btn"},
                                 {"data": "date_add"},
                                 {"data": "action"}
@@ -851,6 +887,7 @@
             var seed_variety = $("#seed_variety").val();
             var commitment_value = $("#commitment_value").val();
 			var region = $("#tagged_region").val();
+			var category = $("#tagged_category").val();
 
             $("#Add_BTN").attr("disabled", "");
             
@@ -866,7 +903,8 @@
                         coopID: coopID,
                         seed_variety: seed_variety,
                         commitment_value: commitment_value,
-						region: region
+						region: region,
+                        category: category
                     },
                     success: function(data){
                         $("#Add_BTN").removeAttr("disabled");
@@ -895,6 +933,7 @@
                                 {"data": "commitment_variety"},
                                 {"data": "variety_bags"},
 								{"data": "region"},
+								{"data": "category"},
                                 {"data": "date_add"},
                                 {"data": "action"}
                             ]
@@ -1007,6 +1046,7 @@
                     {"data": "commitment_variety"},
                     {"data": "variety_bags"},
 					{"data": "region"},
+					{"data": "category"},
                     {"data": "status_btn"},
                     {"data": "date_add"},
                     {"data": "action"}
@@ -1077,7 +1117,7 @@
             var seed_variety = $("#add_more_variety").val();
             var seed_value = $("#add_more_value").val();
 			var region = $("#additional_region_select").val();
-
+            var category = $('#additional_category_select').val();
             
             if(seed_variety == "0"){
                 alert("Please select a seed variety.");
@@ -1090,7 +1130,8 @@
                         coopDetailsID: coopDetailsID,
                         seed_variety: seed_variety,
                         seed_value: seed_value,
-						region: region
+						region: region,
+                        category: category
                     },
                     success: function(data){
                         $('#coop_detail_tbl').DataTable().clear();
@@ -1115,6 +1156,7 @@
                                 {"data": "variety_bags"},
 								{"data": "region"},
                                 {"data": "status_btn"},
+                                {"data": "category"},
                                 {"data": "date_add"},
                                 {"data": "action"}
                             ]

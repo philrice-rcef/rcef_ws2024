@@ -52,6 +52,20 @@ class CoopController extends Controller
            
             return $result;
         })
+        ->addColumn('category', function($row){
+            if($row->category_from != "NEW"){
+                if($row->category_from != $row->category_to){
+                    $result = '<span class="badge badge-info" style="font-size:15px;">'.$row->category_from.'</span>'." >> ".'<span class="badge badge-success" style="font-size:15px;">'.$row->category_to.'</span>';
+                }else{
+                    $result ='<span class="badge badge-success" style="font-size:15px;">'.$row->category_to.'</span>';
+                }
+            }else{
+                $result ='<span class="badge badge-success" style="font-size:15px;">'.$row->category_to.'</span>';
+            }
+
+           
+            return $result;
+        })
         ->addColumn('seed_variety', function($row){
             if($row->seedvariety_from != "NEW"){
                 if($row->seedvariety_from != $row->seedvariety_to){
@@ -138,6 +152,7 @@ class CoopController extends Controller
         return view('coop.index')
 			->with('region_list', $regions)
             ->with('seed_variety', $seed_variety);
+
     }
 
     public function getCoopID(Request $request){
@@ -231,6 +246,7 @@ class CoopController extends Controller
     }
 
     public function coopSaveTable(Request $request){
+        //console.log($row->id);
         return Datatables::of(DB::connection('seed_coop_db')->table('tbl_commitment')
             ->where('coopID', '=', $request->coopID)
             ->orderBy('date_added', 'ASC')
@@ -248,9 +264,14 @@ class CoopController extends Controller
             //tagged region
 			return $region = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_commitment_regional')->where('commitmentID', $row->id)->value('region_name');
         })
+		->addColumn('category', function($row){
+            //tagged category
+			return $region = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_commitment_regional')->where('commitmentID', $row->id)->value('category');
+        })
         ->make(true);
     }
 
+    //START ADD FUNCTION
     public function coopVaritiesADDSubmit(Request $request){
         $coop = DB::connection('seed_coop_db')->table('tbl_cooperatives')->where('coopId', '=', $request->coopDetailsID)->first();
         $commitmentID = DB::connection('seed_coop_db')->table('tbl_commitment')
@@ -258,6 +279,7 @@ class CoopController extends Controller
             'coopID' => $request->coopDetailsID,
             'commitment_variety' => $request->seed_variety,
             'commitment_value' => $request->seed_value,
+            'category' => $request->category,
             'addedBy' => Auth::user()->username,
             'date_added' => date("Y-m-d H:i:s"),
             'variety_status' => 1,
@@ -272,6 +294,7 @@ class CoopController extends Controller
 			'accreditation_no' => $coop->accreditation_no,
 			'region_name' => $request->region,
 			'seed_variety' => $request->seed_variety,
+			'category' => $request->category,
 			'volume' => $request->seed_value,
 			'date_added' => date("Y-m-d H:i:s"),
 			'date_updated' => date("Y-m-d H:i:s")
@@ -286,7 +309,6 @@ class CoopController extends Controller
             ->where('coopID', '=', $coop_commitment->coopID)
             ->update(['total_value' => $coop_commitment->total_value + $request->seed_value]);
 
-
             $coopId =  $request->coopDetailsID;
             $region_from = "NEW";
             $region_to =  $request->region;
@@ -294,11 +316,11 @@ class CoopController extends Controller
             $seedvariety_to =  $request->seed_variety;
             $volume_from = $request->seed_value;
             $volume_to = $request->seed_value;
+            $category_from = "NEW";
+            $category_to = $request->category;
             $tbl_commitment_id = $commitmentID;
             $user_updated = Auth::user()->username;
             $date_created = date("Y-m-d H:i:s");
-
-
 
             DB::connection('seed_coop_db')->table("tbl_adjustment_logs")
             ->insert([
@@ -309,21 +331,16 @@ class CoopController extends Controller
                 'seedvariety_to' => $seedvariety_to,
                 'volume_from' => $volume_from,
                 'volume_to' => $volume_to,
+                'category_from' => $category_from,
+                'category_to' => $category_to,
                 'tbl_commitment_id' => $tbl_commitment_id,
                 'user_updated' => $user_updated,
                 'date_created' => $date_created
             ]);
 
-
-
-
-
-
-
-
-
     }
-
+    //END ADD FUNCTION
+    
     public function coopVaritiesADD(Request $request){
         $coop_commitments = DB::connection('seed_coop_db')
             ->table('tbl_commitment')
@@ -431,6 +448,7 @@ class CoopController extends Controller
 
         // dd($request->all());
         
+        //get current data
         $tbl_commitment = DB::connection('seed_coop_db')->table('tbl_commitment')
                 ->where("id", $request->id)
                 ->first();
@@ -479,6 +497,8 @@ class CoopController extends Controller
                                 $tbl_commitment_id = $tbl_commitment->id;
                                 $user_updated = Auth::user()->username;
                                 $date_created = date("Y-m-d H:i:s");
+                                $category_from = $tbl_regional->category;
+                                $category_to = $request->category;
                                 
         
                                 $totals = DB::connection('seed_coop_db')->table('tbl_total_commitment')
@@ -491,7 +511,8 @@ class CoopController extends Controller
                                             ->where("id", $tbl_commitment->id)
                                             ->update([
                                                 "commitment_variety" => $request->variety,
-                                                "commitment_value" => $request->volume
+                                                "commitment_value" => $request->volume,
+                                                "category" => $request->category
                                             ]);
         
                                             DB::connection('seed_coop_db')->table('tbl_commitment_regional')
@@ -499,7 +520,8 @@ class CoopController extends Controller
                                                 ->update([
                                                     "region_name" => $request->new_region,
                                                     "volume" => $request->volume,
-                                                    "seed_variety" => $request->variety
+                                                    "seed_variety" => $request->variety,
+                                                    "category" => $request->category
                                                 ]);
         
                                             $totals_variety = DB::connection('seed_coop_db')->table('tbl_commitment_regional')    
@@ -512,7 +534,7 @@ class CoopController extends Controller
                                                             "total_value" => $totals_variety
                                                     ]);
                                             
-        
+                                                    //add data to Commitment adjustment logs
                                                     DB::connection('seed_coop_db')->table("tbl_adjustment_logs")
                                                         ->insert([
                                                             'coopId' => $coopId,
@@ -522,6 +544,8 @@ class CoopController extends Controller
                                                             'seedvariety_to' => $seedvariety_to,
                                                             'volume_from' => $volume_from,
                                                             'volume_to' => $volume_to,
+                                                            'category_from' => $category_from,
+                                                            'category_to' => $category_to,
                                                             'tbl_commitment_id' => $tbl_commitment_id,
                                                             'user_updated' => $user_updated,
                                                             'date_created' => $date_created
@@ -577,15 +601,9 @@ class CoopController extends Controller
                 if($coop_regional != null){
                     $btn .= "<button class='btn btn-success btn-sm' data-toggle='modal' data-target='#adjust_commitment' 
                     data-coop_name = '".$coop_regional->coop_name."' data-seed_variety = '".$row->commitment_variety."' data-volume='".$row->commitment_value."'
-                    data-region_name ='".$coop_regional->region_name."' data-commitment_id ='".$row->id."' data-coop_id ='".$row->coopID."'
+                    data-region_name ='".$coop_regional->region_name."' data-commitment_id ='".$row->id."' data-coop_id ='".$row->coopID."'data-category ='".$row->category."'
                     > <i class='fa fa-pencil-square-o' aria-hidden='true'>Adjust</i></button>";
-        
-
                 }
-           
-
-          
-
         }
             return $btn;
         })
@@ -598,6 +616,9 @@ class CoopController extends Controller
         })
 		->addColumn('region', function($row){
             return DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_commitment_regional')->where('commitmentID', $row->id)->value('region_name');
+        })
+        ->addColumn('category', function($row){
+            return DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_commitment_regional')->where('commitmentID', $row->id)->value('category');
         })
         ->make(true);
     }
@@ -616,6 +637,7 @@ class CoopController extends Controller
             'coopID' => $request->coopID,
             'commitment_variety' => $request->seed_variety,
             'commitment_value' => $request->commitment_value,
+            'category' => $request->category,
             'addedBy' => Auth::user()->username,
             'date_added' => date("Y-m-d H:i:s"),
             'moa_number' => $coop->current_moa,
@@ -631,6 +653,7 @@ class CoopController extends Controller
 			'region_name' => $request->region,
 			'seed_variety' => $request->seed_variety,
 			'volume' => $request->commitment_value,
+			'category' => $request->category,
 			'date_added' => date("Y-m-d H:i:s"),
 			'date_updated' => date("Y-m-d H:i:s")
         ]);

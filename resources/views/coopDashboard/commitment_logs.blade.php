@@ -145,6 +145,7 @@
                         <thead>
                             <th>Cooperative</th>
                             <th>Region</th>
+                            <th>Category</th>
                             <th>Seed Variety</th>
                             <th>Volume</th>
                             <th>User Updated</th>
@@ -191,6 +192,7 @@
                     "columns":[
                         {"data": "coop_name"},
                         {"data": "region"},
+                        {"data": "category"},
                         {"data": "seed_variety"},
                         {"data": "volume"},
                         {"data": "user_updated"},
