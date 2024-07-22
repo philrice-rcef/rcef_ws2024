@@ -1099,20 +1099,6 @@ class DeliveryDashboardController extends Controller
             ->make(true);
     }
 
-
-
-
-
-
-
-
-   
-
-   
-
-   
-   
-   
     public function test(){
     //   $producer = new SeedProducers();
     //  return $accreditation_no = $producer->seed_producers_accreditation(1);
@@ -1120,8 +1106,7 @@ class DeliveryDashboardController extends Controller
     return $delivery->delivery_accreditation("CAR-R-2/19-RcI-6555", "NSIC 2012 Rc 300");
     }
 
-    public function cooperatives()
-    {
+    public function cooperatives(){
 
         $producer = new SeedProducers();
         $delivery = new DeliveryInspect();
@@ -3206,7 +3191,7 @@ class DeliveryDashboardController extends Controller
             });
         });
 
-        $file_name = $coop_acr."FMD".date("Y-m-d H:i:s").".xlsx";
+        $file_name = $coop_acr."_FMD_".date("Y-m-d H:i:s").".xlsx";
         $myFile = $myFile->string('xlsx');
         $response = array(
             'name' => $file_name,
@@ -3225,8 +3210,9 @@ class DeliveryDashboardController extends Controller
         $coop_accreditation = $request->coop_accreditation;
         $coop_acr = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->where('accreditation_no', $coop_accreditation)->value('coopName');
         
-        
-/*         $batch_deliveries = DB::connection('delivery_inspection_db')->table('tbl_delivery')
+        //return 'mark';
+/*          //old code
+            $batch_deliveries = DB::connection('delivery_inspection_db')->table('tbl_delivery')
             ->select('batchTicketNumber', 'coopAccreditation', 'seedVariety', 'deliveryDate', 'dropOffPoint', 'region', 'province', 'municipality', 'seedTag', 'isBuffer','sg_id')
             ->where('is_cancelled', 0)
             ->where('coopAccreditation', $coop_accreditation)
@@ -3234,25 +3220,32 @@ class DeliveryDashboardController extends Controller
             ->groupBy('batchTicketNumber', 'seedVariety', 'seedTag')
             ->orderBy('deliveryDate', 'DESC')
             ->get(); */
-            $batch_deliveries = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.view_coop_delivery')
-            ->select('batchTicketNumber', 'coopAccreditation', 'seedVariety', 'deliveryDate', 'dropOffPoint',
-            'region', 'province', 'municipality', 'seedTag', 'isBuffer','sg_id', 'seed_distribution_mode')
-            ->where('coopAccreditation', $coop_accreditation)
-            ->orderBy('deliveryDate', 'DESC')
+            return $batch_deliveries = DB::connection('delivery_inspection_db')->table('tbl_delivery')
+            ->join('tbl_delivery_transaction', 'tbl_delivery.coopAccreditation', '=', 'tbl_delivery_transaction.accreditation_no')
+            ->select(
+                'tbl_delivery.batchTicketNumber', 
+                'tbl_delivery.coopAccreditation', 
+                'tbl_delivery.seedVariety', 
+                'tbl_delivery.deliveryDate', 
+                'tbl_delivery.dropOffPoint', 
+                'tbl_delivery.region', 
+                'tbl_delivery.province', 
+                'tbl_delivery.municipality', 
+                'tbl_delivery.seedTag', 
+                'tbl_delivery.isBuffer',
+                'tbl_delivery.sg_id',
+                'tbl_delivery_transaction.seed_distribution_mode'
+            )
+            ->where('tbl_delivery.is_cancelled', 0)
+            ->where('tbl_delivery.coopAccreditation', $coop_accreditation)
+            ->where('tbl_delivery.isBuffer', 0)
+            //->where('tbl_delivery_transaction.seed_distribution_mode', 'NRP')
+            ->groupBy(
+                'tbl_delivery.batchTicketNumber', 'tbl_delivery.seedVariety', 'tbl_delivery.seedTag'
+            )
+            ->orderBy('tbl_delivery.deliveryDate', 'DESC')
             ->get();
-            //dd($batch_deliveries);
-/*             $batch_deliveries = DB::connection('delivery_inspection_db')->table('tbl_delivery as a')
-            ->leftJoin('tbl_delivery_transaction as b', 'a.coopAccreditation', '=', 'b.accreditation_no')
-            ->select('a.batchTicketNumber', 'a.coopAccreditation', 'a.seedVariety', 'a.deliveryDate',
-            'a.dropOffPoint', 'a.region', 'a.province', 'a.municipality', 'a.seedTag', 'a.isBuffer',
-            'a.sg_id','b.seed_distribution_mode')
-            ->where('a.is_cancelled', 0)
-            ->where('a.isBuffer', 0)
-            ->where('a.coopAccreditation', $coop_accreditation)
-            ->groupBy('a.batchTicketNumber', 'a.seedVariety', 'a.seedTag','b.seed_distribution_mode')
-            //->distinct()
-            ->orderBy('a.deliveryDate', 'DESC')
-            ->get(); */
+        
 
         $total_confirmed = 0;
         $total_inspected = 0;
@@ -3269,12 +3262,7 @@ class DeliveryDashboardController extends Controller
             ->first();
             if($binhi_padala != null){
                     continue;
-
-                
-
-
             }
-
 
             //get seed grower profile
             //1. clean seed tag to link RLA details
@@ -3457,17 +3445,18 @@ class DeliveryDashboardController extends Controller
                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                             'batch_status' => $tt,
                             'remarks' => $label,
-                            'category' => $batch_row->seed_distribution_mode
+                            'category'=> $batch_row->seed_distribution_mode,
+                           
                         );
-
                         if($batch_row->seed_distribution_mode == 'NRP'){
                             array_push($return_arr_nrp, $batch_data);
-                        }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
+                        }else{
+                        if($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
                             array_push($return_arr_gqs, $batch_data);
                         }else{
                             array_push($return_arr, $batch_data);
                         }
-                        //array_push($return_arr, $batch_data);
+                        
                         $inspected_bags += $bg;
 
                       }
@@ -3490,17 +3479,12 @@ class DeliveryDashboardController extends Controller
                 'deliveryDate' => date("Y-m-d", strtotime($batch_row->deliveryDate)),
                 'batch_status' => $batch_status,
                 'remarks' => $label,
-                'category' => $batch_row->seed_distribution_mode
+                'category'=> $batch_row->seed_distribution_mode,
             );
 
-            if($batch_row->seed_distribution_mode == 'NRP'){
-                array_push($return_arr_nrp, $batch_data);
-            }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                array_push($return_arr_gqs, $batch_data);
-            }else{
-                array_push($return_arr, $batch_data);
-            }
-            //array_push($return_arr, $batch_data);
+
+            
+            array_push($return_arr, $batch_data);
 
          }
 
@@ -3582,21 +3566,12 @@ class DeliveryDashboardController extends Controller
                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                             'batch_status' => $tt,
                             'remarks' => $label,
-                            'category' => $batch_row->seed_distribution_mode
+                            'category'=> $batch_row->seed_distribution_mode,
                            
                     );
-                    
-                    if($batch_row->seed_distribution_mode == 'NRP'){
-                        array_push($return_arr_nrp, $batch_data);
-                    }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                        array_push($return_arr_gqs, $batch_data);
-                    }else{
-                        array_push($return_arr, $batch_data);
-                    }
-                    //array_push($return_arr, $batch_data);   
+
+                    array_push($return_arr, $batch_data);   
                     $inspected_bags += $bg;
-
-
 
                         $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
                             if(count($retransferred)>0){
@@ -3626,45 +3601,18 @@ class DeliveryDashboardController extends Controller
                                             'deliveryDate' => date("Y-m-d", strtotime($par->dateCreated)),
                                             'batch_status' => $tt,
                                             'remarks' => "",
-                                            'category' => $batch_row->seed_distribution_mode
+                                            'category'=> $batch_row->seed_distribution_mode,
                                            
                                     );
-                                    
-                                    if($batch_row->seed_distribution_mode == 'NRP'){
-                                        array_push($return_arr_nrp, $batch_data);
-                                    }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                                        array_push($return_arr_gqs, $batch_data);
-                                    }else{
-                                        array_push($return_arr, $batch_data);
-                                    }
-                                    //array_push($return_arr, $batch_data);   
+
+                                    array_push($return_arr, $batch_data);   
                                     $inspected_bags += $bg;
                                 }
 
-
-
-
-
-
-                            
-
-
-
-
-
                             }
 
-
-
-
-
-
-                    
              }
          } //PARTIAL COUNT
-
-
-
 
           if($nxt_season > 0){
                     $arr = $this->getNextSeasonData($batch_row->batchTicketNumber,$batch_row->seedVariety,$batch_row->seedTag);
@@ -3734,63 +3682,18 @@ class DeliveryDashboardController extends Controller
                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                             'batch_status' => $tt,
                             'remarks' => $label,
-                            'category' => $batch_row->seed_distribution_mode
+                            'category'=> $batch_row->seed_distribution_mode,
                            
                     );
-                    
-                    if($batch_row->seed_distribution_mode == 'NRP'){
-                        array_push($return_arr_nrp, $batch_data);
-                    }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                        array_push($return_arr_gqs, $batch_data);
-                    }else{
-                        array_push($return_arr, $batch_data);
-                    }
-                    //array_push($return_arr, $batch_data);   
+
+                    array_push($return_arr, $batch_data);   
                     $inspected_bags += $bg;
              }
          } //NEXT SEASON COUNT
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             $total_confirmed += $confirmed_bags;
             $total_inspected += $inspected_bags;
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
          //PREVIOUS SEASON 
     $prevBatch = DB::table($GLOBALS['season_prefix'].'rcep_transfers_ps.transfer_logs')
@@ -3883,17 +3786,10 @@ class DeliveryDashboardController extends Controller
                                     'deliveryDate' => date("Y-m-d", strtotime($prevBatch->date_created)),
                                     'batch_status' => "",
                                     'remarks' => 'Transferred From Previous Season',
-                                    'category' => $batch_row->seed_distribution_mode
+                                    'category'=> $batch_row->seed_distribution_mode,
                                 );
-                                
-                                if($batch_row->seed_distribution_mode == 'NRP'){
-                                    array_push($return_arr_nrp, $batch_data);
-                                }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                                    array_push($return_arr_gqs, $batch_data);
-                                }else{
-                                    array_push($return_arr, $batch_data);
-                                }
-                                //array_push($return_arr, $batch_data);
+
+                                array_push($return_arr, $batch_data);
 
                                  if(count($checkIfWhole)>0){
                                          $arr = $this->getWholeData($ls_batchNumber,$prevBatch->new_batch_number, $actualRow->seedVariety , $actualRow->seedTag);
@@ -3964,17 +3860,10 @@ class DeliveryDashboardController extends Controller
                                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                                             'batch_status' => $tt,
                                             'remarks' => 'Transferred From Previous Season',
-                                            'category' => $batch_row->seed_distribution_mode
+                                            'category'=> $batch_row->seed_distribution_mode,                                           
                                         );
-                                        
-                                        if($batch_row->seed_distribution_mode == 'NRP'){
-                                            array_push($return_arr_nrp, $batch_data);
-                                        }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                                            array_push($return_arr_gqs, $batch_data);
-                                        }else{
-                                            array_push($return_arr, $batch_data);
-                                        }
-                                        //array_push($return_arr, $batch_data);
+
+                                        array_push($return_arr, $batch_data);
                                         $inspected += $bg;
                                       }
                                     }
@@ -4047,17 +3936,10 @@ class DeliveryDashboardController extends Controller
                                                 'deliveryDate' => date("Y-m-d", strtotime($dc)),
                                                 'batch_status' => $tt,
                                                 'remarks' => 'Transferred From Previous Season',
-                                                'category' => $batch_row->seed_distribution_mode
+                                                'category'=> $batch_row->seed_distribution_mode,
                                         );
-                                        
-                                        if($batch_row->seed_distribution_mode == 'NRP'){
-                                            array_push($return_arr_nrp, $batch_data);
-                                        }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                                            array_push($return_arr_gqs, $batch_data);
-                                        }else{
-                                            array_push($return_arr, $batch_data);
-                                        }
-                                        //array_push($return_arr, $batch_data);
+
+                                        array_push($return_arr, $batch_data);
                                         $inspected += $bg;
                                  
 
@@ -4091,47 +3973,14 @@ class DeliveryDashboardController extends Controller
                                                         'deliveryDate' => date("Y-m-d", strtotime($par->dateCreated)),
                                                         'batch_status' => $tt,
                                                         'remarks' => "Transferred From Previous Season",
-                                                        'category' => $batch_row->seed_distribution_mode
+                                                        'category'=> $batch_row->seed_distribution_mode,
                                                        
                                                 );
-                                                
-                                                if($batch_row->seed_distribution_mode == 'NRP'){
-                                                    array_push($return_arr_nrp, $batch_data);
-                                                }elseif($batch_row->seed_distribution_mode == 'Good Quality Seeds'){
-                                                    array_push($return_arr_gqs, $batch_data);
-                                                }else{
-                                                    array_push($return_arr, $batch_data);
-                                                }
-                                                //array_push($return_arr, $batch_data);   
+
+                                                array_push($return_arr, $batch_data);   
                                                 $inspected_bags += $bg;
                                             }
-
-
                                         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                  }
                                 }
 
@@ -4165,15 +4014,12 @@ class DeliveryDashboardController extends Controller
         $buffer_arr = $this->bufferList($coop_accreditation);
         $bep_arr = $this->bep_list($coop_accreditation);
 
-        $myFile = Excel::create('SEED_COOP_DELIVERIES', function($excel) use ($return_arr, $return_arr_nrp, $return_arr_gqs, $replacement_arr, $buffer_arr, $bep_arr) {
+        $myFile = Excel::create('SEED_COOP_DELIVERIES', function($excel) use ($return_arr, $replacement_arr, $buffer_arr, $bep_arr) {
             $excel->sheet("DELIVERY_LIST", function($sheet) use ($return_arr) {
                 $sheet->fromArray($return_arr);
             });
-            $excel->sheet("DELIVERY_LIST_NRP", function($sheet) use ($return_arr_nrp) {
-                $sheet->fromArray($return_arr_nrp);
-            });
-            $excel->sheet("DELIVERY_LIST_GQS", function($sheet) use ($return_arr_gqs) {
-                $sheet->fromArray($return_arr_gqs);
+            $excel->sheet("DELIVERY_LIST_NRP", function($sheet) use ($return_arr) {
+                $sheet->fromArray($return_arr);
             });
             $excel->sheet("REPLACEMENT_LIST", function($sheet) use ($replacement_arr) {
                 $sheet->fromArray($replacement_arr);
@@ -4195,7 +4041,7 @@ class DeliveryDashboardController extends Controller
 
         return response()->json($response);
     }
-
+//END EXPORT
     public function ReplacementList_FMD($coop_accreditation){
         
         $batch_deliveries = DB::connection('delivery_inspection_db')->table('tbl_delivery')
@@ -6984,7 +6830,7 @@ class DeliveryDashboardController extends Controller
         }
 		
 		
-        //*************** PREVIOUS SEASON TRANSFER ******************************************************
+        //*************** PREVIOUS SEASON TRANSFER ********************************************************
 		
 		$prev_batches = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
                 ->where('transferCategory', 'P')
