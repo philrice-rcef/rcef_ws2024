@@ -206,7 +206,8 @@ class pendingBatchController extends Controller
             ->orderBy('batch_ticket', 'ASC')
             ->groupBy('id')
             ->get();
-//CHANGE actual_delivery_ds and dropoffpoint when transfer on live
+            
+            //CHANGE actual_delivery_ds and dropoffpoint when transfer on live
 
                
 
@@ -233,6 +234,9 @@ class pendingBatchController extends Controller
             return $e;
         }
     }
+
+
+
 
 	//TEMP
 	public function export_farmer_yield_zero($prv_num){

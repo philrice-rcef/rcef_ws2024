@@ -221,8 +221,15 @@ class DeliveryInspect
     }
 
     function get_delivery($batch){
+/*      OLD CODE  
         $delivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery as delivery')
         ->select('*')
+        ->where('delivery.batchTicketNumber', $batch)
+        ->first(); */
+
+        $delivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery as delivery')
+        ->select('delivery.*', 'transaction.seed_distribution_mode')
+        ->join($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_delivery_transaction as transaction', 'delivery.batchTicketNumber', '=', 'transaction.batchTicketNumber')
         ->where('delivery.batchTicketNumber', $batch)
         ->first();
 
@@ -276,7 +283,6 @@ class DeliveryInspect
         ->select('*')
         ->where('ad.batchTicketNumber', $batch)
         ->get();
-
         foreach ($ad as $value) {
             $dvar = $this->get_variety($batch, $value->seedVariety);
             if (count($dvar) == 0) {
@@ -285,6 +291,7 @@ class DeliveryInspect
                 }
             }
         }
+        
         return $actualVariety;
     }
 

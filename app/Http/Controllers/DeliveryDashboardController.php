@@ -1585,11 +1585,11 @@ class DeliveryDashboardController extends Controller
 
     public function gen_iar_pdf($id){
         $delivery = new DeliveryInspect();
-
+        
         $datenow = date('Y-m-d');
         $dv = $delivery->get_delivery($id);
         $coop = $delivery->get_coop($dv->coopAccreditation);
-		// dd($dv);
+		//dd($dv);
         $coopAdd = $coop->citymunDesc . " " . $coop->provDesc;
 
         $dv_all = $delivery->get_delivery_batch($id);
@@ -1615,7 +1615,7 @@ class DeliveryDashboardController extends Controller
             'IAR_no' => $code,
             'Date' => $datenow,
             'MOA' => $coop->current_moa,
-
+            'seedType' => $dv->seed_distribution_mode,
             'coopName' => $coop->coopName,
             'dop' => $dv->dropOffPoint,
             'delivery' => $dv_all,
@@ -1623,7 +1623,7 @@ class DeliveryDashboardController extends Controller
             "ticket" => $id
         ];
 
-       // dd($data);
+        //dd($data);
 
         $pdf = PDFTIM::loadView('DeliveryDashboard/pdf', $data);
 
@@ -3240,19 +3240,7 @@ class DeliveryDashboardController extends Controller
             ->where('coopAccreditation', $coop_accreditation)
             ->orderBy('deliveryDate', 'DESC')
             ->get();
-            //dd($batch_deliveries);
-/*             $batch_deliveries = DB::connection('delivery_inspection_db')->table('tbl_delivery as a')
-            ->leftJoin('tbl_delivery_transaction as b', 'a.coopAccreditation', '=', 'b.accreditation_no')
-            ->select('a.batchTicketNumber', 'a.coopAccreditation', 'a.seedVariety', 'a.deliveryDate',
-            'a.dropOffPoint', 'a.region', 'a.province', 'a.municipality', 'a.seedTag', 'a.isBuffer',
-            'a.sg_id','b.seed_distribution_mode')
-            ->where('a.is_cancelled', 0)
-            ->where('a.isBuffer', 0)
-            ->where('a.coopAccreditation', $coop_accreditation)
-            ->groupBy('a.batchTicketNumber', 'a.seedVariety', 'a.seedTag','b.seed_distribution_mode')
-            //->distinct()
-            ->orderBy('a.deliveryDate', 'DESC')
-            ->get(); */
+
 
         $total_confirmed = 0;
         $total_inspected = 0;
@@ -3457,7 +3445,7 @@ class DeliveryDashboardController extends Controller
                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                             'batch_status' => $tt,
                             'remarks' => $label,
-                            'category' => $batch_row->seed_distribution_mode
+                            'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                         );
 
                         if($batch_row->seed_distribution_mode == 'NRP'){
@@ -3490,7 +3478,7 @@ class DeliveryDashboardController extends Controller
                 'deliveryDate' => date("Y-m-d", strtotime($batch_row->deliveryDate)),
                 'batch_status' => $batch_status,
                 'remarks' => $label,
-                'category' => $batch_row->seed_distribution_mode
+                'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
             );
 
             if($batch_row->seed_distribution_mode == 'NRP'){
@@ -3582,7 +3570,7 @@ class DeliveryDashboardController extends Controller
                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                             'batch_status' => $tt,
                             'remarks' => $label,
-                            'category' => $batch_row->seed_distribution_mode
+                            'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                            
                     );
                     
@@ -3626,7 +3614,7 @@ class DeliveryDashboardController extends Controller
                                             'deliveryDate' => date("Y-m-d", strtotime($par->dateCreated)),
                                             'batch_status' => $tt,
                                             'remarks' => "",
-                                            'category' => $batch_row->seed_distribution_mode
+                                            'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                                            
                                     );
                                     
@@ -3734,7 +3722,7 @@ class DeliveryDashboardController extends Controller
                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                             'batch_status' => $tt,
                             'remarks' => $label,
-                            'category' => $batch_row->seed_distribution_mode
+                            'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                            
                     );
                     
@@ -3883,7 +3871,7 @@ class DeliveryDashboardController extends Controller
                                     'deliveryDate' => date("Y-m-d", strtotime($prevBatch->date_created)),
                                     'batch_status' => "",
                                     'remarks' => 'Transferred From Previous Season',
-                                    'category' => $batch_row->seed_distribution_mode
+                                    'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                                 );
                                 
                                 if($batch_row->seed_distribution_mode == 'NRP'){
@@ -3964,7 +3952,7 @@ class DeliveryDashboardController extends Controller
                                             'deliveryDate' => date("Y-m-d", strtotime($dc)),
                                             'batch_status' => $tt,
                                             'remarks' => 'Transferred From Previous Season',
-                                            'category' => $batch_row->seed_distribution_mode
+                                            'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                                         );
                                         
                                         if($batch_row->seed_distribution_mode == 'NRP'){
@@ -4047,7 +4035,7 @@ class DeliveryDashboardController extends Controller
                                                 'deliveryDate' => date("Y-m-d", strtotime($dc)),
                                                 'batch_status' => $tt,
                                                 'remarks' => 'Transferred From Previous Season',
-                                                'category' => $batch_row->seed_distribution_mode
+                                                'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                                         );
                                         
                                         if($batch_row->seed_distribution_mode == 'NRP'){
@@ -4091,7 +4079,7 @@ class DeliveryDashboardController extends Controller
                                                         'deliveryDate' => date("Y-m-d", strtotime($par->dateCreated)),
                                                         'batch_status' => $tt,
                                                         'remarks' => "Transferred From Previous Season",
-                                                        'category' => $batch_row->seed_distribution_mode
+                                                        'category' => $batch_row->seed_distribution_mode == 'NRP' ? 'SEED RESERVE' : $batch_row->seed_distribution_mode
                                                        
                                                 );
                                                 
@@ -4169,7 +4157,7 @@ class DeliveryDashboardController extends Controller
             $excel->sheet("DELIVERY_LIST", function($sheet) use ($return_arr) {
                 $sheet->fromArray($return_arr);
             });
-            $excel->sheet("DELIVERY_LIST_NRP", function($sheet) use ($return_arr_nrp) {
+            $excel->sheet("DELIVERY_LIST_SEED_RESERVE", function($sheet) use ($return_arr_nrp) {
                 $sheet->fromArray($return_arr_nrp);
             });
             $excel->sheet("DELIVERY_LIST_GQS", function($sheet) use ($return_arr_gqs) {

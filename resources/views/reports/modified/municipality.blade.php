@@ -413,6 +413,7 @@
         });
 
         $('#confirm_export_municipality').on('show.bs.modal', function (e) {
+            
             var province = $(e.relatedTarget).data('province');
             var municipality = $(e.relatedTarget).data('municipality');
             var ebinhi = $(e.relatedTarget).data('ebinhi');
@@ -427,6 +428,7 @@
 
             $("#munReport_province").val(province);
             $("#munReport_municipality").val(municipality);
+            
         });
 
         $("#noUpdate_export_btn_ebinhi").on("click", function(e){
