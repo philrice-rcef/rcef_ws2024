@@ -18,12 +18,17 @@ public/flsar/*
 public_html/storage
 
 storage/framework/*
+storage/geoJson/*
+storage/reports/*
 
 app/Http/Middleware/technoDemoMiddleware.php
 app/Http/Controllers/Auth/AuthController.php
 
 storage/framework/sessions_ws2022_2/*
 public/flsar/*
+public/reports/*
+public/excel_template/*
+public/exec/*
 
 storage/*.key
 .env

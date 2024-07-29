@@ -49,14 +49,14 @@
                                     </div>
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id="">
-                                            <i class="fa fa-brands fa-github"><a href="#" class="gitAction" data-link="{{$data['ServerAddress']."/rcef_station/git-pull"}}"> Git pull</a> </i> </div>
+                                            <i class="fa fa-brands fa-github"><a href="#" class="gitAction" data-link="{{$data['ServerAddress']."/rcef_station/git-pull-ds24"}}"> Git pull</a> </i> </div>
                                     </div>
-                                    @if ($data['StationName'] == "CES")
+                                   <!--  @if ($data['StationName'] == "CES")
                                     <div class="col-md-12 col-sm-4 col-xs-4">
                                         <div class="sub-count" id="">
                                             <i class="fa fa-brands fa-github"><a href="#" data-link="{{$data['ServerAddress']."/rcef_station/git-push"}}" class="gitAction"> Git push</a> </i> </div>
                                     </div>
-                                    @endif
+                                    @endif -->
                                 </div>
                             </div>
 						</div>
