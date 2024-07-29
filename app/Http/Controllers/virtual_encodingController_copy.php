@@ -697,21 +697,16 @@ class virtual_encodingController extends Controller
         if($search_value == ""){
             $search_value = "%";
         }
-
-        $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
-
+   
         $prv_db = $lib->prv_code;
-
-        // dd($GLOBALS['season_prefix']."prv_".$prv_db.".".$conn);
 
         if($lib != null){
             // $rsbsa_pattern = $lib->regCode."-".$lib->provCode."-".$lib->munCode;
             $rsbsa_pattern = "%";
       
-
           
             //  dd($prv_db);
-            $farmer_info = DB::table($GLOBALS['season_prefix']."prv_".$prv_db.".".$conn)
+            $farmer_info = DB::table($GLOBALS['season_prefix']."prv_".$prv_db.".farmer_information_final")
             ->select("rcef_id","db_ref","rsbsa_control_no as rsbsa",DB::raw("UPPER(CONCAT(lastName,', ',firstName,' ',midName,' ',extName)) as name"),DB::raw("CONCAT(province,', ',municipality,' ',brgy_name) as address"), 'final_area', DB::raw("UPPER(SUBSTR(sex,1,1)) as sex"), 'birthdate' )
             // ->where("lastName", "LIKE", $search_value.'%')
             // // ->where("claiming_prv", "LIKE", $rsbsa_pattern."%")
@@ -742,13 +737,7 @@ class virtual_encodingController extends Controller
                     ->orWhere("rcef_id", $search_value)
                     ->orWhere(DB::raw("CONCAT(lastName,' ',firstName,' ',midName,' ',extName)"), "LIKE", $search_value.'%');
             })
-            ->where(function ($query) use ($request) {
-                if($request->connection == "1"){
-                    $query->whereIn("is_new", [2, 8]); 
-                } else {
-                    $query->where("is_new", 0);
-                }
-            })
+            ->whereIn("is_new", [2, 8])
             ->orderBy("lastName")
             ->orderBy("firstName")
             ->groupBy("rsbsa_control_no")
@@ -756,7 +745,6 @@ class virtual_encodingController extends Controller
             ->groupBy("lastName")
             ->groupBy("midName")
             ->groupBy("birthdate")
-
             
             
             
@@ -778,10 +766,7 @@ class virtual_encodingController extends Controller
     }
 
     function select_farmer(Request $request){
-
-        $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
-
-        $farmer = DB::table($GLOBALS['season_prefix']."prv_".$request->prv.".".$conn)
+        $farmer = DB::table($GLOBALS['season_prefix']."prv_".$request->prv.".farmer_information_final")
             ->where('db_ref', $request->db_ref)
             ->first();
 
@@ -1987,9 +1972,6 @@ class virtual_encodingController extends Controller
 
     public function save_distribution(Request $request){
         // dd($request->all());
-        $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
-        $releases = ($request->connection == "1") ? "new_released" : "new_released_nrp";
-    
         if($request->db_ref != 'new'){
 
             DB::beginTransaction();
@@ -2075,12 +2057,12 @@ class virtual_encodingController extends Controller
                                         if($prv_code_parcel != $prv_code_released){
                                             //NOT THE SAME PROVINCE            
                                             $status_vs = 3;
-                                            $farmer_data = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".".$conn)
+                                            $farmer_data = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                 ->where("db_ref", $db_ref)
                                                 ->first();
                                             if($farmer_data != null){
                                                 if($request->is_lowland){
-                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".".$conn)
+                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                         ->where("db_ref", $db_ref)
                                                         ->update([
                                                             "is_new" => 3,
@@ -2106,7 +2088,7 @@ class virtual_encodingController extends Controller
 
                                                 }
                                                 else{
-                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".".$conn)
+                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                         ->where("db_ref", $db_ref)
                                                         ->update([
                                                             "da_intervention_card" => $da_intervention_card,
@@ -2127,7 +2109,7 @@ class virtual_encodingController extends Controller
                                                 }
                         
                                                 //GET CURRENT FARMER ON CLAIMING PRV
-                                                $get_db_ref =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".".$conn)
+                                                $get_db_ref =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
                                                         ->where("rsbsa_control_no", $farmer_data->rsbsa_control_no)
                                                         ->where("firstName", $farmer_data->firstName)
                                                         ->where("midName", $farmer_data->midName)
@@ -2150,11 +2132,11 @@ class virtual_encodingController extends Controller
                                                     unset($clone_data["db_ref"]);
                                                     $clone_data["to_prv_code"] = "clone: ".$list_version;
 
-                                                    $new_farmer_id_clone =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".".$conn)
+                                                    $new_farmer_id_clone =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
                                                             ->insertGetId($clone_data);
 
                                                     //UPDATE
-                                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".".$conn)
+                                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
                                                             ->where("id", $new_farmer_id_clone)
                                                             ->update(["db_ref" => $new_farmer_id_clone]);
 
@@ -2186,13 +2168,13 @@ class virtual_encodingController extends Controller
                                             }
     
     
-                                            $farmer_data = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".".$conn)
+                                            $farmer_data = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
                                                 ->where("db_ref", $db_ref)
                                                 ->first();
                                             if($farmer_data != null){
                                                 $sex = $farmer_data->sex;
                                                 if($request->is_lowland){
-                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".".$conn)
+                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                         ->where("db_ref", $db_ref)
                                                         ->update([
                                                             "is_new" => 3,
@@ -2217,7 +2199,7 @@ class virtual_encodingController extends Controller
                                                         ]);
                                                 }
                                                 else{
-                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".".$conn)
+                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                         ->where("db_ref", $db_ref)
                                                         ->update([
                                                             "da_intervention_card" => $da_intervention_card,
@@ -2246,7 +2228,7 @@ class virtual_encodingController extends Controller
     
     
                                 if($request->members){
-                                    $release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".".$releases)
+                                    $release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".new_released")
                                     ->insertGetId([
                                         "id" =>  "111111111",
                                         "rcef_id" => $rcef_id,
@@ -2304,11 +2286,11 @@ class virtual_encodingController extends Controller
                                     foreach($lowMembers as $lowHolder)
                                     {
                                         // dd($lowHolder);
-                                        $get_info = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".".$conn)
+                                        $get_info = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                         ->where("db_ref", $lowHolder->dbref)
                                         ->first();
 
-                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".".$conn)
+                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                         ->where("db_ref", $lowHolder->dbref)
                                                         ->update([
                                                             "is_new" => 3,
@@ -2322,7 +2304,7 @@ class virtual_encodingController extends Controller
 
                                 }
                                 else{
-                                    $release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".".$releases)
+                                    $release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".new_released")
                                     ->insertGetId([
                                         "id" =>  "111111111",
                                         "rcef_id" => $rcef_id,
@@ -2526,10 +2508,10 @@ class virtual_encodingController extends Controller
 
 public function get_all_parcel2(Request $request){
     
-    $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
+
         
     $prefix = $GLOBALS['season_prefix'];
-   $ffrs_data = DB::table($prefix."prv_".$request->prv.".".$conn)
+   $ffrs_data = DB::table($prefix."prv_".$request->prv.".farmer_information_final")
        ->where("db_ref", $request->db_ref)
        ->first();
    
@@ -2553,31 +2535,18 @@ public function get_all_parcel2(Request $request){
 
       
        if($request->state==0){
-           $parcel_data =DB::table($prefix."prv_".$request->prv.".".$conn)
+           $parcel_data =DB::table($prefix."prv_".$request->prv.".farmer_information_final")
            ->where("rsbsa_control_no", $ffrs_data->rsbsa_control_no)
-           ->where(function ($query) use ($request) {
-                if($request->connection == "1"){
-                    $query->whereIn("is_new", [2, 8]); 
-                } else {
-                    $query->where("is_new", 0);
-                }
-            })
+           ->whereIn("is_new", [2, 8])
         //    ->where(function ($query) {
         //     $query ->where("is_new", 2)
         //             ->orwhere("is_new", 8);
         // })
            ->get();
        }else{
-           $parcel_data =DB::table($prefix."prv_".$request->prv.".".$conn)
+           $parcel_data =DB::table($prefix."prv_".$request->prv.".farmer_information_final")
            ->where("db_ref", $request->db_ref)
-           ->where(function ($query) use ($request) {
-                if($request->connection == "1"){
-                    $query->whereIn("is_new", [2, 8]); 
-                } else {
-                    $query->where("is_new", 0);
-                }
-            })
-        //    ->whereIn("is_new", [2, 8])
+           ->whereIn("is_new", [2, 8])
         //    ->where(function ($query) {
         //     $query ->where("is_new", 2)
         //             ->orwhere("is_new", 8);
@@ -2594,21 +2563,14 @@ public function get_all_parcel2(Request $request){
                $add_home_dop = 0;
            }
 
-           $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
+           $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
                ->where("claiming_prv", $claiming_prv)
                ->where("rsbsa_control_no", $pd->rsbsa_control_no)
                
                ->where("firstName", $pd->firstName)
                ->where("midName", $pd->midName)
                ->where("lastName", $pd->lastName)
-               ->where(function ($query) use ($request) {
-                    if($request->connection == "1"){
-                        $query->whereIn("is_new", [2, 8]); 
-                    } else {
-                        $query->where("is_new", 0);
-                    }
-                })
-            //    ->whereIn("is_new", [2, 8])
+               ->whereIn("is_new", [2, 8])
             //    ->where(function ($query) {
             //     $query ->where("is_new", 2)
             //             ->orwhere("is_new", 8);
@@ -2742,7 +2704,7 @@ public function get_all_parcel2(Request $request){
                $add_home_dop = 0;
            }
 
-           $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
+           $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
                ->where("claiming_prv", $claiming_prv)
                ->where("firstName", $ffrs_data->firstName)
                ->where("midName", $ffrs_data->midName)
@@ -2879,7 +2841,6 @@ public function get_all_parcel2(Request $request){
                    "totalBag" => '####',
                    "release" => $release_data,
                    "balance" => $bred['remaining_balance'],
-                    // "balance" => 9999,
                    "category" => "Inbred"
                ));
 

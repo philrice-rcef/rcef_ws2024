@@ -19,22 +19,9 @@
             </select>
         </div>
 
-        <div class="col-md-6" id="search_virtual_div"> 
-            <div class="row">
-                <div class="col-md-6">
-                <label for="connection"> (2) Connection</label> <br>
-                <select name="connection" id="connection" class="form-control form-select">
-                    <option value="1" selected default>Old</option>
-                    <option value="2">New</option>
-                </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="search_virtual">(3) Search Farmer </label> <br>
-                    <button id="search_virtual" name="search_virtual" style="width:100%;" class="btn btn-success btn-md" data-toggle='modal' data-target='#search_farmer_modal'> <i class="fa fa-search" aria-hidden="true"></i> Search </button>
-                </div>
-            </div>
-            
-
+        <div class="col-md-3" id="search_virtual_div"> 
+            <label for="search_virtual">(2) Search Farmer </label> <br>
+            <button id="search_virtual" name="search_virtual" style="width:100%;" class="btn btn-success btn-md" data-toggle='modal' data-target='#search_farmer_modal'> <i class="fa fa-search" aria-hidden="true"></i> Search </button>
         </div>
 
 
@@ -1012,9 +999,8 @@
 
     $("#save_update").on("click", function(){
         // TRAPPER
-            let connection = $("#connection").val();
+        
             var served =  $("#is_served").val();
-            console.log(connection);
             if(served == "false"){
                      var tbl_data = $('#distribution_tbl >tbody >tr').length;
                         if(tbl_data <= 0){   Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'No Claim Details',  }); return ;  }
@@ -1135,7 +1121,6 @@
                             type: 'POST',
                             url: "{{route('virtual.insert.distribution')}}",
                             data: {
-                                connection: connection,
                                 _token: "{{ csrf_token() }}",
                                 category: "INBRED",
                                 float_id: float_id,
@@ -1404,7 +1389,6 @@
                             type: 'POST',
                             url: "{{route('virtual.save.distribution')}}",
                             data: {
-                                connection: connection,
                                 _token: "{{ csrf_token() }}",
                                 category: "INBRED",
                                 dop_selected_vs: dop_selected_vs,
@@ -1716,8 +1700,6 @@
 
 
         function select_farmer(db_ref, prv){
-
-            let connection = $("#connection").val();
             HoldOn.open(holdon_options);
             clear_distri_form(); 
             $("#farmer_info_new").hide("fast");
@@ -1729,8 +1711,7 @@
             data: {
                 _token: "{{ csrf_token() }}",
                 prv: prv,
-                db_ref: db_ref,
-                connection: connection
+                db_ref: db_ref
             },
             dataType: 'json',
             success: function(result){
@@ -1769,16 +1750,14 @@
         }
 
         function get_parcel_list(db_ref, prv){
-            
-            let connection = $("#connection").val();
+           
             $.ajax({
             type: 'POST',
             url: "{{route('virtual.get.parcel')}}",
             data: {
                 _token: "{{ csrf_token() }}",
                 prv: prv,
-                db_ref: db_ref,
-                connection: connection
+                db_ref: db_ref
             },
             dataType: 'json',
             success: function(result){
@@ -1965,8 +1944,7 @@
         function search(){
             var province = $('#province_virtual').val();
             var search_bar = $("#search_bar").val();
-            var connection = $("#connection").val();
-            $('#dataTBL').DataTable().clear();
+                $('#dataTBL').DataTable().clear();
                 $('#dataTBL').DataTable({
                     "bDestroy": true,
                     "autoWidth": false,
@@ -1984,8 +1962,7 @@
                         "data":{
                             "_token": "{{ csrf_token() }}",
                             "province": province,
-                            "search_bar": search_bar,
-                            "connection": connection,
+                            "search_bar": search_bar
                         }
                     },
                     "columns":[
