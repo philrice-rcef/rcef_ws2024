@@ -7,6 +7,8 @@
         </div>
     </div>
 
+    <!-- <div>My Role: {{ Auth::user()->roles->first()->roleId }}</div> -->
+
 
     <div class="row">
         <div class="col-md-3"> 
@@ -19,25 +21,43 @@
             </select>
         </div>
 
-        <div class="col-md-6" id="search_virtual_div"> 
-            <div class="row">
-                <div class="col-md-6">
-                <label for="connection"> (2) Connection</label> <br>
-                <select name="connection" id="connection" class="form-control form-select">
-                    <option value="1" selected default>FFRS List as of December 31, 2023</option>
-                    <option value="2">FFRS List as of May 2024</option>
-                </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="search_virtual">(3) Search Farmer </label> <br>
-                    <button id="search_virtual" name="search_virtual" style="width:100%;" class="btn btn-success btn-md" data-toggle='modal' data-target='#search_farmer_modal'> <i class="fa fa-search" aria-hidden="true"></i> Search </button>
-                </div>
-            </div>
-            
-
+        <div class="col-md-3" id="connect"> 
+            <!-- <div class="row"> -->
+                <!-- <div class="col-md-6"> -->
+                    <label for="connection"> (2) Connection</label> <br>
+                    <select name="connection" id="connection" class="form-control form-select">
+                        <option value="1" selected default>FFRS List as of December 31, 2023</option>
+                        <option value="2">FFRS List as of May 2024</option>
+                    </select>
+                <!-- </div> -->
+            <!-- </div> -->
         </div>
 
+        <div class="col-md-3" id="search_virtual_div"> 
+            <!-- <div class="row"> -->
+                <!-- <div class="col-md-6" id="connect">
+                    <label for="connection"> (2) Connection</label> <br>
+                    <select name="connection" id="connection" class="form-control form-select">
+                        <option value="1" selected default>FFRS List as of December 31, 2023</option>
+                        <option value="2">FFRS List as of May 2024</option>
+                    </select>
+                </div> -->
 
+                <?php 
+                    $num_temp = "";
+                    // if(Auth::user()->roles->first()->roleId != 41 && Auth::user()->roles->first()->roleId != 47 && Auth::user()->roles->first()->roleId != 30){
+                        if(Auth::user()->roles->first()->roleId != 41 && Auth::user()->roles->first()->roleId != 47){
+                        $num_temp = "2";
+                    } else {
+                        $num_temp = "3";
+                    }
+                ?>
+                <!-- <div class="col-md-6"> -->
+                    <label for="search_virtual">({{ $num_temp }}) Search Farmer </label> <br>
+                    <button id="search_virtual" name="search_virtual" style="width:100%;" class="btn btn-success btn-md" data-toggle='modal' data-target='#search_farmer_modal'> <i class="fa fa-search" aria-hidden="true"></i> Search </button>
+                <!-- </div> -->
+            <!-- </div> -->
+        </div>
     </div>
 
     <div class="row" id="placeholder_name">
@@ -626,12 +646,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         
-       
-
         $("#province_virtual").select2();
         $("#select_dop").select2();
 
         $("#search_virtual_div").hide("fast");
+        $("#connect").hide("fast");
         $("#placeholder_name").hide("fast");
         $("#distribution_div").hide("fast");
 
@@ -994,6 +1013,7 @@
         });
 
         $("#dop_select_new").on("click", function(){
+                let connection = $("#connection").val();
                 $("#distribution_div").show("fast");
                 var select_dop =  $("#select_dop_new").val();
                 var dop_selected_name = $('#select_dop_new').find(":selected").text();
@@ -1626,16 +1646,22 @@
 
 
 
-
-
         $("#province_virtual").on("change", function(){
-            
-            if($(this).val() != "0"){
+            let role =  "{{Auth::user()->roles->first()->roleId}}";
+            // if(role == 41 || role == 47 || role == 30){
+            if(role == 41 || role == 47 ){
+                $("#connect").show("fast");
                 $("#search_virtual_div").show("fast");
             }else{
-                $("#search_virtual_div").hide("fast");
-                $("#placeholder_name").hide("fast");
+                $("#connect").hide("fast");
+                $("#search_virtual_div").show("fast");
             }
+            // if($(this).val() != "0"){
+            //     $("#search_virtual_div").show("fast");
+            // }else{
+            //     $("#search_virtual_div").hide("fast");
+            //     $("#placeholder_name").hide("fast");
+            // }
         });
 
 

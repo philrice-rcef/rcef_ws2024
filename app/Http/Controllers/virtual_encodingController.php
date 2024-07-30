@@ -193,6 +193,8 @@ class virtual_encodingController extends Controller
         //     ->with("mss",$mss);
         // }
 
+        // dd(Auth::user()->roles->first()->roleId);
+        // $role = Auth::user()->roles->first()->roleId;
         if(Auth::user()->roles->first()->name == "rcef-programmer"){
             $user_provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('lib_prv.province')
@@ -2878,8 +2880,8 @@ public function get_all_parcel2(Request $request){
                    "seedVariety" => $bred['variety'],
                    "totalBag" => '####',
                    "release" => $release_data,
-                   "balance" => $bred['remaining_balance'],
-                    // "balance" => 9999,
+                //    "balance" => $bred['remaining_balance'],
+                    "balance" => 9999,
                    "category" => "Inbred"
                ));
 
