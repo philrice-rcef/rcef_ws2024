@@ -24,8 +24,8 @@
                 <div class="col-md-6">
                 <label for="connection"> (2) Connection</label> <br>
                 <select name="connection" id="connection" class="form-control form-select">
-                    <option value="1" selected default>Old</option>
-                    <option value="2">New</option>
+                    <option value="1" selected default>FFRS List as of December 31, 2023</option>
+                    <option value="2">FFRS List as of May 2024</option>
                 </select>
                 </div>
                 <div class="col-md-6">
