@@ -2222,6 +2222,8 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
     Route::get('/farmerVerification/home', ['as' => 'farmerVerification', 'uses' => 'farmerVerificationController@index']);
     Route::post('/farmerVerification/getMuni', ['as' => 'farmerVerification.getMuni', 'uses' => 'farmerVerificationController@getMuni']);
     Route::post('/farmerVerification/getProfiles', ['as' => 'farmerVerification.getProfiles', 'uses' => 'farmerVerificationController@getProfiles']);
+    Route::post('/farmerVerification/getSuggestions', ['as' => 'farmerVerification.getSuggestions', 'uses' => 'farmerVerificationController@getSuggestions']);
+    Route::post('/farmerVerification/updateProfiles', ['as' => 'farmerVerification.updateProfiles', 'uses' => 'farmerVerificationController@updateProfiles']);
 
     //RSMS Dashboard update
     Route::post('delivery_summary/month', ['as' => 'delivery_summary.month', 'uses' => 'Summarycontroller@get_delivery_month']);

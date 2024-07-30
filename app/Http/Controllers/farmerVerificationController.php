@@ -22,9 +22,16 @@ class farmerVerificationController extends Controller
         ->get();
 
         $prvCodes = [];
+        $totalForValidation = 0;
+        $totalValidated = 0;
+        $totalPending = 0;
         foreach($getPrvs as $prv)
         {
             $code = str_replace('prv_','',$prv->TABLE_NAME);
+            // $countMerged = count(DB::table('mongodb_data.prv_'.$code.'_merge')
+            // ->get());
+            // $totalValidated = $totalValidated + $countMerged;
+            
             $checkTbl = DB::table('mongodb_data.prv_'.$code.'_ai')
             ->where('status','FOR VERIFICATION')
             ->first();
@@ -38,87 +45,21 @@ class farmerVerificationController extends Controller
             }
         }
 
-        // $forValidation = DB::select(DB::raw("SELECT SUM(total) as total FROM (SELECT COUNT(*) as total FROM mongodb_data.prv_0128_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0129_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0133_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0155_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0215_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0231_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0250_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0257_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0308_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0314_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0349_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0354_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0369_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0371_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0377_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0410_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0421_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0434_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0456_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0458_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0505_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0516_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0517_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0520_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0541_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0562_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0604_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0606_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0619_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0630_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0645_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0679_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0712_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0722_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0746_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0761_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0826_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0837_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0848_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0860_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0864_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0878_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0972_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0973_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_0983_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1013_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1018_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1035_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1042_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1043_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1123_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1124_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1125_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1182_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1186_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1247_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1263_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1265_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1280_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1401_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1411_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1427_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1432_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1444_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1481_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1536_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1538_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1547_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1602_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1603_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1667_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1668_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1685_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1740_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1751_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1752_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1753_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL UNION ALL
-        // SELECT COUNT(*) as total FROM mongodb_data.prv_1759_ai WHERE _stake LIKE 'PROC' AND ffrs_id IS NULL AND merged_id IS NULL) as myTable"));
+        foreach($prvCodes as $prov)
+        {
+            // $countForVerify = count(DB::table('mongodb_data.prv_'.$prov.'_ai')
+            // ->where('status','FOR VERIFICATION')
+            // ->get());
+            // $totalForValidation = $totalForValidation + $countForVerify;
+            
+            // $countPending = count(DB::table('mongodb_data.prv_'.$prov.'_ai')
+            // ->where('status','NOT LIKE','FOR VERIFICATION')
+            // ->where('status','NOT LIKE','MERGED')
+            // ->get());
+            // $totalPending = $totalPending + $countPending;
+        }
 
-        // $totalForValidation = number_format($forValidation[0]->total);
-        $totalForValidation = number_format(0);
+        // dd($totalForValidation, $totalValidated);
 
         $provinces = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
         ->select('regionName','province')
@@ -127,8 +68,12 @@ class farmerVerificationController extends Controller
         ->orderBy('region_sort')
         ->get();
 
-    
-        return view("farmerVerification.index",compact('provinces','totalForValidation'));
+
+        $totalForValidation = number_format($totalForValidation);
+        $totalValidated = number_format($totalValidated);
+        $totalPending = number_format($totalPending);
+
+        return view("farmerVerification.index",compact('provinces','totalForValidation','totalValidated','totalPending'));
     }
 
     public function getMuni(Request $request)
@@ -144,18 +89,191 @@ class farmerVerificationController extends Controller
 
     public function getProfiles(Request $request)
     {
+        $returnArray = [];
+        $totalForValidation = 0;
+        $totalValidated = 0;
+        $totalPending = 0;
+
         $code = substr(str_replace('-','',$request->mun),0,4);
         // dd($code);
+
+        $countMerged = count(DB::table('mongodb_data.prv_'.$code.'_merge')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->get());
+        $totalValidated = $totalValidated + $countMerged;
+
+        $countForVerify = count(DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','FOR VERIFICATION')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->get());
+        $totalForValidation = $totalForValidation + $countForVerify;
+        
+        $countPending = count(DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','NOT LIKE','FOR VERIFICATION')
+        ->where('status','NOT LIKE','MERGED')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->get());
+        $totalPending = $totalPending + $countPending;
+
         $getCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->where('status','FOR VERIFICATION')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->where('cluster_id',1834) //for testing purposes -  Pangasinan - Mangatarem
         ->first();
+        // dd($getCluster,$request->all());
+
+        if(!$getCluster)
+        {
+            return ('No data.');
+        }
 
         $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->where('status','FOR VERIFICATION')
         ->where('cluster_id',$getCluster->cluster_id)
         ->get();
+
+        $totalForValidation = number_format($totalForValidation);
+        $totalValidated = number_format($totalValidated);
+        $totalPending = number_format($totalPending);
         
-        return $getClusterProfile;
+
+        array_push($returnArray,$getClusterProfile);
+        array_push($returnArray,$totalForValidation);
+        array_push($returnArray,$totalValidated);
+        array_push($returnArray,$totalPending);
+
+        // dd($returnArray);
+        return $returnArray;
+    }
+
+    public function getSuggestions(Request $request)
+    {
+        // dd($request->all());
+        $code = substr(str_replace('-','',$request->mun),0,4);
+        $getSuggestedProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','MERGED')
+        ->where('cluster_id',$request->cluster)
+        ->get();
+
+        if(!$getSuggestedProfile)
+        {
+            $updateNoSuggested = DB::table('mongodb_data.prv_'.$code.'_ai')
+            ->where('status','FOR VERIFICATION')
+            ->where('cluster_id',$request->cluster)
+            ->update([
+                "status" => "FOR APPROVAL"
+            ]);
+            return "No suggested data.";
+        }
+        else
+        {
+            return $getSuggestedProfile;
+        }
+        
+    }
+
+    public function updateProfiles(Request $request)
+    {
+        // dd($request->all());
+        $code = substr(str_replace('-','',$request->mun),0,4);
+        $getSub = [];
+        $getNew = [];
+
+        if($request->profileCount == 1)
+        {
+            $profileId = $request->tempProfile;
+            $selectedId = $request->main_profile;
+
+            if($profileId == $selectedId)
+            {
+                $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+                ->max('new_cluster_id');
+
+                if(!$getMaxNewCluster)
+                {
+                    $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+                    ->max('cluster_id');
+                    $newCluster = $getMaxCluster + 1;
+                }
+                else
+                {
+                    $newCluster = $getMaxNewCluster + 1;
+                }
+                $updateProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
+                ->where('id',$profileId)
+                ->update([
+                    "new_cluster_id" => $newCluster,
+                    "status" => "FOR APPROVAL"
+                ]);
+            }
+            else
+            {
+                $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+                ->max('new_cluster_id');
+
+                if(!$getMaxNewCluster)
+                {
+                    $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+                    ->max('cluster_id');
+                    $newCluster = $getMaxCluster + 1;
+                }
+                else
+                {
+                    $newCluster = $getMaxNewCluster + 1;
+                }
+                $updateProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
+                ->where('id',$profileId)
+                ->update([
+                    "profile_link_id" => $selectedId,
+                    "status" => "FOR APPROVAL"
+                ]);
+            }
+        }
+        else
+        {
+            $getMain = DB::table('mongodb_data.prv_'.$code.'_ai')
+            ->where('id',$request->main_profile)
+            ->update([
+                "main_profile" => 1,
+                "status" => "FOR APPROVAL"
+            ]);
+
+            if($request->sub_profiles)
+            {
+                $getSub = DB::table('mongodb_data.prv_'.$code.'_ai')
+                ->whereIn('id',$request->sub_profiles)
+                ->update([
+                    "profile_link_id" => $request->main_profile,
+                    "status" => "FOR APPROVAL"
+                ]);
+            }
+            if($request->new_profiles)
+            {
+                
+                $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+                ->max('new_cluster_id');
+
+                if(!$getMaxNewCluster)
+                {
+                    $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+                    ->max('cluster_id');
+                    $newCluster = $getMaxCluster + 1;
+                }
+                else
+                {
+                    $newCluster = $getMaxNewCluster + 1;
+                }
+
+                $newProfiles = $request->new_profiles;
+                $getNew = DB::table('mongodb_data.prv_'.$code.'_ai')
+                ->whereIn('id',$request->new_profiles)
+                ->update([
+                    "new_cluster_id" => $newCluster
+                ]);
+
+            }
+        }
+        return 1;
     }
 
 }

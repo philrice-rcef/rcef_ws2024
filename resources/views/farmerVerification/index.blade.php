@@ -263,25 +263,25 @@
                             
                     </div>
                 </section>
-                
-                <div style="padding-top: 1em">
+            
+                <div id="statistics" style="padding-top: 1em; display:none;">
                     <div class="col-md-4">
                         <div class="boxes shadow-md" >
-                            <h1 style="font-weight: 700;">{{$totalForValidation}}</h1>
+                            <h1 id="totalForValidation" style="font-weight: 700;"></h1>
                             <hr>
                             <h4>Total records for validation</h4>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="boxes shadow-md" >
-                            <h1 style="font-weight: 700;"> 1,000</h1>
+                            <h1 id="totalValidated" style="font-weight: 700;"></h1>
                             <hr>
                             <h4>Total records validated</h4>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="boxes shadow-md" >
-                            <h1 style="font-weight: 700;"> 1,000</h1>
+                            <h1 id="totalPending" style="font-weight: 700;"></h1>
                             <hr>
                             <h4>Total pending records</h4>
                         </div>
@@ -292,8 +292,8 @@
                     <div class="col-md-2"></div>
                     <div class="col-md-8" style="padding-top: 1em">
                         <div  class="" style="text-align: center;">
-                            <h1><i class="fas fa-arrow-left" style="font-size: 0.75em;"></i> 1/1,000 <i class="fas fa-arrow-right" style="font-size: 0.75em;"></i></h1>
-                            <h4>Farmer Profiles</h4>
+                            <!-- <h1><i class="fas fa-arrow-left" style="font-size: 0.75em;"></i> 1/1,000 <i class="fas fa-arrow-right" style="font-size: 0.75em;"></i></h1> -->
+                            <!-- <h4>Farmer Profiles</h4> -->
                             <hr>
                             <button type="button" id='submit2' class="btn btn-success submit" disabled>Submit Verification</button> 
                         </div>
@@ -302,6 +302,7 @@
                 </div>
                 
                 <div id="profiles" style="display:none;"></div>
+                <div id="suggested" style="display:none;"></div>
 
 
 
@@ -327,6 +328,10 @@
     var main_profile ='';
     var sub_profiles = [];
     var new_profiles = [];
+    var all_profiles = [];
+    var profileCount = 0;
+    var tempProfile = 0;
+    
 
     $('#provinces').change(() => {
             $('#municipality').removeAttr('disabled');
@@ -376,7 +381,18 @@
         $('#submit').on('click', () =>{
             $prv = $('#provinces').val();
             $mun = $('#municipality').val();
+            
+            $("#statistics").hide();
+            $('#customSearch').hide();
+            $('#profiles').hide();
+            main_profile ='';
+            sub_profiles = [];
+            new_profiles = [];
+            all_profiles = [];
+            profileCount = 0;
+            tempProfile = 0;
             $("#profiles").empty();
+            $("#suggested").empty();
             var options = {
                 theme:"sk-rect",
                 message:'Please wait.',
@@ -394,7 +410,7 @@
             }
             else
             {
-                // HoldOn.open(options);
+                HoldOn.open(options);
 
             $.ajax({ 
                 type: 'POST',
@@ -405,65 +421,216 @@
                     mun: $mun
                 },
                 success: function(data){
-                    data.forEach(proc => {
-                        $("#profiles").append(`
-                            <div class="col-md-6" style="padding-top: 1em">
-                                <div class="boxes shadow-md profiles" id="box_${proc.id}">
-                                    <div style="display:flex; gap: 0.5em;">
-                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
-                                        <ul class="info_list">
-                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
-                                            <li id="rsbsa">RSBSA No.: ${proc.rsbsa_control_no}</li>
-                                            <li id="sex">Sex: ${proc.sex}</li>
-                                            <li id="bday">Birthdate: ${proc.birthdate}</li>
-                                            <li id="mother">Mother Name: ${proc.mother_name}</li>
-                                        </ul>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 2em;">
-                                        <label class="container">
-                                            <input type="checkbox" class="profile-checkbox" id="${proc.id}">
-                                            <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
-                                                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
-                                            </svg>
-                                        </label>
-                                        <i data-id="${proc.id}" class="fa fa-user-plus clickable-add" aria-hidden="true" style="font-size: 2.2em; display:none; margin-block-end: 0.2em;" ></i>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    });
-                    $('.profile-checkbox').on('change', function() {
-                    if ($(this).is(':checked')) {
-                        main_profile = this.id;
-                        $('#submit2').prop('disabled',false);
-                        console.log(`Checkbox with ID ${this.id} is checked`);
-                        $('.profile-checkbox').prop('disabled', true);
-                        $('.profile-checkbox2').hide();
-                        $(this).closest('.profiles').find('.profile-checkbox2').show();
-                        $(this).prop('disabled', false);
-                        $(this).closest('.profiles').css('background-color', '#3ed655');
-                        $(".clickable-add").show();
-                        $(this).closest('.profiles').find(".clickable-add").hide();
-                        
-                    } else {
-                        main_profile = '';
-                        sub_profiles = [];
-                        new_profiles = [];
-                        $('#submit2').prop('disabled',true);
-                        console.log(`Checkbox with ID ${this.id} is unchecked`);
-                        $('.profiles').css('background-color', '');
-                        $(".clickable-add").hide();
-                        $(".clickable-add").removeClass("checked-add");
-                        $('.profile-checkbox').prop('disabled', false);
-                        $('.profile-checkbox2').show();
-                        
+                    if(data == 'No data.')
+                    {
+                        alert(data);
+                        HoldOn.close();
                     }
-                });
-                    // HoldOn.close();
+                    else
+                    {
+                        $("#statistics").show();
+                        $('#customSearch').show();
+                        $('#profiles').show();
+                        $("#totalForValidation").empty();
+                        $("#totalValidated").empty();
+                        $("#totalPending").empty();
+                        $("#totalForValidation").append(data[1]);
+                        $("#totalValidated").append(data[2]);
+                        $("#totalPending").append(data[3]);
+
+                        if(data[0].length == 1)
+                        {
+                            HoldOn.open(options);
+                            $("#statistics").hide();
+                            $('#customSearch').hide();
+                            $('#profiles').hide();
+                            profileCount = data.length;
+                            tempProfile = data[0].id
+                                var cluster = data[0][0].cluster_id;
+                                $.ajax({ 
+                                    type: 'POST',
+                                    url: "{{ route('farmerVerification.getSuggestions') }}",
+                                    data: {
+                                        _token: "{{ csrf_token() }}",
+                                        cluster: cluster,
+                                        mun: $mun
+                                    },
+                                    success: function(data){
+                                        if(data=='No suggested data.')
+                                    {
+                                        $('#submit').click();
+                                    }
+                                    else
+                                    {
+                                        $("#profiles").append(`
+                                            <div class="col-md-6" style="padding-top: 1em">
+                                                <div class="boxes shadow-md profiles" id="box_${data[0][0].id}">
+                                                    <div style="display:flex; gap: 0.5em;">
+                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                        <ul class="info_list">
+                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data[0][0].firstName} ${data[0][0].midName} ${data[0][0].lastName} ${data[0][0].extName}</li>
+                                                            <li id="rsbsa">RSBSA No.: ${data[0][0].rsbsa_control_no}</li>
+                                                            <li id="sex">Sex: ${data[0][0].sex}</li>
+                                                            <li id="bday">Birthdate: ${data[0][0].birthdate}</li>
+                                                            <li id="mother">Mother Name: ${data[0][0].mother_name}</li>
+                                                            <li id="province">Province: ${data[0][0].province}</li>
+                                                            <li id="municipality">Municipality: ${data[0][0].municipality}</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 2em;">
+                                                        <label class="container">
+                                                            <input type="checkbox" class="profile-checkbox" id="${data[0][0].id}">
+                                                            <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                            </svg>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `);
+
+                                        $("#suggested").show();
+                                        data.forEach(proc => {
+                                            all_profiles.push(proc.id);
+                                            $("#suggested").append(`
+                                                <div class="col-md-6" style="padding-top: 1em">
+                                                    <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
+                                                        <div style="display:flex; gap: 0.5em;">
+                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                            <ul class="info_list">
+                                                            <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
+                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
+                                                            <li id="rsbsa">RSBSA No.: ${proc.rsbsa_control_no}</li>
+                                                            <li id="sex">Sex: ${proc.sex}</li>
+                                                            <li id="bday">Birthdate: ${proc.birthdate}</li>
+                                                            <li id="mother">Mother Name: ${proc.mother_name}</li>
+                                                            <li id="province">Province: ${proc.province}</li>
+                                                            <li id="municipality">Municipality: ${proc.municipality}</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; gap: 2em;">
+                                                            <label class="container">
+                                                                <input type="checkbox" class="profile-checkbox" id="${proc.id}">
+                                                                <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                                    <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                                </svg>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `);
+                                        }); 
+    
+                                        $('.profile-checkbox').on('change', function() {
+                                            console.log(this.id);
+                                            if ($(this).is(':checked')) {
+                                                main_profile = this.id;
+                                                $('#submit2').prop('disabled',false);
+                                                console.log(`Checkbox with ID ${this.id} is checked`);
+                                                $('.profile-checkbox').prop('disabled', true);
+                                                $('.profile-checkbox2').hide();
+                                                $(this).closest('.profiles').find('.profile-checkbox2').show();
+                                                $(this).prop('disabled', false);
+                                                $(this).closest('.profiles').css('background-color', '#3ed655');
+                                                $(".clickable-add").show();
+                                                $(this).closest('.profiles').find(".clickable-add").hide();
+                                                
+                                            } else {
+                                                main_profile = '';
+                                                sub_profiles = [];
+                                                new_profiles = [];
+                                                $('#submit2').prop('disabled',true);
+                                                console.log(`Checkbox with ID ${this.id} is unchecked`);
+                                                $('.profiles').css('background-color', '');
+                                                $('.suggest').css('background-color', '#6bfffd');
+                                                $(".clickable-add").hide();
+                                                $(".clickable-add").removeClass("checked-add");
+                                                $('.profile-checkbox').prop('disabled', false);
+                                                $('.profile-checkbox2').show();
+                                                
+                                            }
+                                        });
+                                    }
+    
+                                    }
+                                });
+                                HoldOn.close();
+                        }
+                        else
+                        {
+                            $("#totalForValidation").empty();
+                            $("#totalValidated").empty();
+                            $("#totalPending").empty();
+                            $("#totalForValidation").append(data[1]);
+                            $("#totalValidated").append(data[2]);
+                            $("#totalPending").append(data[3]);
+                            profileCount = data[0].length;
+                            data[0].forEach(proc => {
+                                all_profiles.push(proc.id);
+                                $("#profiles").append(`
+                                    <div class="col-md-6" style="padding-top: 1em">
+                                        <div class="boxes shadow-md profiles" id="box_${proc.id}">
+                                            <div style="display:flex; gap: 0.5em;">
+                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                <ul class="info_list">
+                                                    <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
+                                                    <li id="rsbsa">RSBSA No.: ${proc.rsbsa_control_no}</li>
+                                                    <li id="sex">Sex: ${proc.sex}</li>
+                                                    <li id="bday">Birthdate: ${proc.birthdate}</li>
+                                                    <li id="mother">Mother Name: ${proc.mother_name}</li>
+                                                    <li id="province">Province: ${proc.province}</li>
+                                                    <li id="municipality">Municipality: ${proc.municipality}</li>
+                                                </ul>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 2em;">
+                                                <label class="container">
+                                                    <input type="checkbox" class="profile-checkbox" id="${proc.id}">
+                                                    <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                        <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                    </svg>
+                                                </label>
+                                                <i data-id="${proc.id}" class="fa fa-user-plus clickable-add" aria-hidden="true" style="font-size: 2.2em; display:none; margin-block-end: 0.2em;" ></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                            HoldOn.close();
+                        }
+                        $('.profile-checkbox').on('change', function() {
+                        if ($(this).is(':checked')) {
+                            main_profile = this.id;
+                            $('#submit2').prop('disabled',false);
+                            console.log(`Checkbox with ID ${this.id} is checked`);
+                            $('.profile-checkbox').prop('disabled', true);
+                            $('.profile-checkbox2').hide();
+                            $(this).closest('.profiles').find('.profile-checkbox2').show();
+                            $(this).prop('disabled', false);
+                            $(this).closest('.profiles').css('background-color', '#3ed655');
+                            $(".clickable-add").show();
+                            $(this).closest('.profiles').find(".clickable-add").hide();
+                            
+                        } else {
+                            main_profile = '';
+                            sub_profiles = [];
+                            new_profiles = [];
+                            $('#submit2').prop('disabled',true);
+                            console.log(`Checkbox with ID ${this.id} is unchecked`);
+                            $('.profiles').css('background-color', '');
+                            $(".clickable-add").hide();
+                            $(".clickable-add").removeClass("checked-add");
+                            $('.profile-checkbox').prop('disabled', false);
+                            $('.profile-checkbox2').show();
+                            
+                        }
+                        
+                    });
+                    }
+
                 }
             });
-                $('#customSearch').show();
-                $('#profiles').show();
+                
+                
 
             }
         });
@@ -487,8 +654,37 @@
             }
         });
 
-        $('#submit2').on('click', () =>{
-            console.log(main_profile,sub_profiles,new_profiles);
+        $('#submit2').on('click', () => {
+            // Display confirmation dialog
+            if (confirm('Are you sure you want to submit verification?')) {
+                $mun = $('#municipality').val();
+                let main_profileStr = main_profile.toString();
+                
+                if (profileCount > 1) {
+                    sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
+                }
+                
+                // console.log(sub_profiles);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('farmerVerification.updateProfiles') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        main_profile: main_profile,
+                        sub_profiles: sub_profiles,
+                        new_profiles: new_profiles,
+                        mun: $mun,
+                        profileCount: profileCount,
+                        tempProfile: tempProfile
+                    },
+                    success: function(data) {
+                        alert('Profile successfully validated and submitted for approval.');
+                        $('#submit').click();
+                    }
+                });
+            }
         });
+
     </script>
 @endpush
