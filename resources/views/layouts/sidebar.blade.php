@@ -1363,7 +1363,10 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 									</ul>
 								</li>
 
-								
+								@if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "administrator" || Auth::user()->roles->first()->name == "seed-inspector")
+								<li><a href="{{route('farmerVerification')}}">Farmer KYC</a></li>
+								@endif
+
 								<li><a href="{{route('distribution.app.stocks_home')}}">Release Stocks</a></li>
 								<li><a href="{{route('released.data.index')}}"> Edit\Delete Distribution Data</a></li>
 								<li><a href="{{route('web.dop.maker.regular')}}">DOP Maker</a></li>	

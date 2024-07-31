@@ -228,7 +228,7 @@
     
     <div class="row">
         <div class="col-md-12">
-            <div class="x_panel shadow-2xl">
+            <div class="x_panel shadow-2xl" style="padding-bottom: 3em;">
                 <div class="x_title">
                     <h1>Farmer Verification</h1>
                     <div class="clearfix"></div>
@@ -292,8 +292,8 @@
                     <div class="col-md-2"></div>
                     <div class="col-md-8" style="padding-top: 1em">
                         <div  class="" style="text-align: center;">
-                            <!-- <h1><i class="fas fa-arrow-left" style="font-size: 0.75em;"></i> 1/1,000 <i class="fas fa-arrow-right" style="font-size: 0.75em;"></i></h1> -->
-                            <!-- <h4>Farmer Profiles</h4> -->
+                            <h1><i class="fas fa-arrow-left" style="font-size: 0.75em;"></i> 1/1,000 <i class="fas fa-arrow-right" style="font-size: 0.75em;"></i></h1>
+                            <h4>Farmer Profiles</h4>
                             <hr>
                             <button type="button" id='submit2' class="btn btn-success submit" disabled>Submit Verification</button> 
                         </div>
@@ -334,8 +334,19 @@
     
 
     $('#provinces').change(() => {
+            $("#profiles").empty();
+            $("#suggested").empty();
+            $("#statistics").hide();
+            $('#customSearch').hide();
+            $("#profiles").hide();
+            $("#suggested").hide();
             $('#municipality').removeAttr('disabled');
             $('#municipality').val('default').trigger('change');
+
+            if ($('#provinces').val() !== 'default') {
+            $('#provinces option[value="default"]').remove();
+            }
+
             $prov = $('#provinces').val();
             var options = {
                 theme:"sk-rect",
@@ -385,6 +396,7 @@
             $("#statistics").hide();
             $('#customSearch').hide();
             $('#profiles').hide();
+            $('#submit2').prop('disabled',true);
             main_profile ='';
             sub_profiles = [];
             new_profiles = [];
@@ -440,12 +452,24 @@
 
                         if(data[0].length == 1)
                         {
+                            console.log(data[0][0].id);
                             HoldOn.open(options);
                             $("#statistics").hide();
                             $('#customSearch').hide();
                             $('#profiles').hide();
-                            profileCount = data.length;
-                            tempProfile = data[0].id
+                            profileCount = data[0].length;
+                            tempProfile = data[0][0].id;
+                            data_id = data[0][0].id;
+                            data_firstName = data[0][0].firstName;
+                            data_midName = data[0][0].midName;
+                            data_lastName = data[0][0].lastName;
+                            data_extName = data[0][0].extName;
+                            data_rsbsa_control_no = data[0][0].rsbsa_control_no;
+                            data_sex = data[0][0].sex;
+                            data_birthdate = data[0][0].birthdate;
+                            data_mother_name = data[0][0].mother_name;
+                            data_province = data[0][0].province;
+                            data_municipality = data[0][0].municipality;
                                 var cluster = data[0][0].cluster_id;
                                 $.ajax({ 
                                     type: 'POST',
@@ -455,7 +479,8 @@
                                         cluster: cluster,
                                         mun: $mun
                                     },
-                                    success: function(data){
+                                    success: function(dataSuggest){
+                                        console.log(data);
                                         if(data=='No suggested data.')
                                     {
                                         $('#submit').click();
@@ -464,22 +489,23 @@
                                     {
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
-                                                <div class="boxes shadow-md profiles" id="box_${data[0][0].id}">
+                                                <div class="boxes shadow-md profiles" id="box_${data_id}">
                                                     <div style="display:flex; gap: 0.5em;">
                                                         <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
                                                         <ul class="info_list">
-                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data[0][0].firstName} ${data[0][0].midName} ${data[0][0].lastName} ${data[0][0].extName}</li>
-                                                            <li id="rsbsa">RSBSA No.: ${data[0][0].rsbsa_control_no}</li>
-                                                            <li id="sex">Sex: ${data[0][0].sex}</li>
-                                                            <li id="bday">Birthdate: ${data[0][0].birthdate}</li>
-                                                            <li id="mother">Mother Name: ${data[0][0].mother_name}</li>
-                                                            <li id="province">Province: ${data[0][0].province}</li>
-                                                            <li id="municipality">Municipality: ${data[0][0].municipality}</li>
+                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
+                                                            <li id="rsbsa">RSBSA No.: ${data_rsbsa_control_no}</li>
+                                                            <li id="sex">Sex: ${data_sex}</li>
+                                                            <li id="bday">Birthdate: ${data_birthdate}</li>
+                                                            <li id="mother">Mother Name: ${data_mother_name}</li>
+                                                            <li id="province">Province: ${data_province}</li>
+                                                            <li id="municipality">Municipality: ${data_municipality}</li>
+                                                            <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This is not the same person as the suggested profile(s)</li>
                                                         </ul>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 2em;">
                                                         <label class="container">
-                                                            <input type="checkbox" class="profile-checkbox" id="${data[0][0].id}">
+                                                            <input type="checkbox" class="profile-checkbox" id="${data_id}">
                                                             <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
                                                                 <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
                                                             </svg>
@@ -488,9 +514,11 @@
                                                 </div>
                                             </div>
                                         `);
-
+                                        $("#statistics").show();
+                                        $('#customSearch').show();
+                                        $("#profiles").show();
                                         $("#suggested").show();
-                                        data.forEach(proc => {
+                                        dataSuggest.forEach(proc => {
                                             all_profiles.push(proc.id);
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
@@ -506,6 +534,7 @@
                                                             <li id="mother">Mother Name: ${proc.mother_name}</li>
                                                             <li id="province">Province: ${proc.province}</li>
                                                             <li id="municipality">Municipality: ${proc.municipality}</li>
+                                                            <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">Current profile will be linked with this suggested profile</li>
                                                             </ul>
                                                         </div>
                                                         <div style="display: flex; align-items: center; gap: 2em;">
@@ -525,6 +554,8 @@
                                             console.log(this.id);
                                             if ($(this).is(':checked')) {
                                                 main_profile = this.id;
+                                                $('.mainLegend').hide();
+                                                $(this).closest('.profiles').find('.mainLegend').show();
                                                 $('#submit2').prop('disabled',false);
                                                 console.log(`Checkbox with ID ${this.id} is checked`);
                                                 $('.profile-checkbox').prop('disabled', true);
@@ -536,6 +567,7 @@
                                                 $(this).closest('.profiles').find(".clickable-add").hide();
                                                 
                                             } else {
+                                                $('.mainLegend').hide();
                                                 main_profile = '';
                                                 sub_profiles = [];
                                                 new_profiles = [];
@@ -580,8 +612,12 @@
                                                     <li id="mother">Mother Name: ${proc.mother_name}</li>
                                                     <li id="province">Province: ${proc.province}</li>
                                                     <li id="municipality">Municipality: ${proc.municipality}</li>
+                                                    <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This will be treated as the main profile</li>
+                                                    <li class="subLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #3ed655; padding: 0.5em;">This will be linked to the main profile selected</li>
+                                                    <li class="newLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #dbdbdb; padding: 0.5em;">This will be marked as a different person from the main profile</li>
                                                 </ul>
                                             </div>
+
                                             <div style="display: flex; align-items: center; gap: 2em;">
                                                 <label class="container">
                                                     <input type="checkbox" class="profile-checkbox" id="${proc.id}">
@@ -600,6 +636,9 @@
                         $('.profile-checkbox').on('change', function() {
                         if ($(this).is(':checked')) {
                             main_profile = this.id;
+                            $(this).closest('.profiles').find('.mainLegend').show();
+                            $('.subLegend').show();
+                            $(this).closest('.profiles').find('.subLegend').hide();
                             $('#submit2').prop('disabled',false);
                             console.log(`Checkbox with ID ${this.id} is checked`);
                             $('.profile-checkbox').prop('disabled', true);
@@ -611,6 +650,9 @@
                             $(this).closest('.profiles').find(".clickable-add").hide();
                             
                         } else {
+                            $('.mainLegend').hide();
+                            $('.subLegend').hide();
+                            $('.newLegend').hide();
                             main_profile = '';
                             sub_profiles = [];
                             new_profiles = [];
@@ -643,9 +685,13 @@
                 $(this).toggleClass("checked-add");
                 if ($(this).hasClass("checked-add")) {
                     $(this).closest('.profiles').css('background-color', '##ffa600');
+                    $(this).closest('.profiles').find('.subLegend').hide();
+                    $(this).closest('.profiles').find('.newLegend').show();
                     new_profiles.push($(this).data('id'));
                 } else {
                     $(this).closest('.profiles').css('background-color', '');
+                    $(this).closest('.profiles').find('.subLegend').show();
+                    $(this).closest('.profiles').find('.newLegend').hide();
                     const index = new_profiles.indexOf($(this).data('id'));
                     if (index > -1) {
                         new_profiles.splice(index, 1);

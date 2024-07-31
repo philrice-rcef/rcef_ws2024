@@ -78,11 +78,35 @@ class farmerVerificationController extends Controller
 
     public function getMuni(Request $request)
     {
+        $getPrvCode = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+        ->select('prv_code')
+        ->where('province',$request->prov)
+        ->first();
+        $prv = $getPrvCode->prv_code;
+        
+        $getMuniAi = DB::table('mongodb_data.prv_'.$prv.'_ai')
+        ->select(DB::raw('SUBSTRING(rsbsa_control_no, 1,8) as muni_code'))
+        ->where('status','FOR VERIFICATION')
+        ->groupBy('muni_code')
+        ->get();
+
+        $muniCodes = [];
+
+        foreach($getMuniAi as $muniAi)
+        {
+            $muni = str_replace('-','',$muniAi->muni_code);
+            array_push($muniCodes,$muni);
+        }
+
+        
         $getMuni = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
         ->select('municipality','prv',DB::raw("CONCAT(regCode,'-',provCode,'-',munCode) as geocode"))
         ->where('province',$request->prov)
+        ->whereIn('prv',$muniCodes)
         ->groupBy('municipality')
         ->get();
+
+        // dd($getMuni);
 
         return json_encode($getMuni);
     }
@@ -118,7 +142,7 @@ class farmerVerificationController extends Controller
         $getCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->where('status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
-        ->where('cluster_id',1834) //for testing purposes -  Pangasinan - Mangatarem
+        // ->where('cluster_id',1834) //for testing purposes -  Pangasinan - Mangatarem
         ->first();
         // dd($getCluster,$request->all());
 
@@ -127,9 +151,16 @@ class farmerVerificationController extends Controller
             return ('No data.');
         }
 
+        $noOfClusters = count(DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','FOR VERIFICATION')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->groupBy('cluster_id')
+        ->get());
+
         $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->where('status','FOR VERIFICATION')
         ->where('cluster_id',$getCluster->cluster_id)
+        ->orderBy('id','ASC')
         ->get();
 
         $totalForValidation = number_format($totalForValidation);
@@ -141,6 +172,7 @@ class farmerVerificationController extends Controller
         array_push($returnArray,$totalForValidation);
         array_push($returnArray,$totalValidated);
         array_push($returnArray,$totalPending);
+        array_push($returnArray,$noOfClusters);
 
         // dd($returnArray);
         return $returnArray;
@@ -157,12 +189,12 @@ class farmerVerificationController extends Controller
 
         if(!$getSuggestedProfile)
         {
-            $updateNoSuggested = DB::table('mongodb_data.prv_'.$code.'_ai')
-            ->where('status','FOR VERIFICATION')
-            ->where('cluster_id',$request->cluster)
-            ->update([
-                "status" => "FOR APPROVAL"
-            ]);
+            // $updateNoSuggested = DB::table('mongodb_data.prv_'.$code.'_ai')
+            // ->where('status','FOR VERIFICATION')
+            // ->where('cluster_id',$request->cluster)
+            // ->update([
+            //     "status" => "FOR APPROVAL"
+            // ]);
             return "No suggested data.";
         }
         else
@@ -175,104 +207,104 @@ class farmerVerificationController extends Controller
     public function updateProfiles(Request $request)
     {
         // dd($request->all());
-        $code = substr(str_replace('-','',$request->mun),0,4);
-        $getSub = [];
-        $getNew = [];
+        // $code = substr(str_replace('-','',$request->mun),0,4);
+        // $getSub = [];
+        // $getNew = [];
 
-        if($request->profileCount == 1)
-        {
-            $profileId = $request->tempProfile;
-            $selectedId = $request->main_profile;
+        // if($request->profileCount == 1)
+        // {
+        //     $profileId = $request->tempProfile;
+        //     $selectedId = $request->main_profile;
 
-            if($profileId == $selectedId)
-            {
-                $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-                ->max('new_cluster_id');
+        //     if($profileId == $selectedId)
+        //     {
+        //         $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //         ->max('new_cluster_id');
 
-                if(!$getMaxNewCluster)
-                {
-                    $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-                    ->max('cluster_id');
-                    $newCluster = $getMaxCluster + 1;
-                }
-                else
-                {
-                    $newCluster = $getMaxNewCluster + 1;
-                }
-                $updateProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
-                ->where('id',$profileId)
-                ->update([
-                    "new_cluster_id" => $newCluster,
-                    "status" => "FOR APPROVAL"
-                ]);
-            }
-            else
-            {
-                $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-                ->max('new_cluster_id');
+        //         if(!$getMaxNewCluster)
+        //         {
+        //             $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //             ->max('cluster_id');
+        //             $newCluster = $getMaxCluster + 1;
+        //         }
+        //         else
+        //         {
+        //             $newCluster = $getMaxNewCluster + 1;
+        //         }
+        //         $updateProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //         ->where('id',$profileId)
+        //         ->update([
+        //             "new_cluster_id" => $newCluster,
+        //             "status" => "FOR APPROVAL"
+        //         ]);
+        //     }
+        //     else
+        //     {
+        //         $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //         ->max('new_cluster_id');
 
-                if(!$getMaxNewCluster)
-                {
-                    $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-                    ->max('cluster_id');
-                    $newCluster = $getMaxCluster + 1;
-                }
-                else
-                {
-                    $newCluster = $getMaxNewCluster + 1;
-                }
-                $updateProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
-                ->where('id',$profileId)
-                ->update([
-                    "profile_link_id" => $selectedId,
-                    "status" => "FOR APPROVAL"
-                ]);
-            }
-        }
-        else
-        {
-            $getMain = DB::table('mongodb_data.prv_'.$code.'_ai')
-            ->where('id',$request->main_profile)
-            ->update([
-                "main_profile" => 1,
-                "status" => "FOR APPROVAL"
-            ]);
+        //         if(!$getMaxNewCluster)
+        //         {
+        //             $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //             ->max('cluster_id');
+        //             $newCluster = $getMaxCluster + 1;
+        //         }
+        //         else
+        //         {
+        //             $newCluster = $getMaxNewCluster + 1;
+        //         }
+        //         $updateProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //         ->where('id',$profileId)
+        //         ->update([
+        //             "profile_link_id" => $selectedId,
+        //             "status" => "FOR APPROVAL"
+        //         ]);
+        //     }
+        // }
+        // else
+        // {
+        //     $getMain = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //     ->where('id',$request->main_profile)
+        //     ->update([
+        //         "main_profile" => 1,
+        //         "status" => "FOR APPROVAL"
+        //     ]);
 
-            if($request->sub_profiles)
-            {
-                $getSub = DB::table('mongodb_data.prv_'.$code.'_ai')
-                ->whereIn('id',$request->sub_profiles)
-                ->update([
-                    "profile_link_id" => $request->main_profile,
-                    "status" => "FOR APPROVAL"
-                ]);
-            }
-            if($request->new_profiles)
-            {
+        //     if($request->sub_profiles)
+        //     {
+        //         $getSub = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //         ->whereIn('id',$request->sub_profiles)
+        //         ->update([
+        //             "profile_link_id" => $request->main_profile,
+        //             "status" => "FOR APPROVAL"
+        //         ]);
+        //     }
+        //     if($request->new_profiles)
+        //     {
                 
-                $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-                ->max('new_cluster_id');
+        //         $getMaxNewCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //         ->max('new_cluster_id');
 
-                if(!$getMaxNewCluster)
-                {
-                    $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-                    ->max('cluster_id');
-                    $newCluster = $getMaxCluster + 1;
-                }
-                else
-                {
-                    $newCluster = $getMaxNewCluster + 1;
-                }
+        //         if(!$getMaxNewCluster)
+        //         {
+        //             $getMaxCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //             ->max('cluster_id');
+        //             $newCluster = $getMaxCluster + 1;
+        //         }
+        //         else
+        //         {
+        //             $newCluster = $getMaxNewCluster + 1;
+        //         }
 
-                $newProfiles = $request->new_profiles;
-                $getNew = DB::table('mongodb_data.prv_'.$code.'_ai')
-                ->whereIn('id',$request->new_profiles)
-                ->update([
-                    "new_cluster_id" => $newCluster
-                ]);
+        //         $newProfiles = $request->new_profiles;
+        //         $getNew = DB::table('mongodb_data.prv_'.$code.'_ai')
+        //         ->whereIn('id',$request->new_profiles)
+        //         ->update([
+        //             "new_cluster_id" => $newCluster
+        //         ]);
 
-            }
-        }
+        //     }
+        // }
         return 1;
     }
 
