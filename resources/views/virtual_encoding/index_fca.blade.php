@@ -734,7 +734,7 @@
 
 
         $("#parcel_province").on("change", function(){
-            HoldOn.open(holdon_options);
+            
             var parcel_province =  $("#parcel_province").val();
 
                 $.ajax({
@@ -777,7 +777,7 @@
 
 
         $("#parcel_municipality").on("change", function(){
-            HoldOn.open(holdon_options);
+            
           var new_province =   $("#parcel_province").val();
           var new_municipality =   $("#parcel_municipality").val();
 
@@ -818,7 +818,7 @@
 
 
         $("#add_parcel_now").on("click", function(){
-            HoldOn.open(holdon_options);
+            
             var province = $("#parcel_province").val();
             var municipality = $("#parcel_municipality").val();
             var brgy = $("#parcel_brgy").val();
@@ -1116,7 +1116,7 @@
                        
                         if (result.value) {
                         //    AJAX AND SAVE HERE
-                        HoldOn.open(holdon_options);
+                        
                         $.ajax({
                             type: 'POST',
                             url: "{{route('virtual.insert.distribution')}}",
@@ -1384,7 +1384,7 @@
                     }).then(function(result) {
                         if (result.value) {
                         //    AJAX AND SAVE HERE
-                        HoldOn.open(holdon_options);
+                        
                         $.ajax({
                             type: 'POST',
                             url: "{{route('virtual.save.distribution')}}",
@@ -1699,7 +1699,7 @@
 
 
         function select_farmer(db_ref, prv){
-            HoldOn.open(holdon_options);
+            
             clear_distri_form(); 
             $("#farmer_info_new").hide("fast");
             $("#farmer_info_rec").show("fast");

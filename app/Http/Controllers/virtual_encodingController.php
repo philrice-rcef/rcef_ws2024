@@ -707,7 +707,7 @@ class virtual_encodingController extends Controller
             $search_value = "%";
         }
 
-        $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
+        $conn = ($request->connection == "1") ? "farmer_information_final" : (($request->connection == "2") ? "farmer_information_final_nrp" : "farmer_information_final");
 
         $prv_db = $lib->prv_code;
 
@@ -754,8 +754,11 @@ class virtual_encodingController extends Controller
             ->where(function ($query) use ($request) {
                 if($request->connection == "1"){
                     $query->whereIn("is_new", [2, 8]); 
-                } else {
+                } else if($request->connection == "2"){
                     $query->where("is_new", 0);
+                }
+                else{
+                    $query->whereIn("is_new", [2, 8]); 
                 }
             })
             ->orderBy("lastName")
@@ -788,7 +791,7 @@ class virtual_encodingController extends Controller
 
     function select_farmer(Request $request){
 
-        $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
+        $conn = ($request->connection == "1") ? "farmer_information_final" : (($request->connection == "2") ? "farmer_information_final_nrp" : "farmer_information_final");
 
         $farmer = DB::table($GLOBALS['season_prefix']."prv_".$request->prv.".".$conn)
             ->where('db_ref', $request->db_ref)
@@ -1996,8 +1999,9 @@ class virtual_encodingController extends Controller
 
     public function save_distribution(Request $request){
         // dd($request->all());
-        $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
-        $releases = ($request->connection == "1") ? "new_released" : "new_released_nrp";
+        $conn = ($request->connection == "1") ? "farmer_information_final" : (($request->connection == "2") ? "farmer_information_final_nrp" : "farmer_information_final");
+        $releases = ($request->connection == "1") ? "new_released" : (($request->connection == "2") ? "new_released_nrp" : "new_released");
+        
     
         if($request->db_ref != 'new'){
 
@@ -2535,7 +2539,7 @@ class virtual_encodingController extends Controller
 
 public function get_all_parcel2(Request $request){
     
-    $conn = ($request->connection == "1") ? "farmer_information_final" : "farmer_information_final_nrp";
+    $conn = ($request->connection == "1") ? "farmer_information_final" : (($request->connection == "2") ? "farmer_information_final_nrp" : "farmer_information_final");
         
     $prefix = $GLOBALS['season_prefix'];
    $ffrs_data = DB::table($prefix."prv_".$request->prv.".".$conn)
@@ -2567,8 +2571,11 @@ public function get_all_parcel2(Request $request){
            ->where(function ($query) use ($request) {
                 if($request->connection == "1"){
                     $query->whereIn("is_new", [2, 8]); 
-                } else {
+                } else if($request->connection == "2"){
                     $query->where("is_new", 0);
+                }
+                else{
+                    $query->whereIn("is_new", [2, 8]); 
                 }
             })
         //    ->where(function ($query) {
@@ -2582,8 +2589,11 @@ public function get_all_parcel2(Request $request){
            ->where(function ($query) use ($request) {
                 if($request->connection == "1"){
                     $query->whereIn("is_new", [2, 8]); 
-                } else {
+                } else if($request->connection == "2"){
                     $query->where("is_new", 0);
+                }
+                else{
+                    $query->whereIn("is_new", [2, 8]); 
                 }
             })
         //    ->whereIn("is_new", [2, 8])
