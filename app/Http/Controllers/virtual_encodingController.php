@@ -2880,8 +2880,8 @@ public function get_all_parcel2(Request $request){
                    "seedVariety" => $bred['variety'],
                    "totalBag" => '####',
                    "release" => $release_data,
-                //    "balance" => $bred['remaining_balance'],
-                    "balance" => 9999,
+                   "balance" => $bred['remaining_balance'],
+                    // "balance" => 9999,
                    "category" => "Inbred"
                ));
 
