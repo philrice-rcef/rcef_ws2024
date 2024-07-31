@@ -1357,7 +1357,7 @@ if($_SERVER['REQUEST_URI']!="/rcef_ds2024/pre_reg/view_farmer"){
 										<li><a href="{{route('encoding_vs')}}">From Verifier</a></li>
 										<li><a href="{{route('encoding_vs_fca')}}">FCA Member</a></li>
 										<li><a href="{{route('encoding_vs_lowland')}}">Small Landholding</a></li>
-										<!-- <li><a href="{{route('encoding_vs_homeAddressClaim')}}">Home Address Claims</a></li> -->
+										<li><a href="{{route('encoding_vs_homeAddressClaim')}}">Home Address Claims</a></li>
 										<!-- <li><a href="{{route('onlineEncodingNew')}}">New Farmers</a></li> -->
 										{{-- <li><a href="{{route('new_farmer_vs')}}">New Farmer Encoded</a></li> --}}
 									</ul>
