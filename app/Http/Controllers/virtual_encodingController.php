@@ -2881,7 +2881,6 @@ public function get_all_parcel2(Request $request){
                    "totalBag" => '####',
                    "release" => $release_data,
                    "balance" => $bred['remaining_balance'],
-                    // "balance" => 9999,
                    "category" => "Inbred"
                ));
 
