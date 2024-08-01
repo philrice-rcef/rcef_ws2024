@@ -269,21 +269,21 @@
                         <div class="boxes shadow-md" >
                             <h1 id="totalForValidation" style="font-weight: 700;"></h1>
                             <hr>
-                            <h4>Total records for validation</h4>
+                            <h4>Total Farmer Beneficiary Records for validation</h4>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="boxes shadow-md" >
                             <h1 id="totalValidated" style="font-weight: 700;"></h1>
                             <hr>
-                            <h4>Total records validated</h4>
+                            <h4>Total Farmer Beneficiary Profiles Validated</h4>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="boxes shadow-md" >
                             <h1 id="totalPending" style="font-weight: 700;"></h1>
                             <hr>
-                            <h4>Total pending records</h4>
+                            <h4>Total Pending Records for Approval</h4>
                         </div>
                     </div>
                 </div>
@@ -292,7 +292,15 @@
                     <div class="col-md-2"></div>
                     <div class="col-md-8" style="padding-top: 1em">
                         <div  class="" style="text-align: center;">
-                            <h1><i class="fas fa-arrow-left" style="font-size: 0.75em;"></i> 1/1,000 <i class="fas fa-arrow-right" style="font-size: 0.75em;"></i></h1>
+                            <div style="display:flex; justify-content: center;">
+                                <i id="prevButton" class="fas fa-arrow-left" style="font-size: 3em; margin-right: 0.5em; margin-top: 0.2em; display: none;"></i>
+                                <div style="display:flex; justify-content: center;">
+                                    <h1 id="currentCluster">1</h1>
+                                    <h1>/</h1>
+                                    <h1 id="noOfClusters"></h1>
+                                </div>
+                                <i id="nextButton" class="fas fa-arrow-right" style="font-size: 3em; margin-left: 0.5em; margin-top: 0.2em"></i>
+                            </div>
                             <h4>Farmer Profiles</h4>
                             <hr>
                             <button type="button" id='submit2' class="btn btn-success submit" disabled>Submit Verification</button> 
@@ -331,9 +339,14 @@
     var all_profiles = [];
     var profileCount = 0;
     var tempProfile = 0;
+    var onLoadData = [];
+    var onLoadIndex = 0;
+    var findCluster = '';
     
 
     $('#provinces').change(() => {
+            onLoadIndex = 0;
+            findCluster = '';
             $("#profiles").empty();
             $("#suggested").empty();
             $("#statistics").hide();
@@ -389,6 +402,538 @@
             }
         });
 
+        $('#prevButton').on('click', () =>{
+            var options = {
+                theme:"sk-rect",
+                message:'Please wait.',
+                backgroundColor:"#494f5f",
+                textColor:"white"
+            };
+            HoldOn.open(options);
+            $("#currentCluster").empty();
+            $("#currentCluster").append(onLoadIndex);
+            if(onLoadIndex -1 == 0)
+            {
+                $("#prevButton").hide();
+            }
+            if(onLoadIndex < onLoadData.length - 1)
+            {
+                $("#nextButton").show();
+            }
+
+            onLoadIndex = onLoadIndex - 1;
+            
+            console.log("current index is",onLoadIndex);
+            console.log("current display is",onLoadIndex+1);
+            var options = {
+                theme:"sk-rect",
+                message:'Please wait.',
+                backgroundColor:"#494f5f",
+                textColor:"white"
+            };
+
+            $("#profiles").empty();
+            $("#suggested").empty();
+
+            findCluster = onLoadData[onLoadIndex].cluster_id;
+            $.ajax({ 
+                type: 'POST',
+                url: "{{ route('farmerVerification.getProfiles2') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    prov: $prov,
+                    mun: $mun,
+                    findCluster: findCluster
+                },
+                success: function(data){
+                    if(data == 'No data.')
+                    {
+                        alert(data);
+                        HoldOn.close();
+                    }
+                    else
+                    {
+                        $('#profiles').show();
+
+                        if(data[0].length == 1)
+                        {
+                             
+                            HoldOn.open(options);
+                            $('#profiles').hide();
+                            profileCount = data[0].length;
+                            tempProfile = data[0][0].id;
+                            data_id = data[0][0].id;
+                            data_firstName = data[0][0].firstName;
+                            data_midName = data[0][0].midName;
+                            data_lastName = data[0][0].lastName;
+                            data_extName = data[0][0].extName;
+                            data_rsbsa_control_no = data[0][0].rsbsa_control_no;
+                            data_sex = data[0][0].sex;
+                            data_birthdate = data[0][0].birthdate;
+                            data_mother_name = data[0][0].mother_name;
+                            data_province = data[0][0].province;
+                            data_municipality = data[0][0].municipality;
+                            data_season = data[0][0].season;
+                                var cluster = data[0][0].cluster_id;
+                                $.ajax({ 
+                                    type: 'POST',
+                                    url: "{{ route('farmerVerification.getSuggestions') }}",
+                                    data: {
+                                        _token: "{{ csrf_token() }}",
+                                        cluster: cluster,
+                                        mun: $mun
+                                    },
+                                    success: function(dataSuggest){
+                                        if(data=='No suggested data.')
+                                    {
+                                 
+                                    }
+                                    else
+                                    {
+                                        $("#profiles").append(`
+                                            <div class="col-md-6" style="padding-top: 1em">
+                                                <div class="boxes shadow-md profiles" id="box_${data_id}">
+                                                    <div style="display:flex; gap: 0.5em;">
+                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                        <ul class="info_list">
+                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
+                                                            <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
+                                                            <li id="season"><strong>Claimed Seeds during:</strong> ${data_season}</li>
+                                                            <li id="sex"><strong>Sex:</strong> ${data_sex}</li>
+                                                            <li id="bday"><strong>Birthdate:</strong> ${data_birthdate}</li>
+                                                            <li id="mother"><strong>Mother's Maiden Name:</strong> ${data_mother_name}</li>
+                                                            <li id="province"><strong>Home Address - Province:</strong> ${data_province}</li>
+                                                            <li id="municipality"><strong>Home Address - Municipality:</strong> ${data_municipality}</li>
+                                                            <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This is not the same person as the suggested profile(s)</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 2em;">
+                                                        <label class="container">
+                                                            <input type="checkbox" class="profile-checkbox" id="${data_id}">
+                                                            <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                            </svg>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `);
+                                        $("#profiles").show();
+                                        $("#suggested").show();
+                                        dataSuggest.forEach(proc => {
+                                            all_profiles.push(proc.id);
+                                            $("#suggested").append(`
+                                                <div class="col-md-6" style="padding-top: 1em">
+                                                    <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
+                                                        <div style="display:flex; gap: 0.5em;">
+                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                            <ul class="info_list">
+                                                            <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
+                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
+                                                            <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
+                                                            <li id="season"><strong>Claimed Seeds during:</strong> ${proc.season}</li>
+                                                            <li id="sex"><strong>Sex:</strong> ${proc.sex}</li>
+                                                            <li id="bday"><strong>Birthdate:</strong> ${proc.birthdate}</li>
+                                                            <li id="mother"><strong>Mother's Maiden Name:</strong> ${proc.mother_name}</li>
+                                                            <li id="province"><strong>Home Address - Province:</strong> ${proc.province}</li>
+                                                            <li id="municipality"><strong>Home Address - Municipality:</strong> ${proc.municipality}</li>
+                                                            <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">Current profile will be linked with this suggested profile</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; gap: 2em;">
+                                                            <label class="container">
+                                                                <input type="checkbox" class="profile-checkbox" id="${proc.id}">
+                                                                <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                                    <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                                </svg>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `);
+                                        }); 
+    
+                                        $('.profile-checkbox').on('change', function() {
+                                            console.log(this.id);
+                                            if ($(this).is(':checked')) {
+                                                main_profile = this.id;
+                                                $('.mainLegend').hide();
+                                                $(this).closest('.profiles').find('.mainLegend').show();
+                                                $('#submit2').prop('disabled',false);
+                                                console.log(`Checkbox with ID ${this.id} is checked`);
+                                                $('.profile-checkbox').prop('disabled', true);
+                                                $('.profile-checkbox2').hide();
+                                                $(this).closest('.profiles').find('.profile-checkbox2').show();
+                                                $(this).prop('disabled', false);
+                                                $(this).closest('.profiles').css('background-color', '#3ed655');
+                                                $(".clickable-add").show();
+                                                $(this).closest('.profiles').find(".clickable-add").hide();
+                                                
+                                            } else {
+                                                $('.mainLegend').hide();
+                                                main_profile = '';
+                                                sub_profiles = [];
+                                                new_profiles = [];
+                                                $('#submit2').prop('disabled',true);
+                                                console.log(`Checkbox with ID ${this.id} is unchecked`);
+                                                $('.profiles').css('background-color', '');
+                                                $('.suggest').css('background-color', '#6bfffd');
+                                                $(".clickable-add").hide();
+                                                $(".clickable-add").removeClass("checked-add");
+                                                $('.profile-checkbox').prop('disabled', false);
+                                                $('.profile-checkbox2').show();
+                                                
+                                            }
+                                        });
+                                    }
+    
+                                    }
+                                });
+                                HoldOn.close();
+                        }
+                        else
+                        {
+                            profileCount = data[0].length;
+                            data[0].forEach(proc => {
+                                all_profiles.push(proc.id);
+                                $("#profiles").append(`
+                                    <div class="col-md-6" style="padding-top: 1em">
+                                        <div class="boxes shadow-md profiles" id="box_${proc.id}">
+                                            <div style="display:flex; gap: 0.5em;">
+                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                <ul class="info_list">
+                                                    <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
+                                                    <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
+                                                    <li id="season"><strong>Claimed Seeds during:</strong> ${proc.season}</li>
+                                                    <li id="sex"><strong>Sex:</strong> ${proc.sex}</li>
+                                                    <li id="bday"><strong>Birthdate:</strong> ${proc.birthdate}</li>
+                                                    <li id="mother"><strong>Mother's Maiden Name:</strong> ${proc.mother_name}</li>
+                                                    <li id="province"><strong>Home Address - Province:</strong> ${proc.province}</li>
+                                                    <li id="municipality"><strong>Home Address - Municipality:</strong> ${proc.municipality}</li>
+                                                    <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This will be treated as the main profile</li>
+                                                    <li class="subLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #3ed655; padding: 0.5em;">This will be linked to the main profile selected</li>
+                                                    <li class="newLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #dbdbdb; padding: 0.5em;">This will be marked as a different person from the main profile</li>
+                                                </ul>
+                                            </div>
+
+                                            <div style="display: flex; align-items: center; gap: 2em;">
+                                                <label class="container">
+                                                    <input type="checkbox" class="profile-checkbox" id="${proc.id}">
+                                                    <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                        <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                    </svg>
+                                                </label>
+                                                <i data-id="${proc.id}" class="fa fa-user-plus clickable-add" aria-hidden="true" style="font-size: 2.2em; display:none; margin-block-end: 0.2em;" ></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                            HoldOn.close();
+                        }
+                        $('.profile-checkbox').on('change', function() {
+                        if ($(this).is(':checked')) {
+                            main_profile = this.id;
+                            $(this).closest('.profiles').find('.mainLegend').show();
+                            $('.subLegend').show();
+                            $(this).closest('.profiles').find('.subLegend').hide();
+                            $('#submit2').prop('disabled',false);
+                            console.log(`Checkbox with ID ${this.id} is checked`);
+                            $('.profile-checkbox').prop('disabled', true);
+                            $('.profile-checkbox2').hide();
+                            $(this).closest('.profiles').find('.profile-checkbox2').show();
+                            $(this).prop('disabled', false);
+                            $(this).closest('.profiles').css('background-color', '#3ed655');
+                            $(".clickable-add").show();
+                            $(this).closest('.profiles').find(".clickable-add").hide();
+                            
+                        } else {
+                            $('.mainLegend').hide();
+                            $('.subLegend').hide();
+                            $('.newLegend').hide();
+                            main_profile = '';
+                            sub_profiles = [];
+                            new_profiles = [];
+                            $('#submit2').prop('disabled',true);
+                            console.log(`Checkbox with ID ${this.id} is unchecked`);
+                            $('.profiles').css('background-color', '');
+                            $(".clickable-add").hide();
+                            $(".clickable-add").removeClass("checked-add");
+                            $('.profile-checkbox').prop('disabled', false);
+                            $('.profile-checkbox2').show();
+                            
+                        }
+                        
+                    });
+                    }
+
+                }
+            });
+        });
+        $('#nextButton').on('click', () =>{
+            var options = {
+                theme:"sk-rect",
+                message:'Please wait.',
+                backgroundColor:"#494f5f",
+                textColor:"white"
+            };
+            HoldOn.open(options);
+            $("#currentCluster").empty();
+            $("#currentCluster").append(onLoadIndex + 2);
+            $("#prevButton").show();
+            if(onLoadIndex + 1 == onLoadData.length - 1)
+            {
+                onLoadIndex = onLoadIndex + 1;
+                $("#nextButton").hide();
+            }
+            else
+            {
+                onLoadIndex = onLoadIndex + 1;
+                console.log(onLoadData[onLoadIndex],onLoadData.length);
+            }
+            console.log("current index is",onLoadIndex);
+            console.log("current display is",onLoadIndex+1);
+            
+
+            $("#profiles").empty();
+            $("#suggested").empty();
+
+            findCluster = onLoadData[onLoadIndex].cluster_id;
+            $.ajax({ 
+                type: 'POST',
+                url: "{{ route('farmerVerification.getProfiles2') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    prov: $prov,
+                    mun: $mun,
+                    findCluster: findCluster
+                },
+                success: function(data){
+                    if(data == 'No data.')
+                    {
+                        alert(data);
+                        HoldOn.close();
+                    }
+                    else
+                    {
+                        $('#profiles').show();
+
+                        if(data[0].length == 1)
+                        {
+                             
+                            HoldOn.open(options);
+                            $('#profiles').hide();
+                            profileCount = data[0].length;
+                            tempProfile = data[0][0].id;
+                            data_id = data[0][0].id;
+                            data_firstName = data[0][0].firstName;
+                            data_midName = data[0][0].midName;
+                            data_lastName = data[0][0].lastName;
+                            data_extName = data[0][0].extName;
+                            data_rsbsa_control_no = data[0][0].rsbsa_control_no;
+                            data_sex = data[0][0].sex;
+                            data_birthdate = data[0][0].birthdate;
+                            data_mother_name = data[0][0].mother_name;
+                            data_province = data[0][0].province;
+                            data_municipality = data[0][0].municipality;
+                            data_season = data[0][0].season;
+                                var cluster = data[0][0].cluster_id;
+                                $.ajax({ 
+                                    type: 'POST',
+                                    url: "{{ route('farmerVerification.getSuggestions') }}",
+                                    data: {
+                                        _token: "{{ csrf_token() }}",
+                                        cluster: cluster,
+                                        mun: $mun
+                                    },
+                                    success: function(dataSuggest){
+                                        if(data=='No suggested data.')
+                                    {
+                                        $('#submit').click();
+                                    }
+                                    else
+                                    {
+                                        $("#profiles").append(`
+                                            <div class="col-md-6" style="padding-top: 1em">
+                                                <div class="boxes shadow-md profiles" id="box_${data_id}">
+                                                    <div style="display:flex; gap: 0.5em;">
+                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                        <ul class="info_list">
+                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
+                                                            <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
+                                                            <li id="season"><strong>Claimed Seeds during:</strong> ${data_season}</li>
+                                                            <li id="sex"><strong>Sex:</strong> ${data_sex}</li>
+                                                            <li id="bday"><strong>Birthdate:</strong> ${data_birthdate}</li>
+                                                            <li id="mother"><strong>Mother's Maiden Name:</strong> ${data_mother_name}</li>
+                                                            <li id="province"><strong>Home Address - Province:</strong> ${data_province}</li>
+                                                            <li id="municipality"><strong>Home Address - Municipality:</strong> ${data_municipality}</li>
+                                                            <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This is not the same person as the suggested profile(s)</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 2em;">
+                                                        <label class="container">
+                                                            <input type="checkbox" class="profile-checkbox" id="${data_id}">
+                                                            <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                            </svg>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `);
+                                        $("#profiles").show();
+                                        $("#suggested").show();
+                                        dataSuggest.forEach(proc => {
+                                            all_profiles.push(proc.id);
+                                            $("#suggested").append(`
+                                                <div class="col-md-6" style="padding-top: 1em">
+                                                    <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
+                                                        <div style="display:flex; gap: 0.5em;">
+                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                            <ul class="info_list">
+                                                            <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
+                                                            <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
+                                                            <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
+                                                            <li id="season"><strong>Claimed Seeds during:</strong> ${proc.season}</li>
+                                                            <li id="sex"><strong>Sex:</strong> ${proc.sex}</li>
+                                                            <li id="bday"><strong>Birthdate:</strong> ${proc.birthdate}</li>
+                                                            <li id="mother"><strong>Mother's Maiden Name:</strong> ${proc.mother_name}</li>
+                                                            <li id="province"><strong>Home Address - Province:</strong> ${proc.province}</li>
+                                                            <li id="municipality"><strong>Home Address - Municipality:</strong> ${proc.municipality}</li>
+                                                            <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">Current profile will be linked with this suggested profile</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; gap: 2em;">
+                                                            <label class="container">
+                                                                <input type="checkbox" class="profile-checkbox" id="${proc.id}">
+                                                                <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                                    <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                                </svg>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `);
+                                        }); 
+    
+                                        $('.profile-checkbox').on('change', function() {
+                                            console.log(this.id);
+                                            if ($(this).is(':checked')) {
+                                                main_profile = this.id;
+                                                $('.mainLegend').hide();
+                                                $(this).closest('.profiles').find('.mainLegend').show();
+                                                $('#submit2').prop('disabled',false);
+                                                console.log(`Checkbox with ID ${this.id} is checked`);
+                                                $('.profile-checkbox').prop('disabled', true);
+                                                $('.profile-checkbox2').hide();
+                                                $(this).closest('.profiles').find('.profile-checkbox2').show();
+                                                $(this).prop('disabled', false);
+                                                $(this).closest('.profiles').css('background-color', '#3ed655');
+                                                $(".clickable-add").show();
+                                                $(this).closest('.profiles').find(".clickable-add").hide();
+                                                
+                                            } else {
+                                                $('.mainLegend').hide();
+                                                main_profile = '';
+                                                sub_profiles = [];
+                                                new_profiles = [];
+                                                $('#submit2').prop('disabled',true);
+                                                console.log(`Checkbox with ID ${this.id} is unchecked`);
+                                                $('.profiles').css('background-color', '');
+                                                $('.suggest').css('background-color', '#6bfffd');
+                                                $(".clickable-add").hide();
+                                                $(".clickable-add").removeClass("checked-add");
+                                                $('.profile-checkbox').prop('disabled', false);
+                                                $('.profile-checkbox2').show();
+                                                
+                                            }
+                                        });
+                                    }
+    
+                                    }
+                                });
+                                HoldOn.close();
+                        }
+                        else
+                        {
+                            profileCount = data[0].length;
+                            data[0].forEach(proc => {
+                                all_profiles.push(proc.id);
+                                $("#profiles").append(`
+                                    <div class="col-md-6" style="padding-top: 1em">
+                                        <div class="boxes shadow-md profiles" id="box_${proc.id}">
+                                            <div style="display:flex; gap: 0.5em;">
+                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                <ul class="info_list">
+                                                    <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
+                                                    <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
+                                                    <li id="season"><strong>Claimed Seeds during:</strong> ${proc.season}</li>
+                                                    <li id="sex"><strong>Sex:</strong> ${proc.sex}</li>
+                                                    <li id="bday"><strong>Birthdate:</strong> ${proc.birthdate}</li>
+                                                    <li id="mother"><strong>Mother's Maiden Name:</strong> ${proc.mother_name}</li>
+                                                    <li id="province"><strong>Home Address - Province:</strong> ${proc.province}</li>
+                                                    <li id="municipality"><strong>Home Address - Municipality:</strong> ${proc.municipality}</li>
+                                                    <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This will be treated as the main profile</li>
+                                                    <li class="subLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #3ed655; padding: 0.5em;">This will be linked to the main profile selected</li>
+                                                    <li class="newLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #dbdbdb; padding: 0.5em;">This will be marked as a different person from the main profile</li>
+                                                </ul>
+                                            </div>
+
+                                            <div style="display: flex; align-items: center; gap: 2em;">
+                                                <label class="container">
+                                                    <input type="checkbox" class="profile-checkbox" id="${proc.id}">
+                                                    <svg viewBox="0 0 64 64" height="2em" width="2em" class="profile-checkbox2">
+                                                        <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                                                    </svg>
+                                                </label>
+                                                <i data-id="${proc.id}" class="fa fa-user-plus clickable-add" aria-hidden="true" style="font-size: 2.2em; display:none; margin-block-end: 0.2em;" ></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                            HoldOn.close();
+                        }
+                        $('.profile-checkbox').on('change', function() {
+                        if ($(this).is(':checked')) {
+                            main_profile = this.id;
+                            $(this).closest('.profiles').find('.mainLegend').show();
+                            $('.subLegend').show();
+                            $(this).closest('.profiles').find('.subLegend').hide();
+                            $('#submit2').prop('disabled',false);
+                            console.log(`Checkbox with ID ${this.id} is checked`);
+                            $('.profile-checkbox').prop('disabled', true);
+                            $('.profile-checkbox2').hide();
+                            $(this).closest('.profiles').find('.profile-checkbox2').show();
+                            $(this).prop('disabled', false);
+                            $(this).closest('.profiles').css('background-color', '#3ed655');
+                            $(".clickable-add").show();
+                            $(this).closest('.profiles').find(".clickable-add").hide();
+                            
+                        } else {
+                            $('.mainLegend').hide();
+                            $('.subLegend').hide();
+                            $('.newLegend').hide();
+                            main_profile = '';
+                            sub_profiles = [];
+                            new_profiles = [];
+                            $('#submit2').prop('disabled',true);
+                            console.log(`Checkbox with ID ${this.id} is unchecked`);
+                            $('.profiles').css('background-color', '');
+                            $(".clickable-add").hide();
+                            $(".clickable-add").removeClass("checked-add");
+                            $('.profile-checkbox').prop('disabled', false);
+                            $('.profile-checkbox2').show();
+                            
+                        }
+                        
+                    });
+                    }
+
+                }
+            });
+        });
+        
         $('#submit').on('click', () =>{
             $prv = $('#provinces').val();
             $mun = $('#municipality').val();
@@ -440,6 +985,7 @@
                     }
                     else
                     {
+                        
                         $("#statistics").show();
                         $('#customSearch').show();
                         $('#profiles').show();
@@ -449,10 +995,24 @@
                         $("#totalForValidation").append(data[1]);
                         $("#totalValidated").append(data[2]);
                         $("#totalPending").append(data[3]);
+                        $("#noOfClusters").empty();
+                        $("#noOfClusters").append(data[4]);
+                        $("#currentCluster").empty();
+                        $("#currentCluster").append(data[5][0].index);
+                        onLoadData = data[5];
+                        if(data[4] < 2)
+                        {
+                            $("#prevButton").hide();   
+                            $("#nextButton").hide();  
+                        }
+                        else
+                        {
+                            $("#nextButton").show(); 
+                        }
 
                         if(data[0].length == 1)
                         {
-                            console.log(data[0][0].id);
+                             
                             HoldOn.open(options);
                             $("#statistics").hide();
                             $('#customSearch').hide();
@@ -470,6 +1030,7 @@
                             data_mother_name = data[0][0].mother_name;
                             data_province = data[0][0].province;
                             data_municipality = data[0][0].municipality;
+                            data_season = data[0][0].season;
                                 var cluster = data[0][0].cluster_id;
                                 $.ajax({ 
                                     type: 'POST',
@@ -480,7 +1041,6 @@
                                         mun: $mun
                                     },
                                     success: function(dataSuggest){
-                                        console.log(data);
                                         if(data=='No suggested data.')
                                     {
                                         $('#submit').click();
@@ -494,12 +1054,13 @@
                                                         <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
                                                         <ul class="info_list">
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
-                                                            <li id="rsbsa">RSBSA No.: ${data_rsbsa_control_no}</li>
-                                                            <li id="sex">Sex: ${data_sex}</li>
-                                                            <li id="bday">Birthdate: ${data_birthdate}</li>
-                                                            <li id="mother">Mother Name: ${data_mother_name}</li>
-                                                            <li id="province">Province: ${data_province}</li>
-                                                            <li id="municipality">Municipality: ${data_municipality}</li>
+                                                            <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
+                                                            <li id="season"><strong>Claimed Seeds during:</strong> ${data_season}</li>
+                                                            <li id="sex"><strong>Sex:</strong> ${data_sex}</li>
+                                                            <li id="bday"><strong>Birthdate:</strong> ${data_birthdate}</li>
+                                                            <li id="mother"><strong>Mother's Maiden Name:</strong> ${data_mother_name}</li>
+                                                            <li id="province"><strong>Home Address - Province:</strong> ${data_province}</li>
+                                                            <li id="municipality"><strong>Home Address - Municipality:</strong> ${data_municipality}</li>
                                                             <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This is not the same person as the suggested profile(s)</li>
                                                         </ul>
                                                     </div>
@@ -528,12 +1089,13 @@
                                                             <ul class="info_list">
                                                             <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
-                                                            <li id="rsbsa">RSBSA No.: ${proc.rsbsa_control_no}</li>
-                                                            <li id="sex">Sex: ${proc.sex}</li>
-                                                            <li id="bday">Birthdate: ${proc.birthdate}</li>
-                                                            <li id="mother">Mother Name: ${proc.mother_name}</li>
-                                                            <li id="province">Province: ${proc.province}</li>
-                                                            <li id="municipality">Municipality: ${proc.municipality}</li>
+                                                            <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
+                                                            <li id="season"><strong>Claimed Seeds during:</strong> ${proc.season}</li>
+                                                            <li id="sex"><strong>Sex:</strong> ${proc.sex}</li>
+                                                            <li id="bday"><strong>Birthdate:</strong> ${proc.birthdate}</li>
+                                                            <li id="mother"><strong>Mother's Maiden Name:</strong> ${proc.mother_name}</li>
+                                                            <li id="province"><strong>Home Address - Province:</strong> ${proc.province}</li>
+                                                            <li id="municipality"><strong>Home Address - Municipality:</strong> ${proc.municipality}</li>
                                                             <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">Current profile will be linked with this suggested profile</li>
                                                             </ul>
                                                         </div>
@@ -596,6 +1158,9 @@
                             $("#totalForValidation").append(data[1]);
                             $("#totalValidated").append(data[2]);
                             $("#totalPending").append(data[3]);
+                            $("#noOfClusters").empty();
+                            $("#noOfClusters").append(data[4]);
+
                             profileCount = data[0].length;
                             data[0].forEach(proc => {
                                 all_profiles.push(proc.id);
@@ -606,12 +1171,13 @@
                                                 <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
                                                 <ul class="info_list">
                                                     <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
-                                                    <li id="rsbsa">RSBSA No.: ${proc.rsbsa_control_no}</li>
-                                                    <li id="sex">Sex: ${proc.sex}</li>
-                                                    <li id="bday">Birthdate: ${proc.birthdate}</li>
-                                                    <li id="mother">Mother Name: ${proc.mother_name}</li>
-                                                    <li id="province">Province: ${proc.province}</li>
-                                                    <li id="municipality">Municipality: ${proc.municipality}</li>
+                                                    <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
+                                                    <li id="season"><strong>Claimed Seeds during:</strong> ${proc.season}</li>
+                                                    <li id="sex"><strong>Sex:</strong> ${proc.sex}</li>
+                                                    <li id="bday"><strong>Birthdate:</strong> ${proc.birthdate}</li>
+                                                    <li id="mother"><strong>Mother's Maiden Name:</strong> ${proc.mother_name}</li>
+                                                    <li id="province"><strong>Home Address - Province:</strong> ${proc.province}</li>
+                                                    <li id="municipality"><strong>Home Address - Municipality:</strong> ${proc.municipality}</li>
                                                     <li class="mainLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #e3bd00; padding: 0.5em;">This will be treated as the main profile</li>
                                                     <li class="subLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #3ed655; padding: 0.5em;">This will be linked to the main profile selected</li>
                                                     <li class="newLegend" style="display:none; border: 2px solid black; border-radius: 1em; background-color: #dbdbdb; padding: 0.5em;">This will be marked as a different person from the main profile</li>
@@ -726,6 +1292,8 @@
                     },
                     success: function(data) {
                         alert('Profile successfully validated and submitted for approval.');
+                        onLoadIndex = 0;
+                        findCluster = '';
                         $('#submit').click();
                     }
                 });

@@ -18,19 +18,15 @@ class farmerVerificationController extends Controller
         ->where('TABLE_NAME','LIKE','prv_%')
         ->where('TABLE_NAME','NOT LIKE','%ai')
         ->where('TABLE_NAME','NOT LIKE','%merge')
+        ->where('TABLE_NAME','NOT LIKE','%backup')
         ->where('TABLE_ROWS','>',0)
         ->get();
 
         $prvCodes = [];
-        $totalForValidation = 0;
-        $totalValidated = 0;
-        $totalPending = 0;
+        $prvs = [];
         foreach($getPrvs as $prv)
         {
             $code = str_replace('prv_','',$prv->TABLE_NAME);
-            // $countMerged = count(DB::table('mongodb_data.prv_'.$code.'_merge')
-            // ->get());
-            // $totalValidated = $totalValidated + $countMerged;
             
             $checkTbl = DB::table('mongodb_data.prv_'.$code.'_ai')
             ->where('status','FOR VERIFICATION')
@@ -45,35 +41,46 @@ class farmerVerificationController extends Controller
             }
         }
 
-        foreach($prvCodes as $prov)
-        {
-            // $countForVerify = count(DB::table('mongodb_data.prv_'.$prov.'_ai')
-            // ->where('status','FOR VERIFICATION')
-            // ->get());
-            // $totalForValidation = $totalForValidation + $countForVerify;
-            
-            // $countPending = count(DB::table('mongodb_data.prv_'.$prov.'_ai')
-            // ->where('status','NOT LIKE','FOR VERIFICATION')
-            // ->where('status','NOT LIKE','MERGED')
-            // ->get());
-            // $totalPending = $totalPending + $countPending;
+        if(Auth::user()->roles->first()->name == "rcef-programmer"){
+            $provinces = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+                ->select('regionName','province')
+                ->whereIn('prv_code',$prvCodes)
+                ->groupBy('province')
+                ->orderBy('region_sort')
+                ->get();
+
+        }else{
+
+            if(Auth::user()->stationId == ""){
+                $mss = "No Station Tagged";
+                return view("utility.pageClosed")
+                    ->with("mss",$mss);
+            }else{
+                $user_provinces =  DB::table($GLOBALS['season_prefix'].'sdms_db_dev.lib_station')
+                    ->select("province")
+                    ->where("stationID", Auth::user()->stationId)
+                    ->groupBy("province")
+                    ->get();
+
+
+        
+                foreach($user_provinces as $provinces){
+                    array_push($prvs,$provinces->province);
+                }
+
+                $provinces = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+                ->select('regionName','province')
+                ->whereIn('prv_code',$prvCodes)
+                ->whereIn('province',$prvs)
+                ->groupBy('province')
+                ->orderBy('region_sort')
+                ->get();
+           
+            }
         }
 
-        // dd($totalForValidation, $totalValidated);
 
-        $provinces = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
-        ->select('regionName','province')
-        ->whereIn('prv_code',$prvCodes)
-        ->groupBy('province')
-        ->orderBy('region_sort')
-        ->get();
-
-
-        $totalForValidation = number_format($totalForValidation);
-        $totalValidated = number_format($totalValidated);
-        $totalPending = number_format($totalPending);
-
-        return view("farmerVerification.index",compact('provinces','totalForValidation','totalValidated','totalPending'));
+        return view("farmerVerification.index",compact('provinces'));
     }
 
     public function getMuni(Request $request)
@@ -145,17 +152,28 @@ class farmerVerificationController extends Controller
         // ->where('cluster_id',1834) //for testing purposes -  Pangasinan - Mangatarem
         ->first();
         // dd($getCluster,$request->all());
+        
 
         if(!$getCluster)
         {
             return ('No data.');
         }
 
-        $noOfClusters = count(DB::table('mongodb_data.prv_'.$code.'_ai')
+        $clusters = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->select('cluster_id')
         ->where('status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->groupBy('cluster_id')
-        ->get());
+        ->get();
+
+        $clusterIndex = 1;
+        foreach($clusters as $cluster)
+        {
+            $cluster->index = $clusterIndex;
+            $clusterIndex++;
+        }
+
+        $noOfClusters = count($clusters);
 
         $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->where('status','FOR VERIFICATION')
@@ -173,8 +191,84 @@ class farmerVerificationController extends Controller
         array_push($returnArray,$totalValidated);
         array_push($returnArray,$totalPending);
         array_push($returnArray,$noOfClusters);
+        array_push($returnArray,$clusters);
+        return $returnArray;
+    }
 
-        // dd($returnArray);
+    public function getProfiles2(Request $request)
+    {
+        $returnArray = [];
+        $totalForValidation = 0;
+        $totalValidated = 0;
+        $totalPending = 0;
+
+        $code = substr(str_replace('-','',$request->mun),0,4);
+        // dd($code);
+
+        $countMerged = count(DB::table('mongodb_data.prv_'.$code.'_merge')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->get());
+        $totalValidated = $totalValidated + $countMerged;
+
+        $countForVerify = count(DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','FOR VERIFICATION')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->get());
+        $totalForValidation = $totalForValidation + $countForVerify;
+        
+        $countPending = count(DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','NOT LIKE','FOR VERIFICATION')
+        ->where('status','NOT LIKE','MERGED')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->get());
+        $totalPending = $totalPending + $countPending;
+
+        $getCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','FOR VERIFICATION')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->where('cluster_id',$request->findCluster)
+        ->first();
+        // dd($getCluster,$request->all());
+        
+
+        if(!$getCluster)
+        {
+            return ('No data.');
+        }
+
+        $clusters = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->select('cluster_id')
+        ->where('status','FOR VERIFICATION')
+        ->where('home_geocode','LIKE',$request->mun.'%')
+        ->groupBy('cluster_id')
+        ->get();
+
+        $clusterIndex = 1;
+        foreach($clusters as $cluster)
+        {
+            $cluster->index = $clusterIndex;
+            $clusterIndex++;
+        }
+
+        $noOfClusters = count($clusters);
+
+        $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->where('status','FOR VERIFICATION')
+        ->where('cluster_id',$getCluster->cluster_id)
+        ->orderBy('id','ASC')
+        ->get();
+
+        $totalForValidation = number_format($totalForValidation);
+        $totalValidated = number_format($totalValidated);
+        $totalPending = number_format($totalPending);
+        
+
+        array_push($returnArray,$getClusterProfile);
+        array_push($returnArray,$totalForValidation);
+        array_push($returnArray,$totalValidated);
+        array_push($returnArray,$totalPending);
+        array_push($returnArray,$noOfClusters);
+        array_push($returnArray,$clusters);
         return $returnArray;
     }
 
@@ -206,7 +300,7 @@ class farmerVerificationController extends Controller
 
     public function updateProfiles(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         // $code = substr(str_replace('-','',$request->mun),0,4);
         // $getSub = [];
         // $getNew = [];
