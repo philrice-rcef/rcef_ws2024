@@ -243,7 +243,7 @@ public function exportAllCoopData(){
 
 public function exportRegionalUI(){
 
-    $publicDirectory = public_path("reports\\excel_export_regional\\");
+    $publicDirectory = public_path("reports//excel_export_regional//");
     $return_array = array();
     if (File::exists($publicDirectory)) {
         $files = File::allFiles($publicDirectory);
@@ -275,7 +275,7 @@ public function exportRegionalUI(){
 
 public function exportProvincialUI(){
 
-    $publicDirectory = public_path("reports\\excel_export_provincial\\");
+    $publicDirectory = public_path("reports//excel_export_provincial//");
     $return_array = array();
     if (File::exists($publicDirectory)) {
         $files = File::allFiles($publicDirectory);
@@ -305,7 +305,7 @@ public function exportProvincialUI(){
 
 public function exportMunicipalUI(){
 
-    $publicDirectory = public_path("reports\\excel_export\\");
+    $publicDirectory = public_path("reports//excel_export//");
     $return_array = array();
     if (File::exists($publicDirectory)) {
         $files = File::allFiles($publicDirectory);
@@ -856,7 +856,7 @@ foreach($region_list as $region){
     // dd($regionalData);
     
 
-    $path = public_path("reports\\excel_export_regional\\");
+    $path = public_path("reports//excel_export_regional//");
     $excel_data = json_decode(json_encode($regionalData), true); //convert collection to associative array to be converted to excel
     $excel_data_vs = json_decode(json_encode($regionalDataV), true); //convert collection to associative array to be converted to excel
     
@@ -1262,7 +1262,7 @@ public function exportProvincialStatistics($date_from,$date_to,$region){
     }
     
     // dd($release_vs_data,$b);
-    $path = public_path("reports\\excel_export_provincial\\");
+    $path = public_path("reports//excel_export_provincial//");
     $excel_data = json_decode(json_encode($a), true); //convert collection to associative array to be converted to excel
     $excel_data_vs = json_decode(json_encode($b), true); //convert collection to associative array to be converted to excel
     
@@ -1731,7 +1731,7 @@ public function exportProvincialStatistics($date_from,$date_to,$region){
                 }
                 
             
-                $path = public_path("reports\\excel_export\\");
+                $path = public_path("reports//excel_export//");
                 $excel_data = json_decode(json_encode($a), true); //convert collection to associative array to be converted to excel
                 $excel_data_vs = json_decode(json_encode($b), true); //convert collection to associative array to be converted to excel
                 
@@ -3205,9 +3205,79 @@ $excel_array = array();
     
         return $results;
     }
-    
+       public function export_muni_noUpdate_pyCsv(request $request){
 
+        $prv_details = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+        ->where('province', $request->prv)
+        ->where('municipality', $request->mun)
+        ->first();
+
+        //local python path
+        $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $scriptPath = base_path('app/Http/PyScript/report-exports-seed-bene.py');
+
+        //local path
+        //$scriptPath = 'd://Admin//Downloads//report-exports-seed-bene.py';
+    
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
+        $prv = substr($prv_details->prv, 0, 4);
+        $mun = $request->mun;
+        $cat = 'INBRED';
+    
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedPrv = escapeshellarg($prv);
+        $escapedMun = escapeshellarg($mun);
+        $escapedCat = escapeshellarg($cat);
+    
+        // Construct the command with arguments
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedPrv $escapedMun $escapedCat";
+    
+        // Execute the command with redirection
+        $output = shell_exec($command . " 2>&1");
+        $keyword = 'report/home/';
+        if (strpos($output, $keyword) === 0) {
+            $filename_output = substr($output, strlen($keyword));
+        } else {
+            $filename_output = 'Unexpected format: ' . $output;
+        }
+
+        // Return the trimmed output as a response
+        return response()->json([
+            'message' => 'Script executed successfully',
+            'output' => $filename_output
+        ]);
+        
+       }
+       public function py_unlinking(Request $request){
+            //working
+            //unlink("./public/public/sample.csv");
+            unlink("./report/home/sample.csv");
+
+        }
        public function export_municipality_noUPdate($province, $municipality){
+
+/*         $prv_details = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+        ->where('province', $province)
+        ->where('municipality', $municipality)
+        ->first();
+
+        //local python path
+        $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $scriptPath = base_path('app/Http/PyScript/report-exports-seed-bene.py');
+        $ssn = $GLOBALS["season_prefix"];
+        $prv = substr($prv_details->prv, 0, 4);
+        $mun = $municipality;
+        $cat = 'INBRED';
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedPrv = escapeshellarg($prv);
+        $escapedMun = escapeshellarg($mun);
+        $escapedCat = escapeshellarg($cat);
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedPrv $escapedMun $escapedCat";
+        $output = shell_exec($command . " 2>&1");
+    
+        return $output; */
+
         // dd($municipality);
         ini_set('memory_limit', '-1');
         DB::beginTransaction();
@@ -3617,7 +3687,7 @@ $excel_array = array();
 
     public function getFiles(){
 
-        $publicDirectory = public_path("reports\\excel_export\\");
+        $publicDirectory = public_path("reports//excel_export//");
         $return_array = array();
         if (File::exists($publicDirectory)) {
             $files = File::allFiles($publicDirectory);

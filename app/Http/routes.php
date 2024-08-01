@@ -1128,8 +1128,10 @@ Route::group(['middleware' => ['auth','logMw']], function() {
 
     Route::get('export/provincial/ui', ['as' => 'ui.export.provincial', 'uses' => 'reportExportController@exportProvincialUI']);
     Route::get('export/regional/ui', ['as' => 'ui.export.regional', 'uses' => 'reportExportController@exportRegionalUI']);
+    //mark
+    Route::post('export_muni_noUpdate_pyCsv', ['as' => 'export_muni_noUpdate_pyCsv', 'uses' => 'reportExportController@export_muni_noUpdate_pyCsv']);
+    Route::get('py_unlinking', ['as' => 'py_unlinking', 'uses' => 'reportExportController@py_unlinking']);
  
-
 });
 
 

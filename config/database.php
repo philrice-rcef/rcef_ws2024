@@ -304,6 +304,19 @@ return [
             'strict' => false,
             'engine' => null,
         ],
+        'paymaya_db' => [
+            'driver' => 'mysql',
+            'host' => '192.168.10.44',
+            'port' => '3306',
+            'database' => env('DB_PAYMAYA', 'forge'),
+            'username' => 'json',
+            'password' => 'Zeijan@13',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
 
         'distribution_db' => [
             'driver' => 'mysql',

@@ -9078,6 +9078,15 @@ class ReportController extends Controller
     }
 
     public function generateMunicipalReportData(Request $request){
+
+/*      $pythonPath = 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe';
+        $scriptPath = 'd:\\Admin\\Downloads\\report-exports.py';
+        $command = escapeshellcmd("$pythonPath \"$scriptPath\" 2>&1");
+        $output = shell_exec($command);
+        \Log::info("Command executed: $command");
+        \Log::info("Command output: $output");
+        return $output; */
+        
         $processed_data = DB::table($GLOBALS["season_prefix"]."rcep_reports.lib_municipal_reports")
             ->where("province", $request->province)->get();
         $processed_data = json_decode(json_encode($processed_data), true);
@@ -9340,141 +9349,31 @@ class ReportController extends Controller
 //NEW CODE
 
 /* public function generateLiveMunicipalReportData(Request $request){
-    $lib_drop = DB::connection("delivery_inspection_db")->table("lib_dropoff_point")
-        ->where("province", $request->province)
-        ->groupBy("municipality")
-        ->get();
+    //$province=$request->province;
+    $lib_drop = DB::connection("delivery_inspection_db")->select(
+        'CALL sp_load_live_data(?)', 
+        [$request->province]
+    );
     $tbl = array();
-        $province = $request->province;
+    $province = $request->province;
         foreach($lib_drop as $muni)
         {
-            $municipality = $muni->municipality;
-             $confirmed_new =  DB::connection("delivery_inspection_db")->table("tbl_delivery") //SUBJECT TO REMOVE
-                ->where("province", $request->province)
-                ->where("municipality", $municipality)
-                ->where("isBuffer", 0)
-                ->orWhere("province", $request->province) // subject to change
-                ->where("municipality", $municipality)
-                ->where("isBuffer", 9)
-                ->sum("totalBagCount");
-
-            $confirmed_batches = DB::connection("delivery_inspection_db")->table("tbl_delivery")
-            ->select("batchTicketNumber")
-            ->where("province", $request->province)
-                ->where("municipality", $municipality)
-                ->where("isBuffer", 0)
-            ->orWhere("province", $request->province) // subject to change
-                ->where("municipality", $municipality)
-                ->where("isBuffer", 9)                  //subject to change
-            ->groupBy("batchTicketNumber")
-            ->get();
-
-            $confirmed_batches = json_decode(json_encode($confirmed_batches),true);
-
-
-            $accepted = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
-                ->whereIn("batchTicketNumber", $confirmed_batches)
-                ->where("isRejected", 0)
-                ->sum("totalBagCount");
-                
-
-            $re_transfer = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
-                ->where("transferCategory", "T")
-                ->where("province", $request->province)
-                ->where("municipality", $municipality)
-                ->where("isRejected", 0)
-                ->sum("totalBagCount");
-                
-
-
-
-            $transfered_batches2 = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
-                ->select( DB::raw("CONCAT('transferred from batch: ',batchTicketNumber) as batchTicketNumber"))   
-                ->where("transferCategory", "P") 
-                ->where("province", $request->province)
-                ->where("municipality", $municipality)
-                ->where("isRejected", 0)
-                ->groupBy("batchTicketNumber")
-                ->get();
-            $transfered_batches2 = json_decode(json_encode($transfered_batches2),true);
-
-            $add_transferred = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
-            ->orWhereIn("remarks", $transfered_batches2)
-            ->where("province", $request->province)
-            ->where("municipality", $municipality)
-            ->where("isRejected", 0)
-            ->sum("totalBagCount");
-
-            $transfer = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
-                ->where("transferCategory", "P") 
-                ->where("province", $request->province)
-                ->where("municipality", $municipality)
-                ->where("isRejected", 0)
-                ->sum("totalBagCount");
-            $transferred = $add_transferred + $transfer ;
-
-
-            $total_accept = $transferred + $accepted + $re_transfer;
-
-            if($total_accept <= 0){
-                continue;
-            }
-
+            $municipality=$muni->municipality;
             // $accepted_transfer = "<i> Confirmed: ".number_format($confirmed_new)." <br>";
-            $accepted_transfer = "<b> Total Accepted: ".number_format($total_accept)."</b><br>";
-            $accepted_transfer .= "Accepted: ".number_format($accepted)."<br>";
-            $accepted_transfer .= "Re-Transfer: ".number_format($re_transfer)."<br>";
+            $accepted_transfer = "<b> Total Accepted: ".number_format($muni->accepted)."</b><br>";//$total_accept
+            $accepted_transfer .= "Accepted: ".number_format($muni->accepted)."<br>";
+            $accepted_transfer .= "Re-Transfer: ".number_format($muni->re_transfer)."<br>";
             
-            $accepted_transfer .= "Transferred: ".number_format($transferred)." </i><br>";
+            $accepted_transfer .= "Transferred: ".number_format($muni->transferred)." </i><br>";
     
-
-            //EBINHI
-            $ebinhi_distri = count(DB::table($GLOBALS["season_prefix"]."rcep_paymaya.tbl_claim")
-                ->where("province", $request->province)
-                ->where("municipality", $municipality)
-                ->get());
-
-            $ebinhi_bene =  count(DB::table($GLOBALS["season_prefix"]."rcep_paymaya.tbl_claim")
-            ->where("province", $request->province)
-            ->where("municipality", $municipality)
-            ->groupBy("paymaya_code")
-            ->get());
-
-            $ebinhi_claim_code = DB::table($GLOBALS["season_prefix"]."rcep_paymaya.tbl_claim")
-            ->select("paymaya_code")
-            ->where("province", $request->province)
-            ->where("municipality", $municipality)
-            ->groupBy("paymaya_code")
-            ->get();
-
-            $ebinhi_claim_code = json_decode(json_encode($ebinhi_claim_code), true);
-
-
-            $ebinhi_bene_data_male = count(DB::table($GLOBALS["season_prefix"]."rcep_paymaya.tbl_beneficiaries")
-            // ->select(DB::raw("SUM(IF(,1,0)) as total_male"), DB::raw("SUM(IF(UPPER(SUBSTR(sex,1,1))='F',1,0)) as total_female"),
-            // DB::raw("SUM(area) as area"))
-            ->where(DB::raw("UPPER(SUBSTR(sex,1,1))"), "M")
-            ->whereIn("paymaya_code", $ebinhi_claim_code)
-            ->get());
-
-            $ebinhi_bene_data_female = count(DB::table($GLOBALS["season_prefix"]."rcep_paymaya.tbl_beneficiaries")
-            // ->select(DB::raw("SUM(IF(,1,0)) as total_male"), DB::raw("SUM(IF(UPPER(SUBSTR(sex,1,1))='F',1,0)) as total_female"),
-            // DB::raw("SUM(area) as area"))
-            ->where(DB::raw("UPPER(SUBSTR(sex,1,1))"), "F")
-            ->whereIn("paymaya_code", $ebinhi_claim_code)
-            ->get());
-
-
-
-            $ebinhi_bene_data = DB::table($GLOBALS["season_prefix"]."rcep_paymaya.tbl_beneficiaries")
-            ->select(DB::raw("SUM(area) as area"))
-            ->whereIn("paymaya_code", $ebinhi_claim_code)
-            ->first();
-            
-
-        $bep_male = $ebinhi_bene_data_male;
-        $bep_female = $ebinhi_bene_data_female;
-        $bep_area = $ebinhi_bene_data->area;
+            $paymaya = DB::connection("paymaya_db")->select(
+                'CALL sp_load_live_data_pay_maya_bene(?,?)', 
+                [$request->province,$municipality]
+            );
+        
+            $bep_male = isset($paymaya[0]) ? max($paymaya[0]->male_count, 0) : 0;//$ebinhi_bene_data_male;
+            $bep_female = isset($paymaya[0]) ? max($paymaya[0]->female_count, 0) : 0;//$ebinhi_bene_data_female;
+            $bep_area = isset($paymaya[0]) ? max($paymaya[0]->area, 0) : 0;//$ebinhi_bene_data->area;
             
             $db_prv = SUBSTR($muni->prv,0,4);
 
@@ -9555,22 +9454,22 @@ class ReportController extends Controller
             ->whereIn("rcef_id", $release_rcef_id)
             ->first();
 
-    $farmer_info_male = count(DB::table($GLOBALS["season_prefix"]."prv_".$db_prv.".farmer_information_final")
-                ->where(DB::raw("UPPER(SUBSTR(sex,1,1))"), "M")
-                ->whereIn("rcef_id", $release_rcef_id)
-                ->groupBy("rcef_id")
-                ->get());
-    
-    $farmer_info_female = count(DB::table($GLOBALS["season_prefix"]."prv_".$db_prv.".farmer_information_final")
-                ->where(DB::raw("UPPER(SUBSTR(sex,1,1))"), "F")
-                ->whereIn("rcef_id", $release_rcef_id)
-                ->groupBy("rcef_id")
-                ->get());
+            $farmer_info_male = count(DB::table($GLOBALS["season_prefix"]."prv_".$db_prv.".farmer_information_final")
+                        ->where(DB::raw("UPPER(SUBSTR(sex,1,1))"), "M")
+                        ->whereIn("rcef_id", $release_rcef_id)
+                        ->groupBy("rcef_id")
+                        ->get());
+            
+            $farmer_info_female = count(DB::table($GLOBALS["season_prefix"]."prv_".$db_prv.".farmer_information_final")
+                        ->where(DB::raw("UPPER(SUBSTR(sex,1,1))"), "F")
+                        ->whereIn("rcef_id", $release_rcef_id)
+                        ->groupBy("rcef_id")
+                        ->get());
 
- 
-    $total_male = $farmer_info_male;
-    $total_female = $farmer_info_female;
-    $registered_area = $farmer_info->final_area;
+        
+            $total_male = $farmer_info_male;
+            $total_female = $farmer_info_female;
+            $registered_area = $farmer_info->final_area;
 
 
 
@@ -9598,8 +9497,11 @@ class ReportController extends Controller
                 $yield = "-";
             }
 
-            $distributed = $ebinhi_distri + $regular_dist + $parcel_dist;
-            $beneficiaries = $regular_bene + $ebinhi_bene;
+            $distributed = (isset($paymaya[0]) ? $paymaya[0]->paymaya_total_beneficiaries : 0) + $regular_dist + $parcel_dist;
+            //$distributed = $paymaya->paymaya_total_beneficiaries + $regular_dist + $parcel_dist;
+            $beneficiaries = $regular_bene + (isset($paymaya[0]) ? $paymaya[0]->paymaya_total_beneficiaries : 0);
+            // $distributed = $ebinhi_distri + $regular_dist + $parcel_dist;
+            // $beneficiaries = $regular_bene + $ebinhi_bene;
 
             $ebinhi_tag = 0;
             if($distributed > 0 ){
@@ -9618,14 +9520,20 @@ class ReportController extends Controller
                     $distributed_text .= "<br> <strong>Note:</strong> Claimed intended for parcel DOP: ". number_format($parcel_dist);
                 }
 
-                if($ebinhi_distri > 0 ){
-                    $distributed_text .= "<br> BeP: " .number_format($ebinhi_distri);
+                // if($ebinhi_distri > 0 ){
+                //     $distributed_text .= "<br> BeP: " .number_format($ebinhi_distri);
 
+                //     $ebinhi_tag = 1;
+                //     $beneficiaries_text .= "<br> BeP: " .number_format($ebinhi_bene);
+
+
+                // }
+                if (isset($paymaya[0]) && isset($paymaya[0]->paymaya_total_beneficiaries) && $paymaya[0]->paymaya_total_beneficiaries > 0) {
+                    $distributed_text .= "<br> BeP: " . number_format($paymaya[0]->paymaya_total_beneficiaries);
+                    $beneficiaries_text .= "<br> BeP: " . number_format($paymaya[0]->paymaya_total_beneficiaries);
                     $ebinhi_tag = 1;
-                    $beneficiaries_text .= "<br> BeP: " .number_format($ebinhi_bene);
-
-
                 }
+                
             }else{
                 $distributed_text = "-";
                 $beneficiaries_text = "-";
@@ -9795,7 +9703,7 @@ public function generateLiveMunicipalReportData(Request $request){
                     ->where("province", $request->province)
                     ->where("municipality", $municipality)
                     ->where("isBuffer", 0)
-                    ->orWhere("province", $request->province) // subject to change
+                    ->orWhere("province", $request->province) // SUBJECT TO REMOVE
                     ->where("municipality", $municipality)
                     ->where("isBuffer", 9)
                     ->sum("totalBagCount");

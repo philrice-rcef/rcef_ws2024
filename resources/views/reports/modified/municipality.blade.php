@@ -137,6 +137,7 @@
                 </div>
                 <div class="modal-footer">
                  
+                        <button id="noUpdate_export_btn_py" type="button" class="btn btn-success"> EXPORT CONVENTIONAL EXCEL USING PYTHON</button>
                         <button id="noUpdate_export_btn" type="button" class="btn btn-success"> EXPORT CONVENTIONAL EXCEL</button>
                         <button id="noUpdate_export_btn_ebinhi" type="button" class="btn btn-success">PROCEED E-BINHI EXCEL </button>
                         
@@ -436,12 +437,55 @@
             var redirectWindow = window.open(url, '_blank');
             redirectWindow.location;
         });
-
+        
 
         $("#noUpdate_export_btn").on("click", function(e){
-            var url = 'https://rcef-seed.philrice.gov.ph/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';
+            /* var url = 'https://rcef-seed.philrice.gov.ph/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update'; */
+            var url = 'http://localhost/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';
             var redirectWindow = window.open(url, '_blank');
             redirectWindow.location;
+        });
+
+
+        $("#noUpdate_export_btn_py").click(function() {
+
+            $selected_prv = $("#munReport_province").val();
+            $selected_mun = $("#munReport_municipality").val();
+            $("#noUpdate_export_btn_py").text("Processing...");
+            $("#noUpdate_export_btn_py").attr("disabled", true);
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('export_muni_noUpdate_pyCsv') }}", 
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    prv: $selected_prv,
+                    mun: $selected_mun
+                },
+                success: function(data){
+                    //console.log(data.message);
+                    console.log(window.location.hostname+'/'+data.output);
+                    window.open(data.output, '_blank');
+                    $(".notification_toast").addClass("notif_show");
+                    $("#noUpdate_export_btn_py").removeAttr("disabled");
+                    $("#noUpdate_export_btn_py").text("EXPORT CONVENTIONAL EXCEL USING PYTHON");
+                    setTimeout(() => {
+                        $.ajax({
+                        type: 'GET',
+                        url: "{{ route('py_unlinking') }}", 
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            uri: './public/public/'+data.output
+                        },
+                        success: function(data){
+                            // console.log(data);
+                        }
+                    });
+                    setTimeout(() => {
+                        $(".notification_toast").removeClass("notif_show");
+                    }, 2000);
+                    }, 1000);
+                }
+            });
         });
 
         $("#update_export_btn").on("click", function(e){
