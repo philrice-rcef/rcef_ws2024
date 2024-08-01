@@ -2222,6 +2222,7 @@ Route::get('paymaya/manual_form/{type}/{data}/{date3}', ['as' => 'manual_form', 
     Route::get('/farmerVerification/home', ['as' => 'farmerVerification', 'uses' => 'farmerVerificationController@index']);
     Route::post('/farmerVerification/getMuni', ['as' => 'farmerVerification.getMuni', 'uses' => 'farmerVerificationController@getMuni']);
     Route::post('/farmerVerification/getProfiles', ['as' => 'farmerVerification.getProfiles', 'uses' => 'farmerVerificationController@getProfiles']);
+    Route::post('/farmerVerification/getProfiles2', ['as' => 'farmerVerification.getProfiles2', 'uses' => 'farmerVerificationController@getProfiles2']);
     Route::post('/farmerVerification/getSuggestions', ['as' => 'farmerVerification.getSuggestions', 'uses' => 'farmerVerificationController@getSuggestions']);
     Route::post('/farmerVerification/updateProfiles', ['as' => 'farmerVerification.updateProfiles', 'uses' => 'farmerVerificationController@updateProfiles']);
 
