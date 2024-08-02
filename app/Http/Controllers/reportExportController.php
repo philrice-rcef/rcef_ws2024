@@ -3214,13 +3214,13 @@ $excel_array = array();
         ->where('province', $request->prv)
         ->where('municipality', $request->mun)
         ->first();
-
+        //uncomment for development
         //$pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
-        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
-        $scriptPath = base_path('app/Http/PyScript/report-exports-seed-bene.py');
 
-        // Local path (uncomment if needed)
-        // $scriptPath = 'd://Admin//Downloads//report-exports-seed-bene.py';
+        //production
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+
+        $scriptPath = base_path('app/Http/PyScript/report-exports-seed-bene.py');
 
         // Escape the arguments
         $ssn = $GLOBALS["season_prefix"];

@@ -441,7 +441,7 @@
 
         $("#noUpdate_export_btn").on("click", function(e){
             var url = 'https://rcef-seed.philrice.gov.ph/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';
-            /*var url = 'http://localhost/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';*/
+            /* var url = 'http://localhost/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update'; */
             var redirectWindow = window.open(url, '_blank');
             redirectWindow.location;
         });
@@ -450,7 +450,9 @@
         $("#noUpdate_export_btn_py").click(function() {
 
             $selected_prv = $("#munReport_province").val();
+            console.log($selected_prv+'qweqweqweq');
             $selected_mun = $("#munReport_municipality").val();
+            console.log($selected_mun+'qweqwe');
             $("#noUpdate_export_btn_py").text("Processing...");
             $("#noUpdate_export_btn_py").attr("disabled", true);
             $.ajax({
