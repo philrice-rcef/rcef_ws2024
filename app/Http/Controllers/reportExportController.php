@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 use App\SeedCooperatives;
 use App\SeedGrowers;
 use Config;
@@ -3212,8 +3215,54 @@ $excel_array = array();
         ->where('municipality', $request->mun)
         ->first();
 
-        //local python path
         $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $scriptPath = base_path('app/Http/PyScript/report-exports-seed-bene.py');
+
+        // Local path (uncomment if needed)
+        // $scriptPath = 'd://Admin//Downloads//report-exports-seed-bene.py';
+
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
+        $prv = substr($prv_details->prv, 0, 4);
+        $mun = $request->mun;
+        $cat = 'INBRED';
+
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedPrv = escapeshellarg($prv);
+        $escapedMun = escapeshellarg($mun);
+        $escapedCat = escapeshellarg($cat);
+
+        // Construct the command with arguments as a single string
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedPrv $escapedMun $escapedCat";
+
+        // Create a new process
+        $process = new Process($command);
+
+        try {
+            // Run the process
+            $process->mustRun();
+
+            // Get the output
+            $output = $process->getOutput();
+
+            $keyword = 'report/home/';
+            if (strpos($output, $keyword) === 0) {
+                $filename_output = substr($output, strlen($keyword));
+            } else {
+                $filename_output = 'Unexpected format: ' . $output;
+            }
+    
+            // Return the trimmed output as a response
+            return response()->json([
+                'message' => 'Script executed successfully',
+                'output' => $filename_output
+            ]);
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
+        }
+        //local python path
+/*         $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
         $scriptPath = base_path('app/Http/PyScript/report-exports-seed-bene.py');
 
         //local path
@@ -3246,14 +3295,29 @@ $excel_array = array();
         return response()->json([
             'message' => 'Script executed successfully',
             'output' => $filename_output
-        ]);
+        ]); */
         
        }
        public function py_unlinking(Request $request){
-            //working
-            //unlink("./public/public/sample.csv");
-            unlink("./report/home/sample.csv");
+            //unlink("./report/home/sample.csv");
+            $fileName = trim($request->uri);
 
+            // Construct the full file path
+            $filePath = './report/home/' . $fileName;
+        
+            // Debugging: Log the file path to check if it's correct
+            error_log("Attempting to delete file at path: " . $filePath);
+        
+            if (file_exists($filePath)) {
+                // Try to delete the file and handle any potential errors
+                if (unlink($filePath)) {
+                    return response()->json(['message' => 'File deleted successfully.']);
+                } else {
+                    return response()->json(['message' => 'File could not be deleted.'], 500);
+                }
+            } else {
+                return response()->json(['message' => 'File not found.'], 404);
+            }
         }
        public function export_municipality_noUPdate($province, $municipality){
 
@@ -3400,15 +3464,15 @@ $excel_array = array();
                 $y = 1;
 
                 
-                foreach($yield_data as $yield){
-                    $inclu["yield_variety_".$y] = $yield->variety;
-                    $inclu["yield_area_".$y] = $yield->area;
-                    $inclu["yield_bags_".$y] = $yield->bags;
-                    $inclu["yield_weight_".$y] = $yield->weight;
-                    $inclu["yield_type_".$y] = $yield->type;
-                    $inclu["yield_class_".$y] = $yield->class;
-                    $y++;
-                }
+                // foreach($yield_data as $yield){
+                //     $inclu["yield_variety_".$y] = $yield->variety;
+                //     $inclu["yield_area_".$y] = $yield->area;
+                //     $inclu["yield_bags_".$y] = $yield->bags;
+                //     $inclu["yield_weight_".$y] = $yield->weight;
+                //     $inclu["yield_type_".$y] = $yield->type;
+                //     $inclu["yield_class_".$y] = $yield->class;
+                //     $y++;
+                // }
                 array_push($excel_data, $inclu);
 
                 // $yield_data = json_decode($yield_data);

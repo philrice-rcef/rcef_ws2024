@@ -440,8 +440,8 @@
         
 
         $("#noUpdate_export_btn").on("click", function(e){
-            /* var url = 'https://rcef-seed.philrice.gov.ph/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update'; */
-            var url = 'http://localhost/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';
+            var url = 'https://rcef-seed.philrice.gov.ph/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';
+            /*var url = 'http://localhost/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';*/
             var redirectWindow = window.open(url, '_blank');
             redirectWindow.location;
         });
@@ -474,7 +474,7 @@
                         url: "{{ route('py_unlinking') }}", 
                         data: {
                             _token: "{{ csrf_token() }}",
-                            uri: './public/public/'+data.output
+                            uri: /* './public/public/'+ */data.output
                         },
                         success: function(data){
                             // console.log(data);
