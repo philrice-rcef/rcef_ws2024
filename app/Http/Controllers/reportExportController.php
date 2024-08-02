@@ -3215,7 +3215,8 @@ $excel_array = array();
         ->where('municipality', $request->mun)
         ->first();
 
-        $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        //$pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
         $scriptPath = base_path('app/Http/PyScript/report-exports-seed-bene.py');
 
         // Local path (uncomment if needed)
