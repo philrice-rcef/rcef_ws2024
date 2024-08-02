@@ -3225,7 +3225,7 @@ $excel_array = array();
         // Escape the arguments
         $ssn = $GLOBALS["season_prefix"];
         $prv = substr($prv_details->prv, 0, 4);
-        return $mun = $request->mun;
+        $mun = $request->mun;
         $cat = 'INBRED';
         $province = $request->prv;
 
