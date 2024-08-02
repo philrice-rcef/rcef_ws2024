@@ -18,7 +18,7 @@ def main(ssn, prv, mun, cat):
         base_query = f"SELECT * FROM {ssn}prv_{prv}.new_released "
         if mun and cat:
             base_query += f"WHERE municipality LIKE '{mun}' AND category LIKE '{cat}'"
-            #print(base_query)
+            print(base_query)
         elif mun:
             base_query += f"WHERE municipality LIKE '{mun}'"
         elif cat:
