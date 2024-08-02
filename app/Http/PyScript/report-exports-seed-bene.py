@@ -5,12 +5,14 @@ import tkinter as tk
 from tkinter import filedialog
 import argparse
 import os
+import datetime
 
-def main(ssn, prv, mun, cat):
+def main(ssn, prv, mun, cat, province):
     # root = tk.Tk()
     # root.title("Data Report Generator")
     report_headers = ['db_ref', 'rcef_id_x', 'rsbsa_control_no', 'firstName', 'midName', 'lastName', 'extName', 'sex_y', 'birthdate_y', 'tel_no', 'province_x', 'municipality_x', ]
-
+    now = datetime.datetime.now()
+    date_time_str = now.strftime("%Y%m%d_%H%M%S")
 
     try:
         # Set up connection to mysql mariaDB database
@@ -33,7 +35,7 @@ def main(ssn, prv, mun, cat):
         merged_df = pd.merge(released, profiles, on='db_ref', how='left')
         #print(merged_df.head(0))
 
-        filepath = "report/home/sample.csv"
+        filepath = f"report/home/{province}_{mun}_{date_time_str}.csv"#"report/home/sample.csv"
         if filepath:
             if filepath.endswith(".csv"):
                 merged_df.to_csv(filepath, index=False)
@@ -58,9 +60,10 @@ if __name__ == "__main__":
     parser.add_argument('prv', type=str, help='Province')
     parser.add_argument('mun', type=str, nargs='?', default='', help='Municipality')
     parser.add_argument('cat', type=str, nargs='?', default='INBRED', help='Category')
+    parser.add_argument('province', type=str, help='Prov')
 
     args = parser.parse_args()
-    main(args.ssn, args.prv, args.mun, args.cat)
+    main(args.ssn, args.prv, args.mun, args.cat, args.province)
 
 
 

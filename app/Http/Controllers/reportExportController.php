@@ -3215,7 +3215,7 @@ $excel_array = array();
         ->where('municipality', $request->mun)
         ->first();
         //uncomment for development
-        //$pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
 
         //production
         $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
@@ -3225,16 +3225,18 @@ $excel_array = array();
         // Escape the arguments
         $ssn = $GLOBALS["season_prefix"];
         $prv = substr($prv_details->prv, 0, 4);
-        $mun = $request->mun;
+        return $mun = $request->mun;
         $cat = 'INBRED';
+        $province = $request->prv;
 
         $escapedSsn = escapeshellarg($ssn);
         $escapedPrv = escapeshellarg($prv);
         $escapedMun = escapeshellarg($mun);
         $escapedCat = escapeshellarg($cat);
+        $escapedProvince = escapeshellarg($province);
 
         // Construct the command with arguments as a single string
-        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedPrv $escapedMun $escapedCat";
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedPrv $escapedMun $escapedCat $escapedProvince";
 
         // Create a new process
         $process = new Process($command);
