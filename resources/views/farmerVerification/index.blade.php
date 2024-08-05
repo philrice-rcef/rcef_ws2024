@@ -304,7 +304,7 @@
                             <h4>Farmer Profiles</h4>
                             <hr>
                             <button type="button" id='submit2' class="btn btn-success submit" disabled>Submit Verification</button> 
-                            <button type="button" id='skipButton' class="btn btn-warning submit" style="display:none;" disabled>Skip Verification</button> 
+                            <button type="button" id='skipButton' class="btn btn-warning submit">Skip Verification</button> 
                         </div>
                     </div>
                     <div class="col-md-2"></div>
@@ -402,6 +402,42 @@
                 $('#submit').attr('disabled', 'disabled');
             }
         });
+
+        $('#skipButton').on('click', () =>{
+            if (confirm('Are you sure you want to skip verification for this profile? This will be removed from the list to be subject for further verification of the RCEF-PMO or C/MLGU.')) {
+                $mun = $('#municipality').val();
+                let main_profileStr = main_profile.toString();
+                
+                if (profileCount > 1) {
+                    sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
+                }
+                
+                // console.log(sub_profiles);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('farmerVerification.skipProfile') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        main_profile: main_profile,
+                        sub_profiles: sub_profiles,
+                        new_profiles: new_profiles,
+                        mun: $mun,
+                        profileCount: profileCount,
+                        tempProfile: tempProfile,
+                        all_profiles: all_profiles
+                    },
+                    success: function(data) {
+                        alert('Profile now submitted for further verification.');
+                        onLoadIndex = 0;
+                        findCluster = '';
+                        $('#submit').click();
+                    }
+                });
+            }
+
+        });
+
 
         $('#prevButton').on('click', () =>{
             var options = {
@@ -562,6 +598,7 @@
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
                                                 $('#submit2').prop('disabled',false);
+                                                $('#skipButton').prop('disabled',true);
                                                 console.log(`Checkbox with ID ${this.id} is checked`);
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
@@ -577,6 +614,7 @@
                                                 sub_profiles = [];
                                                 new_profiles = [];
                                                 $('#submit2').prop('disabled',true);
+                                                $('#skipButton').prop('disabled',false);
                                                 console.log(`Checkbox with ID ${this.id} is unchecked`);
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
@@ -640,6 +678,7 @@
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
                             $('#submit2').prop('disabled',false);
+                            $('#skipButton').prop('disabled',true);
                             console.log(`Checkbox with ID ${this.id} is checked`);
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
@@ -657,6 +696,7 @@
                             sub_profiles = [];
                             new_profiles = [];
                             $('#submit2').prop('disabled',true);
+                            $('#skipButton').prop('disabled',false);
                             console.log(`Checkbox with ID ${this.id} is unchecked`);
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
@@ -825,6 +865,7 @@
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
                                                 $('#submit2').prop('disabled',false);
+                                                $('#skipButton').prop('disabled',true);
                                                 console.log(`Checkbox with ID ${this.id} is checked`);
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
@@ -840,6 +881,7 @@
                                                 sub_profiles = [];
                                                 new_profiles = [];
                                                 $('#submit2').prop('disabled',true);
+                                                $('#skipButton').prop('disabled',false);
                                                 console.log(`Checkbox with ID ${this.id} is unchecked`);
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
@@ -903,6 +945,7 @@
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
                             $('#submit2').prop('disabled',false);
+                            $('#skipButton').prop('disabled',true);
                             console.log(`Checkbox with ID ${this.id} is checked`);
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
@@ -920,6 +963,7 @@
                             sub_profiles = [];
                             new_profiles = [];
                             $('#submit2').prop('disabled',true);
+                            $('#skipButton').prop('disabled',false);
                             console.log(`Checkbox with ID ${this.id} is unchecked`);
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
@@ -1122,6 +1166,7 @@
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
                                                 $('#submit2').prop('disabled',false);
+                                                $('#skipButton').prop('disabled',true);
                                                 console.log(`Checkbox with ID ${this.id} is checked`);
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
@@ -1137,6 +1182,7 @@
                                                 sub_profiles = [];
                                                 new_profiles = [];
                                                 $('#submit2').prop('disabled',true);
+                                                $('#skipButton').prop('disabled',false);
                                                 console.log(`Checkbox with ID ${this.id} is unchecked`);
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
@@ -1209,6 +1255,7 @@
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
                             $('#submit2').prop('disabled',false);
+                            $('#skipButton').prop('disabled',true);
                             console.log(`Checkbox with ID ${this.id} is checked`);
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
@@ -1226,6 +1273,7 @@
                             sub_profiles = [];
                             new_profiles = [];
                             $('#submit2').prop('disabled',true);
+                            $('#skipButton').prop('disabled',false);
                             console.log(`Checkbox with ID ${this.id} is unchecked`);
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();

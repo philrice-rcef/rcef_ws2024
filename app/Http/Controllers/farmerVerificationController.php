@@ -299,9 +299,24 @@ class farmerVerificationController extends Controller
         
     }
 
+    public function skipProfile(Request $request)
+    {
+        // dd($request->all());
+        $code = substr(str_replace('-','',$request->mun),0,4);
+        $skipProfiles = DB::table('mongodb_data.prv_'.$code.'_ai')
+        ->whereIn('id',$request->all_profiles)
+        ->where('status','FOR VERIFICATION')
+        ->update([
+            "status" => "FOR RCEF CHECKING"
+        ]);
+
+        return 1;
+
+    }
+
     public function updateProfiles(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $code = substr(str_replace('-','',$request->mun),0,4);
         $getSub = [];
         $getNew = [];
