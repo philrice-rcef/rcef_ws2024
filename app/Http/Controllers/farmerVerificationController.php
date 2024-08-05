@@ -301,13 +301,15 @@ class farmerVerificationController extends Controller
 
     public function skipProfile(Request $request)
     {
-        // dd($request->all());
+        // dd($request->skipReason);
         $code = substr(str_replace('-','',$request->mun),0,4);
+        $skipReason = $request->skipReason;
         $skipProfiles = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->whereIn('id',$request->all_profiles)
         ->where('status','FOR VERIFICATION')
         ->update([
-            "status" => "FOR RCEF CHECKING"
+            "status" => "FOR RCEF CHECKING",
+            "skipReason" => $skipReason
         ]);
 
         return 1;

@@ -327,10 +327,10 @@
     <script src=" {{ asset('public/js/select2.min.js') }} "></script>
     <script src=" {{ asset('public/js/parsely.js') }} "></script>
     <script src=" {{ asset('public/assets/iCheck/icheck.min.js') }} "></script>
-    <script src=" {{ asset('public/js/daterangepicker.js') }} "></script>
-    <!-- <script src=" {{ asset('public/js/highcharts.js') }} "></script> -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="public/js/HoldOn.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <script>
 
@@ -403,40 +403,59 @@
             }
         });
 
-        $('#skipButton').on('click', () =>{
-            if (confirm('Are you sure you want to skip verification for this profile? This will be removed from the list to be subject for further verification of the RCEF-PMO or C/MLGU.')) {
-                $mun = $('#municipality').val();
-                let main_profileStr = main_profile.toString();
-                
-                if (profileCount > 1) {
-                    sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
-                }
-                
-                // console.log(sub_profiles);
-                
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ route('farmerVerification.skipProfile') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        main_profile: main_profile,
-                        sub_profiles: sub_profiles,
-                        new_profiles: new_profiles,
-                        mun: $mun,
-                        profileCount: profileCount,
-                        tempProfile: tempProfile,
-                        all_profiles: all_profiles
-                    },
-                    success: function(data) {
-                        alert('Profile now submitted for further verification.');
-                        onLoadIndex = 0;
-                        findCluster = '';
-                        $('#submit').click();
+        $('#skipButton').on('click', () => {
+            Swal.fire({
+                title: 'Are you sure you want to skip verification for this profile?',
+                text: 'This will be removed from the list to be subject for further verification of the RCEF-PMO or C/MLGU.',
+                input: 'text',
+                inputLabel: 'Please provide a reason for skipping:',
+                inputPlaceholder: 'Enter your reason here...',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, skip it!',
+                cancelButtonText: 'Cancel',
+                preConfirm: (skipReason) => {
+                    if (!skipReason) {
+                        Swal.showValidationMessage('You need to provide a reason for skipping');
                     }
-                });
-            }
+                    return skipReason;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let skipReason = result.value;
+                    $mun = $('#municipality').val();
+                    let main_profileStr = main_profile.toString();
 
+                    if (profileCount > 1) {
+                        sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
+                    }
+
+                    // console.log(sub_profiles);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ route('farmerVerification.skipProfile') }}",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            main_profile: main_profile,
+                            sub_profiles: sub_profiles,
+                            new_profiles: new_profiles,
+                            mun: $mun,
+                            profileCount: profileCount,
+                            tempProfile: tempProfile,
+                            all_profiles: all_profiles,
+                            skipReason: skipReason // Send the reason to the server
+                        },
+                        success: function(data) {
+                            Swal.fire('Success', 'Profile now submitted for further verification.', 'success');
+                            onLoadIndex = 0;
+                            findCluster = '';
+                            $('#submit').click();
+                        }
+                    });
+                }
+            });
         });
+
 
 
         $('#prevButton').on('click', () =>{
