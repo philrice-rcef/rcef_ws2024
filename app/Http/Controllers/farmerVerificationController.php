@@ -149,6 +149,7 @@ class farmerVerificationController extends Controller
         $getCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->where('status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
+        ->orderBy('cluster_id','ASC')
         // ->where('cluster_id',1834) //for testing purposes -  Pangasinan - Mangatarem
         ->first();
         // dd($getCluster,$request->all());
@@ -255,7 +256,7 @@ class farmerVerificationController extends Controller
         $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->where('status','FOR VERIFICATION')
         ->where('cluster_id',$getCluster->cluster_id)
-        ->orderBy('id','ASC')
+        ->orderBy('cluster_id','ASC')
         ->get();
 
         $totalForValidation = number_format($totalForValidation);

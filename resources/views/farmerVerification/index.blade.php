@@ -304,6 +304,7 @@
                             <h4>Farmer Profiles</h4>
                             <hr>
                             <button type="button" id='submit2' class="btn btn-success submit" disabled>Submit Verification</button> 
+                            <button type="button" id='skipButton' class="btn btn-warning submit" style="display:none;" disabled>Skip Verification</button> 
                         </div>
                     </div>
                     <div class="col-md-2"></div>
@@ -415,6 +416,7 @@
             if(onLoadIndex -1 == 0)
             {
                 $("#prevButton").hide();
+                $("#nextButton").show();
             }
             if(onLoadIndex < onLoadData.length - 1)
             {
@@ -937,6 +939,7 @@
         $('#submit').on('click', () =>{
             $prv = $('#provinces').val();
             $mun = $('#municipality').val();
+            onLoadIndex = 0;
             
             $("#statistics").hide();
             $('#customSearch').hide();
