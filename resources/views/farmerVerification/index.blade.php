@@ -481,7 +481,7 @@
             $prov = $('#provinces').val();
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -579,7 +579,7 @@
         $('#prevButton').on('click', () =>{
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -601,7 +601,7 @@
                             
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -868,7 +868,7 @@
         $('#nextButton').on('click', () =>{
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -1166,7 +1166,7 @@
             $("#suggested").empty();
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
