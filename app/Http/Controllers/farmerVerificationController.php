@@ -186,6 +186,7 @@ class farmerVerificationController extends Controller
         $totalForValidation = number_format($totalForValidation);
         $totalValidated = number_format($totalValidated);
         $totalPending = number_format($totalPending);
+        $noOfClusters = number_format($noOfClusters);
         
 
         array_push($returnArray,$getClusterProfile);
@@ -264,6 +265,7 @@ class farmerVerificationController extends Controller
         $totalForValidation = number_format($totalForValidation);
         $totalValidated = number_format($totalValidated);
         $totalPending = number_format($totalPending);
+        $noOfClusters = number_format($noOfClusters);
         
 
         array_push($returnArray,$getClusterProfile);
