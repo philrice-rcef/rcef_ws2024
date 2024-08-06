@@ -216,7 +216,7 @@
         }
 
 
-        button {
+        #beginButton {
             padding: 1em;
             margin-top: 0.5em;
             margin-left: 1em;
@@ -234,7 +234,7 @@
             overflow: hidden;
         }
 
-        button::before {
+        #beginButton::before {
             content: "";
             position: absolute;
             top: 0;
@@ -249,24 +249,78 @@
             transition: all 250ms
         }
 
-        button:hover::before {
+        #beginButton:hover::before {
             width: 100%;
         }
 
-        button:disabled {
+        #beginButton:disabled {
             color: #999;
             background: #ccc;
             cursor: not-allowed;
             -webkit-box-shadow: none;
             box-shadow: none;
         }
-        button:disabled::before {
+        #beginButton:disabled::before {
             background-color: #999;
             -webkit-box-shadow: none;
             box-shadow: none;
         }
 
-        button:hover:disabled {
+        #beginButton:hover:disabled {
+        color: #ffffff;
+        }
+       
+        #submitButton {
+            padding: 1em;
+            margin-top: 0.5em;
+            margin-left: 1em;
+            border: unset;
+            border-radius: 15px;
+            color: #212121;
+            z-index: 1;
+            background: #e3e1e1;
+            position: relative;
+            font-weight: bold;
+            font-size: 1em;
+            -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            transition: all 250ms;
+            overflow: hidden;
+        }
+
+        #submitButton::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            border-radius: 15px;
+            background-color: #3ed655;
+            z-index: -1;
+            -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            transition: all 250ms
+        }
+
+        #submitButton:hover::before {
+            width: 100%;
+        }
+
+        #submitButton:disabled {
+            color: #999;
+            background: #ccc;
+            cursor: not-allowed;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+        #submitButton:disabled::before {
+            background-color: #999;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        #submitButton:hover:disabled {
         color: #ffffff;
         }
 
@@ -370,7 +424,7 @@
                             <i style="padding-inline: 1em">*Please select province and municipality to begin verification.</i>
                         </div>
                         <div>
-                            <button type="button" id='submit' style="border-radius: 15px;" disabled>Begin Verification</button> 
+                            <button type="button" id='beginButton' style="border-radius: 15px;" disabled>Begin Verification</button> 
                             <button type="button" id="reset" style="display:none">Reset</button> 
                         </div>
                             
@@ -416,7 +470,7 @@
                             </div>
                             <h4>Farmer Profiles</h4>
                             <hr>
-                            <button type="button" id='submit2' style="border-radius: 15px;" disabled>Submit Verification</button> 
+                            <button type="button" id='submitButton' style="border-radius: 15px;" disabled>Submit Verification</button> 
                             <button type="button" id='skipButton' style="border-radius: 15px;">Skip Verification</button> 
                         </div>
                     </div>
@@ -481,7 +535,7 @@
             $prov = $('#provinces').val();
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading') }}" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -513,11 +567,11 @@
             $mun = $('#municipality').val();
             if($mun != 'default')
             {
-                $('#submit').removeAttr('disabled');
+                $('#beginButton').removeAttr('disabled');
             }
             else if($mun == 'default')
             {
-                $('#submit').attr('disabled', 'disabled');
+                $('#beginButton').attr('disabled', 'disabled');
             }
         });
 
@@ -567,7 +621,7 @@
                             Swal.fire('Success', 'Profile now submitted for further verification.', 'success');
                             onLoadIndex = 0;
                             findCluster = '';
-                            $('#submit').click();
+                            $('#beginButton').click();
                         }
                     });
                 }
@@ -579,7 +633,7 @@
         $('#prevButton').on('click', () =>{
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading') }}" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -601,7 +655,7 @@
                             
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading') }}" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -670,7 +724,7 @@
                                         } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
                                             profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         } else {
-                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
@@ -709,7 +763,7 @@
                                             } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                                 profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             } else {
-                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                                profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
@@ -747,7 +801,7 @@
                                                 main_profile = this.id;
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
-                                                $('#submit2').prop('disabled',false);
+                                                $('#submitButton').prop('disabled',false);
                                                 $('#skipButton').prop('disabled',true);                                            
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
@@ -762,7 +816,7 @@
                                                 main_profile = '';
                                                 sub_profiles = [];
                                                 new_profiles = [];
-                                                $('#submit2').prop('disabled',true);
+                                                $('#submitButton').prop('disabled',true);
                                                 $('#skipButton').prop('disabled',false);                                            
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
@@ -789,7 +843,7 @@
                                 } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                     profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 } else {
-                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                    profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
@@ -832,7 +886,7 @@
                             $(this).closest('.profiles').find('.mainLegend').show();
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
-                            $('#submit2').prop('disabled',false);
+                            $('#submitButton').prop('disabled',false);
                             $('#skipButton').prop('disabled',true);                        
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
@@ -849,7 +903,7 @@
                             main_profile = '';
                             sub_profiles = [];
                             new_profiles = [];
-                            $('#submit2').prop('disabled',true);
+                            $('#submitButton').prop('disabled',true);
                             $('#skipButton').prop('disabled',false);                        
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
@@ -868,7 +922,7 @@
         $('#nextButton').on('click', () =>{
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading') }}" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -942,7 +996,7 @@
                                     success: function(dataSuggest){
                                         if(data=='No suggested data.')
                                     {
-                                        $('#submit').click();
+                                        $('#beginButton').click();
                                     }
                                     else
                                     {
@@ -951,7 +1005,7 @@
                                         } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
                                             profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         } else {
-                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
@@ -990,7 +1044,7 @@
                                             } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                                 profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             } else {
-                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                                profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
@@ -1028,7 +1082,7 @@
                                                 main_profile = this.id;
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
-                                                $('#submit2').prop('disabled',false);
+                                                $('#submitButton').prop('disabled',false);
                                                 $('#skipButton').prop('disabled',true);                                            
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
@@ -1043,7 +1097,7 @@
                                                 main_profile = '';
                                                 sub_profiles = [];
                                                 new_profiles = [];
-                                                $('#submit2').prop('disabled',true);
+                                                $('#submitButton').prop('disabled',true);
                                                 $('#skipButton').prop('disabled',false);                                            
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
@@ -1070,7 +1124,7 @@
                                 } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                     profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 } else {
-                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                    profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
@@ -1113,7 +1167,7 @@
                             $(this).closest('.profiles').find('.mainLegend').show();
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
-                            $('#submit2').prop('disabled',false);
+                            $('#submitButton').prop('disabled',false);
                             $('#skipButton').prop('disabled',true);                        
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
@@ -1130,7 +1184,7 @@
                             main_profile = '';
                             sub_profiles = [];
                             new_profiles = [];
-                            $('#submit2').prop('disabled',true);
+                            $('#submitButton').prop('disabled',true);
                             $('#skipButton').prop('disabled',false);                        
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
@@ -1147,7 +1201,7 @@
             });
         });
         
-        $('#submit').on('click', () =>{
+        $('#beginButton').on('click', () =>{
             $prv = $('#provinces').val();
             $mun = $('#municipality').val();
             onLoadIndex = 0;
@@ -1155,7 +1209,7 @@
             $("#statistics").hide();
             $('#customSearch').hide();
             $('#profiles').hide();
-            $('#submit2').prop('disabled',true);
+            $('#submitButton').prop('disabled',true);
             main_profile ='';
             sub_profiles = [];
             new_profiles = [];
@@ -1166,7 +1220,7 @@
             $("#suggested").empty();
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading') }}" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -1258,7 +1312,7 @@
                                     success: function(dataSuggest){
                                         if(data=='No suggested data.')
                                     {
-                                        $('#submit').click();
+                                        $('#beginButton').click();
                                     }
                                     else
                                     {
@@ -1267,7 +1321,7 @@
                                         } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
                                             profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         } else {
-                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
@@ -1308,7 +1362,7 @@
                                             } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                                 profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             } else {
-                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                                profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
@@ -1346,7 +1400,7 @@
                                                 main_profile = this.id;
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
-                                                $('#submit2').prop('disabled',false);
+                                                $('#submitButton').prop('disabled',false);
                                                 $('#skipButton').prop('disabled',true);                                            
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
@@ -1361,7 +1415,7 @@
                                                 main_profile = '';
                                                 sub_profiles = [];
                                                 new_profiles = [];
-                                                $('#submit2').prop('disabled',true);
+                                                $('#submitButton').prop('disabled',true);
                                                 $('#skipButton').prop('disabled',false);                                            
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
@@ -1397,7 +1451,7 @@
                                 } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f'){
                                     profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 } else {
-                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                    profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
@@ -1440,7 +1494,7 @@
                             $(this).closest('.profiles').find('.mainLegend').show();
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
-                            $('#submit2').prop('disabled',false);
+                            $('#submitButton').prop('disabled',false);
                             $('#skipButton').prop('disabled',true);                        
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
@@ -1457,7 +1511,7 @@
                             main_profile = '';
                             sub_profiles = [];
                             new_profiles = [];
-                            $('#submit2').prop('disabled',true);
+                            $('#submitButton').prop('disabled',true);
                             $('#skipButton').prop('disabled',false);                        
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
@@ -1501,39 +1555,45 @@
             }
         });
 
-        $('#submit2').on('click', () => {
-            // Display confirmation dialog
-            if (confirm('Are you sure you want to submit verification?')) {
-                $mun = $('#municipality').val();
-                let main_profileStr = main_profile.toString();
-                
-                if (profileCount > 1) {
-                    sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
-                }
-                
-            //
-                
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ route('farmerVerification.updateProfiles') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        main_profile: main_profile,
-                        sub_profiles: sub_profiles,
-                        new_profiles: new_profiles,
-                        mun: $mun,
-                        profileCount: profileCount,
-                        tempProfile: tempProfile
-                    },
-                    success: function(data) {
-                        alert('Profile successfully validated and submitted for approval.');
-                        onLoadIndex = 0;
-                        findCluster = '';
-                        $('#submit').click();
+        $('#submitButton').on('click', () => {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Are you sure you want to submit verification?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, submit it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let $mun = $('#municipality').val();
+                    let main_profileStr = main_profile.toString();
+
+                    if (profileCount > 1) {
+                        sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
                     }
-                });
-            }
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ route('farmerVerification.updateProfiles') }}",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            main_profile: main_profile,
+                            sub_profiles: sub_profiles,
+                            new_profiles: new_profiles,
+                            mun: $mun,
+                            profileCount: profileCount,
+                            tempProfile: tempProfile
+                        },
+                        success: function(data) {
+                            Swal.fire('Success', 'Profile successfully validated and submitted for approval.', 'success');
+                            onLoadIndex = 0;
+                            findCluster = '';
+                            $('#beginButton').click();
+                        }
+                    });
+                }
+            });
         });
+
 
     </script>
 @endpush
