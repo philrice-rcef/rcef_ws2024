@@ -585,6 +585,7 @@
                 showCancelButton: true,
                 confirmButtonText: 'Yes, skip it!',
                 cancelButtonText: 'Cancel',
+                allowOutsideClick: false,
                 preConfirm: (skipReason) => {
                     if (!skipReason) {
                         Swal.showValidationMessage('You need to provide a reason for skipping');
@@ -1557,12 +1558,12 @@
 
         $('#submitButton').on('click', () => {
             Swal.fire({
-                title: 'Are you sure?',
-                text: 'Are you sure you want to submit verification?',
+                title: 'Are you sure you want to submit verification?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, submit it!',
-                cancelButtonText: 'Cancel'
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     let $mun = $('#municipality').val();
