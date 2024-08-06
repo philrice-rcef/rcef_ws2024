@@ -667,10 +667,10 @@
                                     {
                                         if (data_sex.charAt(0) === 'M' || data_sex.charAt(0) === 'm') {
                                             profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
-                                        } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
+                                        } else if (data_sex.charAt(0) === 'P' || data_sex.charAt(0) === 'p') {
                                             profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         } else {
-                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
@@ -709,7 +709,7 @@
                                             } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                                 profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             } else {
-                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                                profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
@@ -789,7 +789,7 @@
                                 } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                     profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 } else {
-                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                    profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
@@ -948,10 +948,10 @@
                                     {
                                         if (data_sex.charAt(0) === 'M' || data_sex.charAt(0) === 'm') {
                                             profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
-                                        } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
+                                        } else if (data_sex.charAt(0) === 'P' || data_sex.charAt(0) === 'p') {
                                             profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         } else {
-                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
@@ -990,7 +990,7 @@
                                             } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                                 profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             } else {
-                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                                profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
@@ -1070,7 +1070,7 @@
                                 } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                     profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 } else {
-                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                    profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
@@ -1264,10 +1264,10 @@
                                     {
                                         if (data_sex.charAt(0) === 'M' || data_sex.charAt(0) === 'm') {
                                             profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
-                                        } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
+                                        } else if (data_sex.charAt(0) === 'P' || data_sex.charAt(0) === 'p') {
                                             profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         } else {
-                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                         }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
@@ -1308,7 +1308,7 @@
                                             } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
                                                 profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             } else {
-                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                                profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                             }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
@@ -1397,7 +1397,7 @@
                                 } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f'){
                                     profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 } else {
-                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                    profile_icon = '<img src="{{ asset('public/images/undefinedFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
                                 }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
