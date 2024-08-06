@@ -1211,6 +1211,7 @@
             $('#customSearch').hide();
             $('#profiles').hide();
             $('#submitButton').prop('disabled',true);
+            $('#skipButton').prop('disabled',false);
             main_profile ='';
             sub_profiles = [];
             new_profiles = [];
