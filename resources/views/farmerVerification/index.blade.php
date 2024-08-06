@@ -133,7 +133,6 @@
             padding: 1em 2em;
             border-radius: 30px;
             background: #e0e0e0;
-            /* background: #e0e0e0; */
                border: 2px solid #c3c6ce;
                 -webkit-transition: 0.5s ease-out;
                 transition: 0.5s ease-out;
@@ -334,7 +333,7 @@
 <div class="clearfix" id="page">
     
     @include('layouts.message')
-    
+        
     <div class="row">
         <div class="col-md-12">
             <div class="x_panel shadow-2xl" style="padding-bottom: 3em;">
@@ -452,6 +451,10 @@
     var onLoadData = [];
     var onLoadIndex = 0;
     var findCluster = '';
+
+        $('#provinces').select2();
+        $('#municipality').select2();
+
     
 
     $('#provinces').change(() => {
@@ -472,7 +475,8 @@
 
             $prov = $('#provinces').val();
             var options = {
-                theme:"sk-rect",
+                theme:"custom",
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -569,7 +573,8 @@
 
         $('#prevButton').on('click', () =>{
             var options = {
-                theme:"sk-rect",
+                theme:"custom",
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -592,7 +597,8 @@
             console.log("current index is",onLoadIndex);
             console.log("current display is",onLoadIndex+1);
             var options = {
-                theme:"sk-rect",
+                theme:"custom",
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -660,7 +666,7 @@
                                             <div class="col-md-6" style="padding-top: 1em">
                                                 <div class="boxes shadow-md profiles" id="box_${data_id}">
                                                     <div style="display:flex; gap: 0.5em;">
-                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                         <ul class="info_list">
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
                                                             <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
@@ -692,7 +698,7 @@
                                                 <div class="col-md-6" style="padding-top: 1em">
                                                     <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
                                                         <div style="display:flex; gap: 0.5em;">
-                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                             <ul class="info_list">
                                                             <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
@@ -768,7 +774,7 @@
                                     <div class="col-md-6" style="padding-top: 1em">
                                         <div class="boxes shadow-md profiles" id="box_${proc.id}">
                                             <div style="display:flex; gap: 0.5em;">
-                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                 <ul class="info_list">
                                                     <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
                                                     <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
@@ -842,7 +848,8 @@
         });
         $('#nextButton').on('click', () =>{
             var options = {
-                theme:"sk-rect",
+                theme:"custom",
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -927,7 +934,7 @@
                                             <div class="col-md-6" style="padding-top: 1em">
                                                 <div class="boxes shadow-md profiles" id="box_${data_id}">
                                                     <div style="display:flex; gap: 0.5em;">
-                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                         <ul class="info_list">
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
                                                             <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
@@ -959,7 +966,7 @@
                                                 <div class="col-md-6" style="padding-top: 1em">
                                                     <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
                                                         <div style="display:flex; gap: 0.5em;">
-                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                             <ul class="info_list">
                                                             <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
@@ -1035,7 +1042,7 @@
                                     <div class="col-md-6" style="padding-top: 1em">
                                         <div class="boxes shadow-md profiles" id="box_${proc.id}">
                                             <div style="display:flex; gap: 0.5em;">
-                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                 <ul class="info_list">
                                                     <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
                                                     <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
@@ -1126,7 +1133,8 @@
             $("#profiles").empty();
             $("#suggested").empty();
             var options = {
-                theme:"sk-rect",
+                theme:"custom",
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
@@ -1226,7 +1234,7 @@
                                             <div class="col-md-6" style="padding-top: 1em">
                                                 <div class="boxes shadow-md profiles" id="box_${data_id}">
                                                     <div style="display:flex; gap: 0.5em;">
-                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                         <ul class="info_list">
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
                                                             <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
@@ -1260,7 +1268,7 @@
                                                 <div class="col-md-6" style="padding-top: 1em">
                                                     <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
                                                         <div style="display:flex; gap: 0.5em;">
-                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                             <ul class="info_list">
                                                             <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
@@ -1345,7 +1353,7 @@
                                     <div class="col-md-6" style="padding-top: 1em">
                                         <div class="boxes shadow-md profiles" id="box_${proc.id}">
                                             <div style="display:flex; gap: 0.5em;">
-                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 8em"></i>
+                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
                                                 <ul class="info_list">
                                                     <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
                                                     <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
