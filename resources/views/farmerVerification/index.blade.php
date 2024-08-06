@@ -324,6 +324,11 @@
         color: #ffffff;
         }
 
+        .profIcon
+        {
+            filter: saturate(60%);
+        }
+
        
     </style>
 @endsection
@@ -542,7 +547,7 @@
                         sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
                     }
 
-                    // console.log(sub_profiles);
+                //
 
                     $.ajax({
                         type: 'POST',
@@ -593,9 +598,7 @@
             }
 
             onLoadIndex = onLoadIndex - 1;
-            
-            console.log("current index is",onLoadIndex);
-            console.log("current display is",onLoadIndex+1);
+                            
             var options = {
                 theme:"custom",
                 content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="https://giffiles.alphacoders.com/217/217334.gif" class="center-block">',
@@ -662,11 +665,18 @@
                                     }
                                     else
                                     {
+                                        if (data_sex.charAt(0) === 'M' || data_sex.charAt(0) === 'm') {
+                                            profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                        } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
+                                            profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                        } else {
+                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                        }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
                                                 <div class="boxes shadow-md profiles" id="box_${data_id}">
                                                     <div style="display:flex; gap: 0.5em;">
-                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                        ${profile_icon}
                                                         <ul class="info_list">
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
                                                             <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
@@ -694,11 +704,18 @@
                                         $("#suggested").show();
                                         dataSuggest.forEach(proc => {
                                             all_profiles.push(proc.id);
+                                            if (proc.sex.charAt(0) === 'M' || proc.sex.charAt(0) === 'm') {
+                                                profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                            } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
+                                                profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                            } else {
+                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
                                                     <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
                                                         <div style="display:flex; gap: 0.5em;">
-                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                            ${profile_icon}
                                                             <ul class="info_list">
                                                             <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
@@ -725,15 +742,13 @@
                                             `);
                                         }); 
     
-                                        $('.profile-checkbox').on('change', function() {
-                                            console.log(this.id);
+                                        $('.profile-checkbox').on('change', function() {                                        
                                             if ($(this).is(':checked')) {
                                                 main_profile = this.id;
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
                                                 $('#submit2').prop('disabled',false);
-                                                $('#skipButton').prop('disabled',true);
-                                                console.log(`Checkbox with ID ${this.id} is checked`);
+                                                $('#skipButton').prop('disabled',true);                                            
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
                                                 $(this).closest('.profiles').find('.profile-checkbox2').show();
@@ -748,8 +763,7 @@
                                                 sub_profiles = [];
                                                 new_profiles = [];
                                                 $('#submit2').prop('disabled',true);
-                                                $('#skipButton').prop('disabled',false);
-                                                console.log(`Checkbox with ID ${this.id} is unchecked`);
+                                                $('#skipButton').prop('disabled',false);                                            
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
                                                 $(".clickable-add").hide();
@@ -770,11 +784,18 @@
                             profileCount = data[0].length;
                             data[0].forEach(proc => {
                                 all_profiles.push(proc.id);
+                                if (proc.sex.charAt(0) === 'M' || proc.sex.charAt(0) === 'm') {
+                                    profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
+                                    profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                } else {
+                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
                                         <div class="boxes shadow-md profiles" id="box_${proc.id}">
                                             <div style="display:flex; gap: 0.5em;">
-                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                ${profile_icon}
                                                 <ul class="info_list">
                                                     <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
                                                     <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
@@ -812,8 +833,7 @@
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
                             $('#submit2').prop('disabled',false);
-                            $('#skipButton').prop('disabled',true);
-                            console.log(`Checkbox with ID ${this.id} is checked`);
+                            $('#skipButton').prop('disabled',true);                        
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
                             $(this).closest('.profiles').find('.profile-checkbox2').show();
@@ -830,8 +850,7 @@
                             sub_profiles = [];
                             new_profiles = [];
                             $('#submit2').prop('disabled',true);
-                            $('#skipButton').prop('disabled',false);
-                            console.log(`Checkbox with ID ${this.id} is unchecked`);
+                            $('#skipButton').prop('disabled',false);                        
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
                             $(".clickable-add").removeClass("checked-add");
@@ -865,11 +884,8 @@
             }
             else
             {
-                onLoadIndex = onLoadIndex + 1;
-                console.log(onLoadData[onLoadIndex],onLoadData.length);
-            }
-            console.log("current index is",onLoadIndex);
-            console.log("current display is",onLoadIndex+1);
+                onLoadIndex = onLoadIndex + 1;            
+            }                
             
 
             $("#profiles").empty();
@@ -930,11 +946,18 @@
                                     }
                                     else
                                     {
+                                        if (data_sex.charAt(0) === 'M' || data_sex.charAt(0) === 'm') {
+                                            profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                        } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
+                                            profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                        } else {
+                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                        }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
                                                 <div class="boxes shadow-md profiles" id="box_${data_id}">
                                                     <div style="display:flex; gap: 0.5em;">
-                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                        ${profile_icon}
                                                         <ul class="info_list">
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
                                                             <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
@@ -962,11 +985,18 @@
                                         $("#suggested").show();
                                         dataSuggest.forEach(proc => {
                                             all_profiles.push(proc.id);
+                                            if (proc.sex.charAt(0) === 'M' || proc.sex.charAt(0) === 'm') {
+                                                profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                            } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
+                                                profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                            } else {
+                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
                                                     <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
                                                         <div style="display:flex; gap: 0.5em;">
-                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                            ${profile_icon}
                                                             <ul class="info_list">
                                                             <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
@@ -993,15 +1023,13 @@
                                             `);
                                         }); 
     
-                                        $('.profile-checkbox').on('change', function() {
-                                            console.log(this.id);
+                                        $('.profile-checkbox').on('change', function() {                                        
                                             if ($(this).is(':checked')) {
                                                 main_profile = this.id;
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
                                                 $('#submit2').prop('disabled',false);
-                                                $('#skipButton').prop('disabled',true);
-                                                console.log(`Checkbox with ID ${this.id} is checked`);
+                                                $('#skipButton').prop('disabled',true);                                            
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
                                                 $(this).closest('.profiles').find('.profile-checkbox2').show();
@@ -1016,8 +1044,7 @@
                                                 sub_profiles = [];
                                                 new_profiles = [];
                                                 $('#submit2').prop('disabled',true);
-                                                $('#skipButton').prop('disabled',false);
-                                                console.log(`Checkbox with ID ${this.id} is unchecked`);
+                                                $('#skipButton').prop('disabled',false);                                            
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
                                                 $(".clickable-add").hide();
@@ -1038,11 +1065,18 @@
                             profileCount = data[0].length;
                             data[0].forEach(proc => {
                                 all_profiles.push(proc.id);
+                                if (proc.sex.charAt(0) === 'M' || proc.sex.charAt(0) === 'm') {
+                                    profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
+                                    profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                } else {
+                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
                                         <div class="boxes shadow-md profiles" id="box_${proc.id}">
                                             <div style="display:flex; gap: 0.5em;">
-                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                ${profile_icon}
                                                 <ul class="info_list">
                                                     <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
                                                     <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
@@ -1080,8 +1114,7 @@
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
                             $('#submit2').prop('disabled',false);
-                            $('#skipButton').prop('disabled',true);
-                            console.log(`Checkbox with ID ${this.id} is checked`);
+                            $('#skipButton').prop('disabled',true);                        
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
                             $(this).closest('.profiles').find('.profile-checkbox2').show();
@@ -1098,8 +1131,7 @@
                             sub_profiles = [];
                             new_profiles = [];
                             $('#submit2').prop('disabled',true);
-                            $('#skipButton').prop('disabled',false);
-                            console.log(`Checkbox with ID ${this.id} is unchecked`);
+                            $('#skipButton').prop('disabled',false);                        
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
                             $(".clickable-add").removeClass("checked-add");
@@ -1230,11 +1262,18 @@
                                     }
                                     else
                                     {
+                                        if (data_sex.charAt(0) === 'M' || data_sex.charAt(0) === 'm') {
+                                            profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                        } else if (data_sex.charAt(0) === 'F' || data_sex.charAt(0) === 'f') {
+                                            profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                        } else {
+                                            profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                        }
                                         $("#profiles").append(`
                                             <div class="col-md-6" style="padding-top: 1em">
                                                 <div class="boxes shadow-md profiles" id="box_${data_id}">
                                                     <div style="display:flex; gap: 0.5em;">
-                                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                        ${profile_icon}
                                                         <ul class="info_list">
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${data_firstName} ${data_midName} ${data_lastName} ${data_extName}</li>
                                                             <li id="rsbsa"><strong>RSBSA Number:</strong> ${data_rsbsa_control_no}</li>
@@ -1264,11 +1303,18 @@
                                         $("#suggested").show();
                                         dataSuggest.forEach(proc => {
                                             all_profiles.push(proc.id);
+                                            if (proc.sex.charAt(0) === 'M' || proc.sex.charAt(0) === 'm') {
+                                                profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                            } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f') {
+                                                profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                            } else {
+                                                profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                            }
                                             $("#suggested").append(`
                                                 <div class="col-md-6" style="padding-top: 1em">
                                                     <div class="boxes shadow-md profiles suggest" id="box_${proc.id}" style="background-color: #6bfffd">
-                                                        <div style="display:flex; gap: 0.5em;">
-                                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                    <div style="display:flex; gap: 0.5em;">
+                                                            ${profile_icon}
                                                             <ul class="info_list">
                                                             <i style="position: absolute; top: 2.4rem; right: 3rem; outline: 1px solid black; background: beige; padding: 0.2em 0.4em; border-radius: 1em;"><span>*Suggested Profile</span></i>
                                                             <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
@@ -1295,15 +1341,13 @@
                                             `);
                                         }); 
     
-                                        $('.profile-checkbox').on('change', function() {
-                                            console.log(this.id);
+                                        $('.profile-checkbox').on('change', function() {                                        
                                             if ($(this).is(':checked')) {
                                                 main_profile = this.id;
                                                 $('.mainLegend').hide();
                                                 $(this).closest('.profiles').find('.mainLegend').show();
                                                 $('#submit2').prop('disabled',false);
-                                                $('#skipButton').prop('disabled',true);
-                                                console.log(`Checkbox with ID ${this.id} is checked`);
+                                                $('#skipButton').prop('disabled',true);                                            
                                                 $('.profile-checkbox').prop('disabled', true);
                                                 $('.profile-checkbox2').hide();
                                                 $(this).closest('.profiles').find('.profile-checkbox2').show();
@@ -1318,8 +1362,7 @@
                                                 sub_profiles = [];
                                                 new_profiles = [];
                                                 $('#submit2').prop('disabled',true);
-                                                $('#skipButton').prop('disabled',false);
-                                                console.log(`Checkbox with ID ${this.id} is unchecked`);
+                                                $('#skipButton').prop('disabled',false);                                            
                                                 $('.profiles').css('background-color', '');
                                                 $('.suggest').css('background-color', '#6bfffd');
                                                 $(".clickable-add").hide();
@@ -1349,11 +1392,18 @@
                             profileCount = data[0].length;
                             data[0].forEach(proc => {
                                 all_profiles.push(proc.id);
+                                if (proc.sex.charAt(0) === 'M' || proc.sex.charAt(0) === 'm') {
+                                    profile_icon = '<img src="{{ asset('public/images/maleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                } else if (proc.sex.charAt(0) === 'F' || proc.sex.charAt(0) === 'f'){
+                                    profile_icon = '<img src="{{ asset('public/images/femaleFarmer.PNG') }}" alt="" class="profIcon" style="width: 12em; height: 12em; margin-top:15px; margin-left:20px;"/>';
+                                } else {
+                                    profile_icon = '<i class="fa fa-user" aria-hidden="true" style="font-size: 10em; margin-top:20px; margin-left:20px;"></i>';
+                                }
                                 $("#profiles").append(`
                                     <div class="col-md-6" style="padding-top: 1em">
                                         <div class="boxes shadow-md profiles" id="box_${proc.id}">
                                             <div style="display:flex; gap: 0.5em;">
-                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 10em"></i>
+                                                ${profile_icon}
                                                 <ul class="info_list">
                                                     <li style="font-size: 1.5em; font-weight: 500;" id="profileName">${proc.firstName} ${proc.midName} ${proc.lastName} ${proc.extName}</li>
                                                     <li id="rsbsa"><strong>RSBSA Number:</strong> ${proc.rsbsa_control_no}</li>
@@ -1391,8 +1441,7 @@
                             $('.subLegend').show();
                             $(this).closest('.profiles').find('.subLegend').hide();
                             $('#submit2').prop('disabled',false);
-                            $('#skipButton').prop('disabled',true);
-                            console.log(`Checkbox with ID ${this.id} is checked`);
+                            $('#skipButton').prop('disabled',true);                        
                             $('.profile-checkbox').prop('disabled', true);
                             $('.profile-checkbox2').hide();
                             $(this).closest('.profiles').find('.profile-checkbox2').show();
@@ -1409,8 +1458,7 @@
                             sub_profiles = [];
                             new_profiles = [];
                             $('#submit2').prop('disabled',true);
-                            $('#skipButton').prop('disabled',false);
-                            console.log(`Checkbox with ID ${this.id} is unchecked`);
+                            $('#skipButton').prop('disabled',false);                        
                             $('.profiles').css('background-color', '');
                             $(".clickable-add").hide();
                             $(".clickable-add").removeClass("checked-add");
@@ -1463,7 +1511,7 @@
                     sub_profiles = all_profiles.filter(item => !new_profiles.includes(parseInt(item)) && item !== main_profileStr);
                 }
                 
-                // console.log(sub_profiles);
+            //
                 
                 $.ajax({
                     type: 'POST',
