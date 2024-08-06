@@ -29,7 +29,7 @@ class farmerVerificationController extends Controller
             $code = str_replace('prv_','',$prv->TABLE_NAME);
             
             $checkTbl = DB::table('mongodb_data.prv_'.$code.'_ai')
-            ->where('status','FOR VERIFICATION')
+            ->where('profile_status','FOR VERIFICATION')
             ->first();
             if($checkTbl)
             {
@@ -93,7 +93,7 @@ class farmerVerificationController extends Controller
         
         $getMuniAi = DB::table('mongodb_data.prv_'.$prv.'_ai')
         ->select(DB::raw('SUBSTRING(rsbsa_control_no, 1,8) as muni_code'))
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->groupBy('muni_code')
         ->get();
 
@@ -134,20 +134,20 @@ class farmerVerificationController extends Controller
         $totalValidated = $totalValidated + $countMerged;
 
         $countForVerify = count(DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->get());
         $totalForValidation = $totalForValidation + $countForVerify;
         
         $countPending = count(DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','NOT LIKE','FOR VERIFICATION')
-        ->where('status','NOT LIKE','MERGED')
+        ->where('profile_status','NOT LIKE','FOR VERIFICATION')
+        ->where('profile_status','NOT LIKE','MERGED')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->get());
         $totalPending = $totalPending + $countPending;
 
         $getCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->orderBy('cluster_id','ASC')
         // ->where('cluster_id',1834) //for testing purposes -  Pangasinan - Mangatarem
@@ -162,7 +162,7 @@ class farmerVerificationController extends Controller
 
         $clusters = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->select('cluster_id')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->groupBy('cluster_id')
         ->get();
@@ -177,7 +177,7 @@ class farmerVerificationController extends Controller
         $noOfClusters = count($clusters);
 
         $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('cluster_id',$getCluster->cluster_id)
         ->orderBy('id','ASC')
         ->get();
@@ -212,20 +212,20 @@ class farmerVerificationController extends Controller
         $totalValidated = $totalValidated + $countMerged;
 
         $countForVerify = count(DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->get());
         $totalForValidation = $totalForValidation + $countForVerify;
         
         $countPending = count(DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','NOT LIKE','FOR VERIFICATION')
-        ->where('status','NOT LIKE','MERGED')
+        ->where('profile_status','NOT LIKE','FOR VERIFICATION')
+        ->where('profile_status','NOT LIKE','MERGED')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->get());
         $totalPending = $totalPending + $countPending;
 
         $getCluster = DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->where('cluster_id',$request->findCluster)
         ->first();
@@ -239,7 +239,7 @@ class farmerVerificationController extends Controller
 
         $clusters = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->select('cluster_id')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('home_geocode','LIKE',$request->mun.'%')
         ->groupBy('cluster_id')
         ->get();
@@ -254,7 +254,7 @@ class farmerVerificationController extends Controller
         $noOfClusters = count($clusters);
 
         $getClusterProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->where('cluster_id',$getCluster->cluster_id)
         ->orderBy('cluster_id','ASC')
         ->get();
@@ -278,17 +278,17 @@ class farmerVerificationController extends Controller
         // dd($request->all());
         $code = substr(str_replace('-','',$request->mun),0,4);
         $getSuggestedProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->where('status','MERGED')
+        ->where('profile_status','MERGED')
         ->where('cluster_id',$request->cluster)
         ->get();
 
         if(!$getSuggestedProfile)
         {
             $updateNoSuggested = DB::table('mongodb_data.prv_'.$code.'_ai')
-            ->where('status','FOR VERIFICATION')
+            ->where('profile_status','FOR VERIFICATION')
             ->where('cluster_id',$request->cluster)
             ->update([
-                "status" => "FOR APPROVAL"
+                "profile_status" => "FOR APPROVAL"
             ]);
             return "No suggested data.";
         }
@@ -306,9 +306,9 @@ class farmerVerificationController extends Controller
         $skipReason = $request->skipReason;
         $skipProfiles = DB::table('mongodb_data.prv_'.$code.'_ai')
         ->whereIn('id',$request->all_profiles)
-        ->where('status','FOR VERIFICATION')
+        ->where('profile_status','FOR VERIFICATION')
         ->update([
-            "status" => "FOR RCEF CHECKING",
+            "profile_status" => "FOR RCEF CHECKING",
             "skipReason" => $skipReason
         ]);
 
@@ -347,7 +347,7 @@ class farmerVerificationController extends Controller
                 ->where('id',$profileId)
                 ->update([
                     "new_cluster_id" => $newCluster,
-                    "status" => "FOR APPROVAL"
+                    "profile_status" => "FOR APPROVAL"
                 ]);
             }
             else
@@ -369,7 +369,7 @@ class farmerVerificationController extends Controller
                 ->where('id',$profileId)
                 ->update([
                     "profile_link_id" => $selectedId,
-                    "status" => "FOR APPROVAL"
+                    "profile_status" => "FOR APPROVAL"
                 ]);
             }
         }
@@ -379,7 +379,7 @@ class farmerVerificationController extends Controller
             ->where('id',$request->main_profile)
             ->update([
                 "main_profile" => 1,
-                "status" => "FOR APPROVAL"
+                "profile_status" => "FOR APPROVAL"
             ]);
 
             if($request->sub_profiles)
@@ -388,7 +388,7 @@ class farmerVerificationController extends Controller
                 ->whereIn('id',$request->sub_profiles)
                 ->update([
                     "profile_link_id" => $request->main_profile,
-                    "status" => "FOR APPROVAL"
+                    "profile_status" => "FOR APPROVAL"
                 ]);
             }
             if($request->new_profiles)

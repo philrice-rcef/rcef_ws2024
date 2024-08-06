@@ -216,6 +216,115 @@
             color: green;
         }
 
+
+        button {
+            padding: 1em;
+            margin-top: 0.5em;
+            margin-left: 1em;
+            border: unset;
+            border-radius: 15px;
+            color: #212121;
+            z-index: 1;
+            background: #e3e1e1;
+            position: relative;
+            font-weight: bold;
+            font-size: 1em;
+            -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            transition: all 250ms;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            border-radius: 15px;
+            background-color: #3ed655;
+            z-index: -1;
+            -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            transition: all 250ms
+        }
+
+        button:hover::before {
+            width: 100%;
+        }
+
+        button:disabled {
+            color: #999;
+            background: #ccc;
+            cursor: not-allowed;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+        button:disabled::before {
+            background-color: #999;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        button:hover:disabled {
+        color: #ffffff;
+        }
+
+
+        #skipButton {
+            padding: 1em;
+            border: unset;
+            border-radius: 15px;
+            color: #212121;
+            z-index: 1;
+            background: #e3e1e1;
+            position: relative;
+            font-weight: bold;
+            font-size: 1em;
+            -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            transition: all 250ms;
+            overflow: hidden;
+        }
+
+        #skipButton::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            border-radius: 15px;
+            background: #ffa600;
+            z-index: -1;
+            -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+            transition: all 250ms
+        }
+
+        #skipButton:hover::before {
+            width: 100%;
+        }
+
+        #skipButton:disabled {
+            color: #999;
+            background: #ccc;
+            cursor: not-allowed;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+        
+        #skipButton:disabled::before {
+            background-color: #999;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        #skipButton:hover:disabled {
+        color: #ffffff;
+        }
+
        
     </style>
 @endsection
@@ -230,7 +339,7 @@
         <div class="col-md-12">
             <div class="x_panel shadow-2xl" style="padding-bottom: 3em;">
                 <div class="x_title">
-                    <h1>Farmer Verification</h1>
+                    <h1>Farmer KYC</h1>
                     <div class="clearfix"></div>
                 </div>
 
@@ -257,8 +366,8 @@
                             <i style="padding-inline: 1em">*Please select province and municipality to begin verification.</i>
                         </div>
                         <div>
-                            <button type="button" id='submit' class="btn btn-success submit" disabled>Begin Verification</button> 
-                            <button type="button" id="reset" class="btn btn-secondary" style="display:none">Reset</button> 
+                            <button type="button" id='submit' style="border-radius: 15px;" disabled>Begin Verification</button> 
+                            <button type="button" id="reset" style="display:none">Reset</button> 
                         </div>
                             
                     </div>
@@ -303,8 +412,8 @@
                             </div>
                             <h4>Farmer Profiles</h4>
                             <hr>
-                            <button type="button" id='submit2' class="btn btn-success submit" disabled>Submit Verification</button> 
-                            <button type="button" id='skipButton' class="btn btn-warning submit">Skip Verification</button> 
+                            <button type="button" id='submit2' style="border-radius: 15px;" disabled>Submit Verification</button> 
+                            <button type="button" id='skipButton' style="border-radius: 15px;">Skip Verification</button> 
                         </div>
                     </div>
                     <div class="col-md-2"></div>
@@ -1320,7 +1429,7 @@
             {
                 $(this).toggleClass("checked-add");
                 if ($(this).hasClass("checked-add")) {
-                    $(this).closest('.profiles').css('background-color', '##ffa600');
+                    $(this).closest('.profiles').css('background-color', '#ffa600');
                     $(this).closest('.profiles').find('.subLegend').hide();
                     $(this).closest('.profiles').find('.newLegend').show();
                     new_profiles.push($(this).data('id'));
