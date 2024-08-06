@@ -868,7 +868,7 @@
         $('#nextButton').on('click', () =>{
             var options = {
                 theme:"custom",
-                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
+                content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading') }}" class="center-block">',
                 message:'Please wait.',
                 backgroundColor:"#494f5f",
                 textColor:"white"
