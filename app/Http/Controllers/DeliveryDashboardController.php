@@ -4192,7 +4192,7 @@ class DeliveryDashboardController extends Controller
         // $pythonPath = 'C://Users//bmsdelossantos//AppData//Local//Programs//Python//Python311//python.exe';
 
         //production
-        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//Scripts//pip.exe';
 
         $scriptPath = base_path('app/Http/PyScript/delivery_dashboard.py');
 
@@ -4208,7 +4208,7 @@ class DeliveryDashboardController extends Controller
 
         // Construct the command with arguments as a single string
         // $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedcoop_accreditation ";
-        $command = "$pythonPath pip install xlsxwriter ";
+        $command = "$pythonPath install xlsxwriter ";
 
     
         // Create a new process
