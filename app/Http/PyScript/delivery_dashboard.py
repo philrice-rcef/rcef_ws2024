@@ -1965,6 +1965,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Err: ", e)
         traceback.print_exc()
-        exit(1)
     finally:
-        exit(0)
+        exit(1)
