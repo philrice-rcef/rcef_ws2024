@@ -4208,7 +4208,7 @@ class DeliveryDashboardController extends Controller
 
         // Construct the command with arguments as a single string
         // $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedcoop_accreditation ";
-        $command = "$pythonPath -m pip3 install xlsxwriter ";
+        $command = "$pythonPath pip3 install xlsxwriter ";
 
     
         // Create a new process
