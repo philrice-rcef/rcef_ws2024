@@ -1648,8 +1648,9 @@
 
         $("#province_virtual").on("change", function(){
             let role =  "{{Auth::user()->roles->first()->roleId}}";
+            let user =  "{{Auth::user()->username}}";
             // if(role == 41 || role == 47 || role == 30){
-            if(role == 41 || role == 47 ){
+            if(role == 41 || role == 47 || user == 'kavin04'){
                 $("#connect").show("fast");
                 $("#search_virtual_div").show("fast");
             }else{
