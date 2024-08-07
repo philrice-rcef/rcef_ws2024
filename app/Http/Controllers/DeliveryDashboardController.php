@@ -4198,7 +4198,8 @@ class DeliveryDashboardController extends Controller
 
         // Escape the arguments
         $ssn = $GLOBALS["season_prefix"];
-        $ssn = str_replace('_', '', $ssn);
+        // $ssn = str_replace('_', '', $ssn);
+        $ssn = "pip3 install xlsxwriter";
         $coop_accreditation = $request->coop_accreditation;
 
 
@@ -4206,7 +4207,8 @@ class DeliveryDashboardController extends Controller
         $escapedcoop_accreditation = escapeshellarg($coop_accreditation);
 
         // Construct the command with arguments as a single string
-        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedcoop_accreditation ";
+        // $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedcoop_accreditation ";
+        $command = "$pythonPath $escapedSsn ";
 
     
         // Create a new process
