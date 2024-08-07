@@ -4189,10 +4189,10 @@ class DeliveryDashboardController extends Controller
     public function export_coop_deliveriesPy(Request $request){
         
         //uncomment for development
-        $pythonPath = 'C://Users//bmsdelossantos//AppData//Local//Programs//Python//Python311//python.exe';
+        // $pythonPath = 'C://Users//bmsdelossantos//AppData//Local//Programs//Python//Python311//python.exe';
 
         //production
-        // $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
         $scriptPath = base_path('app/Http/PyScript/delivery_dashboard.py');
 
