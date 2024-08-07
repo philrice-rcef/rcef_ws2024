@@ -4192,14 +4192,13 @@ class DeliveryDashboardController extends Controller
         // $pythonPath = 'C://Users//bmsdelossantos//AppData//Local//Programs//Python//Python311//python.exe';
 
         //production
-        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//Scripts//pip.exe';
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
         $scriptPath = base_path('app/Http/PyScript/delivery_dashboard.py');
 
         // Escape the arguments
         $ssn = $GLOBALS["season_prefix"];
-        // $ssn = str_replace('_', '', $ssn);
-        $ssn = "pip3 install xlsxwriter";
+        $ssn = str_replace('_', '', $ssn);
         $coop_accreditation = $request->coop_accreditation;
 
 
@@ -4207,8 +4206,7 @@ class DeliveryDashboardController extends Controller
         $escapedcoop_accreditation = escapeshellarg($coop_accreditation);
 
         // Construct the command with arguments as a single string
-        // $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedcoop_accreditation ";
-        $command = "$pythonPath install xlsxwriter ";
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedcoop_accreditation ";
 
     
         // Create a new process
