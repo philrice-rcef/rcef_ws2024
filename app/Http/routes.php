@@ -89,7 +89,7 @@ Route::group(['middleware' => ['auth','logMw']], function() {
     Route::post('delivery/dashboard/coop_name', ['as' => 'delivery_dashboard.coop.name', 'uses' => 'DeliveryDashboardController@get_coop_name']);
     Route::post('delivery/dashboard/batch_list', ['as' => 'delivery_dashboard.batch.list', 'uses' => 'DeliveryDashboardController@get_delivery_list']);
 	Route::post('delivery/export/batches', ['as' => 'delivery_dashboard.export_deliveries', 'uses' => 'DeliveryDashboardController@export_coop_deliveries']);
-	Route::post('delivery/export/batches_2', ['as' => 'delivery_dashboard.export_deliveries_2', 'uses' => 'DeliveryDashboardController@export_coop_deliveries_2']);
+	Route::post('delivery/export/batchesPy', ['as' => 'delivery_dashboard.export_deliveriesPy', 'uses' => 'DeliveryDashboardController@export_coop_deliveriesPy']);
 	Route::post('delivery/export/batches_fmd', ['as' => 'delivery_dashboard.export_deliveries_fmd', 'uses' => 'DeliveryDashboardController@export_coop_deliveries_FMD']);
 
 	

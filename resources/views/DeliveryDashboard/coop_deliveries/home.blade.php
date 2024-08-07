@@ -229,26 +229,29 @@
                     //link
                     count = count + 1;
                     var button_id = "btn_"+region_id+"_"+count;
+                    var button_id_py = "btn_py_"+region_id+"_"+count;
                     var button_id_fmd = "btn_fmd_"+region_id+"_"+count;
                     
                     var button_id_iop = "btn_iop_"+region_id+"_"+count;
                     var coop_accreditation = "'"+array_value['coop_accre']+"', '"+button_id+"'";
+                    var coop_accreditation_py = "'"+array_value['coop_accre']+"', '"+button_id_py+"'";
                     var coop_accreditation_fmd = "'"+array_value['coop_accre']+"', '"+button_id_fmd+"'";
                     
                     var coop_accreditation_iop = "'"+array_value['coop_accre']+"', '"+button_id_iop+"'";
                     
                     var action_btn = "<a href='#' data-coop_accre="+array_value['coop_accre']+" data-coop="+array_value['cop_id']+" data-total_commit="+array_value['total_commit']+" data-total_confirmed="+array_value['total_confirmed']+" data-total_inspected="+array_value['total_inspected']+" data-toggle='modal' data-target='#show_coop_batches_modal' class='btn btn-warning btn-sm form-control'><i class='fa fa-search'></i> View Deliveries</a>";
                     var export_btn = '<button id="'+button_id+'" onclick="exportDeliveries('+coop_accreditation+')" class="btn btn-success btn-sm form-control"><i class="fa fa-table"></i> Export Deliveries</button>';
+                    var export_btn_py = '<button id="'+button_id_py+'" onclick="exportDeliveriesPy('+coop_accreditation_py+')" class="btn btn-success btn-sm form-control"><i class="fa fa-table"></i> Export Deliveries v2</button>';
                     var export_btn_fmd = '<button  style="width:47%;" id="'+button_id_fmd+'" onclick="exportDeliveries_fmd('+coop_accreditation_fmd+')" class="btn btn-primary btn-sm form-control"><i class="fa fa-table"></i> FMD FORMAT</button>';
                     
                     var iop_button = '<button  style="width:47%;"  id="'+button_id_iop+'" onclick="exportindexOfPayment('+coop_accreditation_iop+')" class="btn btn-success btn-sm form-control"><i class="fa fa-money"></i> Index of Payment</button>';
                     //body
-                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:130px;'><strong>"+array_value['coop_name']+"</strong></li>");
-                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:130px;'><strong>"+array_value['total_commit']+" bag(s)</strong></li>");
-                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:130px;'><strong>"+array_value['total_confirmed']+" bag(s)</strong></li>");
-                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:130px;'><strong>"+array_value['total_inspected']+" bag(s)</strong></li>");
-                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:130px;'><strong>"+array_value['confirmed_replacement']+" bag(s)</strong></li>");
-                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:130px;'><strong>"+action_btn+export_btn+iop_button+export_btn_fmd+"</strong></li>");
+                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:180px;'><strong>"+array_value['coop_name']+"</strong></li>");
+                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:180px;'><strong>"+array_value['total_commit']+" bag(s)</strong></li>");
+                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:180px;'><strong>"+array_value['total_confirmed']+" bag(s)</strong></li>");
+                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:180px;'><strong>"+array_value['total_inspected']+" bag(s)</strong></li>");
+                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:180px;'><strong>"+array_value['confirmed_replacement']+" bag(s)</strong></li>");
+                    $("#"+list_id).append("<li class = 'list-group-item col-xs-2' style='height:180px;'><strong>"+action_btn+export_btn+export_btn_py+iop_button+export_btn_fmd+"</strong></li>");
                 });
             }
         });
@@ -326,6 +329,45 @@
 
                 $("#"+button_id).removeAttr('disabled');
                 $("#"+button_id).empty().html('<i class="fa fa-table"></i> Export Deliveries');
+            }
+        });
+    }
+    function exportDeliveriesPy(coop_accreditation, button_id_py){
+        $("#"+button_id_py).empty().html("Fetching data...");
+        $("#"+button_id_py).attr("disabled","");
+
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('delivery_dashboard.export_deliveriesPy') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                coop_accreditation: coop_accreditation
+            },
+            success: function (response, textStatus, request) {
+                // console.log(response.output);
+                // var a = document.createElement("a");
+                // a.href = response.file; 
+                // a.download = response.name;
+                // document.body.appendChild(a);
+                // a.click();
+                // a.remove();
+                window.open(`report/home/${response.output}`, '_blank');
+                setTimeout(() => {
+                        $.ajax({
+                        type: 'GET',
+                        url: "{{ route('py_unlinking') }}", 
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            uri: response.output
+                        },
+                        success: function(data){
+                            // console.log(data);
+                        }
+                    });
+                    }, 1000);
+
+                $("#"+button_id_py).removeAttr('disabled');
+                $("#"+button_id_py).empty().html('<i class="fa fa-table"></i> Export Deliveries v2');
             }
         });
     }
