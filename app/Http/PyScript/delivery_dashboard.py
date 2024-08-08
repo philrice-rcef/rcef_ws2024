@@ -1948,18 +1948,12 @@ if __name__ == "__main__":
         current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         with Workbook(f"{coopName}_{current_time}.xlsx") as wb:
-            dl = wb.add_worksheet("DELIVERY_LIST")
-            return_df.write_excel(workbook=wb, worksheet=dl, autofit=True, table_style='Table Style Light 11')
-            dlsr = wb.add_worksheet("DELIVERY_LIST_SEED_RESERVE")
-            return_df_nrp.write_excel(workbook=wb, worksheet=dlsr, autofit=True, table_style='Table Style Light 11')
-            dlsq = wb.add_worksheet("DELIVERY_LIST_GQS")
-            return_df_qgs.write_excel(workbook=wb, worksheet=dlsq, autofit=True, table_style='Table Style Light 11')
-            repl = wb.add_worksheet("REPLACEMENT_LIST")
-            replacement_arr.write_excel(workbook=wb, worksheet=repl, autofit=True, table_style='Table Style Light 11')
-            bl = wb.add_worksheet("BUFFER_LIST")
-            buffer_arr.write_excel(workbook=wb, worksheet=bl, autofit=True, table_style='Table Style Light 11')
-            bep = wb.add_worksheet("BINHI_E_PADALA")
-            bep_arr.write_excel(workbook=wb, worksheet=bep, autofit=True, table_style='Table Style Light 11')
+            return_df.write_excel(workbook=wb, worksheet="DELIVERY_LIST", autofit=True, table_style='Table Style Light 11')
+            return_df_nrp.write_excel(workbook=wb, worksheet="DELIVERY_LIST_SEED_RESERVE", autofit=True, table_style='Table Style Light 11')
+            return_df_qgs.write_excel(workbook=wb, worksheet="DELIVERY_LIST_GQS", autofit=True, table_style='Table Style Light 11')
+            replacement_arr.write_excel(workbook=wb, worksheet="REPLACEMENT_LIST", autofit=True, table_style='Table Style Light 11')
+            buffer_arr.write_excel(workbook=wb, worksheet="BUFFER_LIST", autofit=True, table_style='Table Style Light 11')
+            bep_arr.write_excel(workbook=wb, worksheet="BINHI_E_PADALA", autofit=True, table_style='Table Style Light 11')
             
         print(f"report/home/{coopName}_{current_time}.xlsx")
     except Exception as e:
