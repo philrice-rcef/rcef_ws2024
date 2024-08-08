@@ -2772,6 +2772,7 @@ $excel_array = array();
                     "Date Released" => $date_synced,
                     "Released By" => $row->released_by,
                     "Date Synced" => $date_synced,
+                    "App Version" => $row->app_version,
                 );
 
               
@@ -3459,6 +3460,7 @@ $excel_array = array();
                     "Date Released" => $date_synced,
                     "Released By" => $row->released_by,
                     "Date Synced" => $date_synced,
+                    "App Version" => $row->app_version,
                 );
 
               
