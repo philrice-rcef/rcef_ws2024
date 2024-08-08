@@ -3235,17 +3235,12 @@ $excel_array = array();
         $escapedCat = escapeshellarg($cat);
         $escapedProvince = escapeshellarg($province);
 
-        // Construct the command with arguments as a single string
         $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedPrv $escapedMun $escapedCat $escapedProvince";
 
-        // Create a new process
         $process = new Process($command);
 
         try {
-            // Run the process
             $process->mustRun();
-
-            // Get the output
             $output = $process->getOutput();
 
             $keyword = 'report/home/';
@@ -3254,14 +3249,11 @@ $excel_array = array();
             } else {
                 $filename_output = 'Unexpected format: ' . $output;
             }
-    
-            // Return the trimmed output as a response
             return response()->json([
                 'message' => 'Script executed successfully',
                 'output' => $filename_output
             ]);
         } catch (ProcessFailedException $exception) {
-            // Handle the exception
             echo $exception->getMessage();
         }
         //local python path

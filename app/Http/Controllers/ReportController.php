@@ -9774,6 +9774,7 @@ public function generateLiveMunicipalReportData(Request $request){
                 $accepted_transfer .= "Accepted: ".number_format($accepted)."<br>";
                 $accepted_transfer .= "Re-Transfer: ".number_format($re_transfer)."<br>";
                 
+                //where transferCategory = P
                 $accepted_transfer .= "Transferred: ".number_format($transferred)." </i><br>";
         
 
@@ -9952,11 +9953,11 @@ public function generateLiveMunicipalReportData(Request $request){
 
                 $ebinhi_tag = 0;
                 if($distributed > 0 ){
-                    $distributed_text = "<strong> Total: ".number_format($distributed)." bag(s)"."</strong>";
-                    $beneficiaries_text = "<strong> Total: ".number_format($beneficiaries)."</strong>";
+                    $distributed_text = "<strong> Total-aaaa: ".number_format($distributed)." bag(s)"."</strong>";
+                    $beneficiaries_text = "<strong> Total-aaaa: ".number_format($beneficiaries)."</strong>";
                     if($regular_dist > 0){
-                        $distributed_text .= "<br> Regular: ". number_format($regular_dist);
-                        $beneficiaries_text .= "<br> Regular: ". number_format($regular_bene); 
+                        $distributed_text .= "<br> Regular-bbbb: ". number_format($regular_dist);
+                        $beneficiaries_text .= "<br> Regular-bbbbBENE: ". number_format($regular_bene); 
                         
                     }
                     if($home_dist>0){
@@ -9968,16 +9969,16 @@ public function generateLiveMunicipalReportData(Request $request){
                     }
 
                     if($ebinhi_distri > 0 ){
-                        $distributed_text .= "<br> BeP: " .number_format($ebinhi_distri);
+                        $distributed_text .= "<br> BeP-cccc: " .number_format($ebinhi_distri);
 
                         $ebinhi_tag = 1;
-                        $beneficiaries_text .= "<br> BeP: " .number_format($ebinhi_bene);
+                        $beneficiaries_text .= "<br> BeP-ccccBENE: " .number_format($ebinhi_bene);
 
 
                     }
                 }else{
-                    $distributed_text = "-";
-                    $beneficiaries_text = "-";
+                    $distributed_text = "dddd-";
+                    $beneficiaries_text = "dddd-";
                 }
                 
 
@@ -9987,7 +9988,7 @@ public function generateLiveMunicipalReportData(Request $request){
                 
 
                 if($male > 0){
-                    $male_text = "<strong> Total: ".number_format($male)."</strong>";
+                    $male_text = "<strong> Total111111: ".number_format($male)."</strong>";
                     if($total_male > 0){
                         $male_text .= "<br> Regular: ".number_format($total_male);
                     }
@@ -9999,7 +10000,7 @@ public function generateLiveMunicipalReportData(Request $request){
                 }
                 
                 if($female > 0){
-                    $female_text = "<strong> Total: ".number_format($female)."</strong>";
+                    $female_text = "<strong> Total22222: ".number_format($female)."</strong>";
                     if($total_female > 0){
                         $female_text .="<br> Regular: ".number_format($total_female);
                     }
@@ -10011,7 +10012,7 @@ public function generateLiveMunicipalReportData(Request $request){
                 }
                 
                 if($area_registered > 0){
-                    $area_text = "<strong> Total: ".number_format($area_registered)."</strong>";
+                    $area_text = "<strong> Total33333: ".number_format($area_registered)."</strong>";
                     if($registered_area > 0){
                         $area_text .="<br> Regular: ".number_format($registered_area);
                     }
