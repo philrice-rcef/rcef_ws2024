@@ -1574,7 +1574,7 @@ if __name__ == "__main__":
                                 "seed_grower": "N/A",
                                 "confirmed": 0,
                                 "inspected": par_row['totalBagCount'],
-                                "deliveryDate": datetime.datetime.strptime(par_row['deliveryDate'], "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                                "deliveryDate": datetime.datetime.strptime(f"{par_row['dateCreated']} 00:00:00", "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
                                 "batchStatus": tt,
                                 "remarks": "",
                                 "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
