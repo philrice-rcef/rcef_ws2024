@@ -2772,6 +2772,7 @@ $excel_array = array();
                     "Date Released" => $date_synced,
                     "Released By" => $row->released_by,
                     "Date Synced" => $date_synced,
+                    "App Version" => $row->app_version,
                 );
 
               
@@ -3451,6 +3452,7 @@ $excel_array = array();
                     "Date Released" => $date_synced,
                     "Released By" => $row->released_by,
                     "Date Synced" => $date_synced,
+                    "App Version" => $row->app_version,
                 );
 
               
@@ -3459,15 +3461,15 @@ $excel_array = array();
                 $y = 1;
 
                 
-                // foreach($yield_data as $yield){
-                //     $inclu["yield_variety_".$y] = $yield->variety;
-                //     $inclu["yield_area_".$y] = $yield->area;
-                //     $inclu["yield_bags_".$y] = $yield->bags;
-                //     $inclu["yield_weight_".$y] = $yield->weight;
-                //     $inclu["yield_type_".$y] = $yield->type;
-                //     $inclu["yield_class_".$y] = $yield->class;
-                //     $y++;
-                // }
+                foreach($yield_data as $yield){
+                    $inclu["yield_variety_".$y] = $yield->variety;
+                    $inclu["yield_area_".$y] = $yield->area;
+                    $inclu["yield_bags_".$y] = $yield->bags;
+                    $inclu["yield_weight_".$y] = $yield->weight;
+                    $inclu["yield_type_".$y] = $yield->type;
+                    $inclu["yield_class_".$y] = $yield->class;
+                    $y++;
+                }
                 array_push($excel_data, $inclu);
 
                 // $yield_data = json_decode($yield_data);

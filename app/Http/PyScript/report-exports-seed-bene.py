@@ -10,7 +10,7 @@ import datetime
 def main(ssn, prv, mun, cat, province):
     # root = tk.Tk()
     # root.title("Data Report Generator")
-    report_headers = ['db_ref', 'rcef_id_x', 'rsbsa_control_no', 'firstName', 'midName', 'lastName', 'extName', 'sex_y', 'birthdate_y', 'tel_no', 'province_x', 'municipality_x', 'mother_lname', 'final_area_y', 'claimed_area', 'bags_claimed', 'seed_variety', 'remarks', 'crop_establishment_cs_x', 'seedling_age', 'ecosystem_cs_x', 'planting_week_x', 'kp_kit_count', 'other_benefits_received', 'date_released', 'released_by', 'server_date_received', 'category']
+    report_headers = ['db_ref', 'rcef_id_x', 'rsbsa_control_no', 'firstName', 'midName', 'lastName', 'extName', 'sex_y', 'birthdate_y', 'tel_no', 'province_x', 'municipality_x', 'mother_lname', 'final_area_y', 'claimed_area', 'bags_claimed', 'seed_variety', 'remarks', 'crop_establishment_cs_x', 'seedling_age', 'ecosystem_cs_x', 'planting_week_x', 'kp_kit_count', 'other_benefits_received', 'date_released', 'released_by', 'server_date_received', 'category', 'app_version']
     now = datetime.datetime.now()
     date_time_str = now.strftime("%Y%m%d_%H%M%S")
 

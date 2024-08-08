@@ -257,11 +257,11 @@ class virtual_encodingController extends Controller
     }
 
     public function index_homeAddressClaim(){
-        if(Auth::user()->roles->first()->name != "rcef-programmer"){
-            $mss = "Under Development";
-                return view("utility.pageClosed")
-            ->with("mss",$mss);
-        }
+        // if(Auth::user()->roles->first()->name != "rcef-programmer"){
+        //     $mss = "Under Development";
+        //         return view("utility.pageClosed")
+        //     ->with("mss",$mss);
+        // }
 
         if(Auth::user()->roles->first()->name == "rcef-programmer"){
             $user_provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
@@ -270,7 +270,7 @@ class virtual_encodingController extends Controller
             ->orderBy("region_sort", 'ASC')
             ->get();
         }else{
-            $provinceList = ["ABRA","CAGAYAN","CAMARINES SUR","IFUGAO","ISABELA","KALINGA","NUEVA VIZCAYA","QUIRINO","ILOILO"];
+            $provinceList = ["ABRA","CAGAYAN","CAMARINES SUR","IFUGAO","ISABELA","KALINGA","NUEVA VIZCAYA","QUIRINO","ILOILO","NEGROS OCCIDENTAL"];
             $user_provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
             ->select('lib_prv.province')
             ->whereIn("province", $provinceList)
