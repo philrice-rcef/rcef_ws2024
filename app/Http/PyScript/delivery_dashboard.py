@@ -40,7 +40,7 @@ bep_arr = pl.DataFrame()
 def load_view_coop_deliveries():
     global _view_coop_deliveries
     _view_coop_deliveries = pl.read_database_uri(f"select a.batchTicketNumber AS'batchTicketNumber', a.coopAccreditation AS'coopAccreditation', a.seedVariety AS'seedVariety', a.deliveryDate AS'deliveryDate', a.dropOffPoint AS'dropOffPoint', a.region AS'region', a.province AS'province', a.municipality AS'municipality', a.seedTag AS'seedTag', a.isBuffer AS'isBuffer', a.sg_id AS'sg_id',( select b.seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery_transaction b where a.coopAccreditation = b.accreditation_no and a.region = b.region limit 1 ) AS seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery a where a.is_cancelled = 0 and a.isBuffer = 0 and a.coopAccreditation ='{_coop_a}' group by a.batchTicketNumber, a.seedVariety, a.seedTag order by a.deliveryDate desc", uri)
-    print(_view_coop_deliveries)
+    # print(_view_coop_deliveries)
 def load_cooperatives():
     global tbl_cooperatives
     tbl_cooperatives = pl.read_database_uri(f"SELECT * FROM {_season}_rcep_seed_cooperatives.tbl_cooperatives where accreditation_no = '{_coop_a}'", uri)
@@ -1966,4 +1966,4 @@ if __name__ == "__main__":
         print(f"Err: ", e)
         traceback.print_exc()
     finally:
-        exit(1)
+        exit(0)
