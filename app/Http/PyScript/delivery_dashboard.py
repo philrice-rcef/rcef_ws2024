@@ -1966,4 +1966,4 @@ if __name__ == "__main__":
         print(f"Err: ", e)
         traceback.print_exc()
     finally:
-        exit(0)
+        exit(1)
