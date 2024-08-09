@@ -185,6 +185,7 @@ Route::group(['middleware' => ['auth','logMw']], function() {
 	Route::post('generate/report/provincial', ['as' => 'generate.province.report', 'uses'=>'ReportController@generateProvincialReportData']);
 	Route::post('generate/report/municipal/', ['as' => 'generate.municipal.report', 'uses'=>'ReportController@generateMunicipalReportData']);
 	Route::post('generate/report/live/municipal', ['as' => 'generate.live_municipal.report', 'uses'=>'ReportController@generateLiveMunicipalReportData']);
+	Route::post('generate/report/live/municipalPy', ['as' => 'generate.live_municipal_py.report', 'uses'=>'ReportController@generateLiveMunicipalReportDataPy']);
 	
 
     /*     * REPORT ROUTES */

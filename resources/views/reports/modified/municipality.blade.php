@@ -68,13 +68,14 @@
                         </select>
                     </div>
 
-                    <div class="col-md-2">
+                    <!-- <div class="col-md-2">
                     <button class="btn btn-success form-control" id="load_report_btn"><i class="fa fa-cloud-download" aria-hidden="true"></i> LOAD PROCESSED DATA</button>
-                    </div> 
+                    </div>  -->
 
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                        
-                        <button class="btn btn-success form-control" id="load_report_btn_live"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA</button>
+                        <!-- <button class="btn btn-success form-control" id="load_report_btn_live"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA</button> -->
+                        <button class="btn btn-success form-control" id="load_report_btn_live_py"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA v2</button>
 
                         
 
@@ -283,6 +284,44 @@
                 "pageLength": 25,
                 "ajax": {
                     "url": "{{ route('generate.live_municipal.report') }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data":{
+                        "_token": "{{ csrf_token() }}",
+                        province: province,
+                        "ebinhi" : "true"
+                    }
+                },
+                "columns":[
+                    {"data": "municipality"},
+                    {"data": "accepted_transferred"},
+                    {"data": "total_bags_distributed"},
+                    {"data": "total_beneficiaries"},
+                    {"data": "total_male_count"},
+                    {"data": "total_female_count"},
+                    {"data": "total_registered_area"},
+					{"data": "total_yield", "className": "text-right"},
+                    {"data": "total_area_claimed"},
+                    
+                    {"data": "action", 'searchable': false }
+                ]
+            });
+        });
+        $("#load_report_btn_live_py").on("click", function(e){
+            var province = $("#province").val();
+
+            $('#mun_tbl').DataTable().clear();
+            $("#mun_tbl").DataTable({
+                "bDestroy": true,
+                "autoWidth": false,
+                "searchHighlight": true,
+                "processing": true,
+                "serverSide": true,
+                "orderMulti": true,
+                "order": [],
+                "pageLength": 25,
+                "ajax": {
+                    "url": "{{ route('generate.live_municipal_py.report') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data":{
