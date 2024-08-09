@@ -41,13 +41,13 @@
 
     <div class="col-md-12 col-sm-12 col-xs-12">
 
-        <div class="row">
+        <!-- <div class="row">
             <div class="alert alert-warning alert-dismissible fade in" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
                 <strong><i class="fa fa-info-circle"></i> Notice!</strong> This is a scheduled report, please note that the values displayed based on live data are <b><u>updated everyday @ 12 MN</u></b> to eliminate or minimize loading time. <br>
             
             </div>
-        </div>
+        </div> -->
 
         <!-- FILTER PANEL -->
         <div class="x_panel">
