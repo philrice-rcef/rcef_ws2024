@@ -128,10 +128,15 @@ for item in final_result_json:
             item[col] = 0
 
 # Filter the final_result_json to keep only the selected columns
+# filtered_result_json = [
+#     {key: item[key] for key in selected_columns} 
+#     for item in final_result_json
+# ]
 filtered_result_json = [
     {key: item[key] for key in selected_columns} 
     for item in final_result_json
+    if item.get('t3_municipality') and item['t3_municipality'].strip() != ''
 ]
-
+sorted_result_json = sorted(filtered_result_json, key=lambda x: x['t3_municipality'])
 # Print the filtered JSON result
-print(json.dumps(filtered_result_json, indent=4))
+print(json.dumps(sorted_result_json, indent=4))

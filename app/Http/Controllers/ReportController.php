@@ -9354,10 +9354,10 @@ public function generateLiveMunicipalReportDataPy(Request $request){
         ->first();
 
         //uncomment for development
-        //$pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
 
         //production
-        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        //$pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
         $scriptPath = base_path('app/Http/PyScript/load_live_data.py');
 
@@ -9386,6 +9386,7 @@ public function generateLiveMunicipalReportDataPy(Request $request){
             $tbl = array();
             foreach($return_output as $data)
             {
+                $municipality = $data['t3_municipality'];
                 $yield = number_format($data['t8_municipality_yield'],2);
                 $claimed_area =number_format($data['total_final_area'],2)." (ha)";
                 $accepted_transfer = "<b> Total Accepted: ".number_format($data['totalBagCount_sum'])."</b><br>";
@@ -9420,7 +9421,7 @@ public function generateLiveMunicipalReportDataPy(Request $request){
                 // }else{
                 //     $btn =  "<a class='btn btn-warning btn-xs' disabled><i class='fa fa-warning'></i> Temporarily Disabled</a>";
                 // }
-                $btn =  "<a class='btn btn-success btn-xs' data-ebinhi='$ebinhi_tag' data-province='$request->province' data-municipality='municipality' data-toggle='modal' data-target='#confirm_export_municipality'><i class='fa fa-calendar'></i> GENERATE EXCEL</a>";
+                $btn =  "<a class='btn btn-success btn-xs' data-ebinhi='$ebinhi_tag' data-province='$request->province' data-municipality='$municipality' data-toggle='modal' data-target='#confirm_export_municipality'><i class='fa fa-calendar'></i> GENERATE EXCEL</a>";
     
                 array_push($tbl, array(
                     "municipality" => $data['t3_municipality'],
