@@ -29,6 +29,7 @@ public/flsar/*
 public/reports/*
 public/excel_template/*
 public/exec/*
+report/home/*
 
 storage/*.key
 .env

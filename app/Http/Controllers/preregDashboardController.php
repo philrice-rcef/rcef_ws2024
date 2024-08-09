@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
+// use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DB;
 use Auth;
@@ -455,17 +455,17 @@ class preregDashboardController extends Controller
         }
 
         // dd($returnValue);
-        return array(
+        return json_encode(array(
             "overAllArray" => $allYield,
             "maleArray" => $maleYield,
             "femaleArray" => $femaleYield
-        );
+        ));
     }
 
     public function getPrv(){
 
         $prvs = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-            ->select('prv_code', 'farm_addr_mun', 'rcef_id')
+            ->select(DB::raw("LEFT(rcef_id, 4) as 'prv_code'"), 'farm_addr_mun', 'rcef_id')
             ->where('isPrereg', 1)
             // ->where(DB::raw("province_name not in ('', null)"))
             ->where('farm_addr_mun', '<>', 'AGUINALDO')
