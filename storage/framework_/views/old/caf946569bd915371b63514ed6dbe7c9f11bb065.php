@@ -1,11 +1,11 @@
 <?php $qr_side = "active"; $qr_home="active"?>
 
-@extends('layouts.index')
 
-@section('styles')
-  <link rel="stylesheet" href="{{ asset('public/css/select2.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('public/assets/iCheck/skins/flat/green.css') }}">
-  <link rel="stylesheet" href="{{ asset('public/css/daterangepicker.css') }}">
+
+<?php $__env->startSection('styles'); ?>
+  <link rel="stylesheet" href="<?php echo e(asset('public/css/select2.min.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('public/assets/iCheck/skins/flat/green.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('public/css/daterangepicker.css')); ?>">
   <style>
     ul.parsley-errors-list {
         list-style: none;
@@ -31,13 +31,13 @@
         margin-top: 0; 
     }
   </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <div class="clearfix"></div>
 
-    @include('layouts.message')
+    <?php echo $__env->make('layouts.message', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 
     <div class="col-md-12 col-sm-12 col-xs-12">
 
@@ -62,9 +62,9 @@
                     <div class="col-md-8">
                         <select name="province_2" id="province" class="form-control">
                             <option value="0">Please select a province</option>
-                            @foreach ($municipal_list as $row)
-                                <option value="{{$row->province}}">{{$row->province}}</option>
-                            @endforeach
+                            <?php foreach($municipal_list as $row): ?>
+                                <option value="<?php echo e($row->province); ?>"><?php echo e($row->province); ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -79,7 +79,7 @@
 
                         
 
-                   {{-- <button class="btn btn-success form-control" id="load_report_btn_without"><i class="fa fa-database"></i> LOAD WITHOUT EBINHI DATA </button>  --}}
+                   <?php /* <button class="btn btn-success form-control" id="load_report_btn_without"><i class="fa fa-database"></i> LOAD WITHOUT EBINHI DATA </button>  */ ?>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="province_export_title">
-                        EXPORT OPTION [USER LEVEL - {{strtoupper($user_level)}}]
+                        EXPORT OPTION [USER LEVEL - <?php echo e(strtoupper($user_level)); ?>]
                     </h4>
                 </div>
                 <div class="modal-body" style="max-height: 500px;overflow: auto;">
@@ -128,12 +128,12 @@
                     <input type="hidden" id="munReport_municipality" value="">
 
                     <p>
-                        @if ($user_level == "rcef-pmo")
+                        <?php if($user_level == "rcef-pmo"): ?>
                             The system detected that you are now using an `rcef-pmo` account, this allows you to upate the seed beneficiary list whilst performing the export functionality, 
                             but please bear in mind that updating the list takes time: (depending on the current updates of the selected municipality).
-                        @else
+                        <?php else: ?>
                             You are now about to export the data of the selected municipality, please wait patiently... 
-                        @endif
+                        <?php endif; ?>
                     </p>  
                 </div>
                 <div class="modal-footer">
@@ -191,14 +191,14 @@
 	
 	
 	
-@endsection()
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
-    <script src=" {{ asset('public/js/jquery.inputmask.bundle.js') }} "></script>
-    <script src=" {{ asset('public/js/select2.min.js') }} "></script>
-    <script src=" {{ asset('public/js/parsely.js') }} "></script>
-    <script src=" {{ asset('public/assets/iCheck/icheck.min.js') }} "></script>
-    <script src=" {{ asset('public/js/daterangepicker.js') }} "></script>
+<?php $__env->startPush('scripts'); ?>
+    <script src=" <?php echo e(asset('public/js/jquery.inputmask.bundle.js')); ?> "></script>
+    <script src=" <?php echo e(asset('public/js/select2.min.js')); ?> "></script>
+    <script src=" <?php echo e(asset('public/js/parsely.js')); ?> "></script>
+    <script src=" <?php echo e(asset('public/assets/iCheck/icheck.min.js')); ?> "></script>
+    <script src=" <?php echo e(asset('public/js/daterangepicker.js')); ?> "></script>
 
     <script>
 		
@@ -230,11 +230,11 @@
                         "order": [],
                         "pageLength": 10,
                         "ajax": {
-                            "url": "{{route('genTable.report.break_down.modal')}}",
+                            "url": "<?php echo e(route('genTable.report.break_down.modal')); ?>",
                             "dataType": "json",
                             "type": "POST",
                             "data":{
-                                "_token": "{{ csrf_token() }}",
+                                "_token": "<?php echo e(csrf_token()); ?>",
                                 region: region,
                                 province: province,
                                 municipality: municipality
@@ -283,11 +283,11 @@
                 "order": [],
                 "pageLength": 25,
                 "ajax": {
-                    "url": "{{ route('generate.live_municipal.report') }}",
+                    "url": "<?php echo e(route('generate.live_municipal.report')); ?>",
                     "dataType": "json",
                     "type": "POST",
                     "data":{
-                        "_token": "{{ csrf_token() }}",
+                        "_token": "<?php echo e(csrf_token()); ?>",
                         province: province,
                         "ebinhi" : "true"
                     }
@@ -321,11 +321,11 @@
                 "order": [],
                 "pageLength": 25,
                 "ajax": {
-                    "url": "{{ route('generate.live_municipal_py.report') }}",
+                    "url": "<?php echo e(route('generate.live_municipal_py.report')); ?>",
                     "dataType": "json",
                     "type": "POST",
                     "data":{
-                        "_token": "{{ csrf_token() }}",
+                        "_token": "<?php echo e(csrf_token()); ?>",
                         province: province,
                         "ebinhi" : "true"
                     }
@@ -361,11 +361,11 @@
                 "order": [],
                 "pageLength": 25,
                 "ajax": {
-                    "url": "{{ route('generate.municipal.report') }}",
+                    "url": "<?php echo e(route('generate.municipal.report')); ?>",
                     "dataType": "json",
                     "type": "POST",
                     "data":{
-                        "_token": "{{ csrf_token() }}",
+                        "_token": "<?php echo e(csrf_token()); ?>",
                         province: province,
                         "ebinhi" : "true"
                     }
@@ -402,11 +402,11 @@
                 "order": [],
                 "pageLength": 25,
                 "ajax": {
-                    "url": "{{ route('generate.municipal.report') }}",
+                    "url": "<?php echo e(route('generate.municipal.report')); ?>",
                     "dataType": "json",
                     "type": "POST",
                     "data":{
-                        "_token": "{{ csrf_token() }}",
+                        "_token": "<?php echo e(csrf_token()); ?>",
                         province: province,
                         "ebinhi" : "false"
                     }
@@ -433,9 +433,9 @@
 
             $.ajax({
                 type: 'POST',
-                url: "{{ route('rcef.report.excel') }}",
+                url: "<?php echo e(route('rcef.report.excel')); ?>",
                 data: {
-                    _token: "{{ csrf_token() }}",
+                    _token: "<?php echo e(csrf_token()); ?>",
                     excel_type: 'municipal'
                 },
                 success: function (response, textStatus, request) {
@@ -496,9 +496,9 @@
             $("#noUpdate_export_btn_py").attr("disabled", true);
             $.ajax({
                 type: 'POST',
-                url: "{{ route('export_muni_noUpdate_pyCsv') }}", 
+                url: "<?php echo e(route('export_muni_noUpdate_pyCsv')); ?>", 
                 data: {
-                    _token: "{{ csrf_token() }}",
+                    _token: "<?php echo e(csrf_token()); ?>",
                     prv: $selected_prv,
                     mun: $selected_mun
                 },
@@ -512,9 +512,9 @@
                     setTimeout(() => {
                         $.ajax({
                         type: 'GET',
-                        url: "{{ route('py_unlinking') }}", 
+                        url: "<?php echo e(route('py_unlinking')); ?>", 
                         data: {
-                            _token: "{{ csrf_token() }}",
+                            _token: "<?php echo e(csrf_token()); ?>",
                             uri: /* './public/public/'+ */data.output
                         },
                         success: function(data){
@@ -535,4 +535,6 @@
             redirectWindow.location;
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
