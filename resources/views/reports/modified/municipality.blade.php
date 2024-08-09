@@ -75,7 +75,7 @@
                     <div class="col-md-4">
                        
                         <!-- <button class="btn btn-success form-control" id="load_report_btn_live"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA</button> -->
-                        <button class="btn btn-success form-control" id="load_report_btn_live_py"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA v2</button>
+                        <button class="btn btn-success form-control" id="load_report_btn_live_py"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA</button>
 
                         
 
@@ -138,8 +138,8 @@
                 </div>
                 <div class="modal-footer">
                  
-                        <button id="noUpdate_export_btn_py" type="button" class="btn btn-success"> EXPORT CONVENTIONAL EXCEL USING PYTHON</button>
-                        <button id="noUpdate_export_btn" type="button" class="btn btn-success"> EXPORT CONVENTIONAL EXCEL</button>
+                        <button id="noUpdate_export_btn_py" type="button" class="btn btn-success"> EXPORT CONVENTIONAL EXCEL</button>
+                        <!-- <button id="noUpdate_export_btn" type="button" class="btn btn-success"> EXPORT CONVENTIONAL EXCEL</button> -->
                         <button id="noUpdate_export_btn_ebinhi" type="button" class="btn btn-success">PROCEED E-BINHI EXCEL </button>
                         
                 </div>
@@ -478,12 +478,12 @@
         });
         
 
-        $("#noUpdate_export_btn").on("click", function(e){
+/*         $("#noUpdate_export_btn").on("click", function(e){
             var url = 'https://rcef-seed.philrice.gov.ph/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';
-            /* var url = 'http://localhost/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update'; */
+            // var url = 'http://localhost/rcef_ws2024/report/excel/'+$("#munReport_province").val()+'/'+$("#munReport_municipality").val()+'/no_update';
             var redirectWindow = window.open(url, '_blank');
             redirectWindow.location;
-        });
+        }); */
 
 
         $("#noUpdate_export_btn_py").click(function() {
