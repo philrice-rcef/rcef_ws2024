@@ -229,74 +229,108 @@
     </div>
 
 
-    <div class="row" id="distribution_div">
+    <div class="row" id="distribution_div" >
         <div class="col-md-12" style="margin-bottom:0; padding-left: 20px; text-align:center;">
             <div class="card">
                 <h2> (4) Distribution Data</h2>
             </div>
         </div>
-
+    
         <div class="col-md-3">
             <div class="card" style="padding:5px;">
                 <div class="row">
                     <div class="col-md-12">
-                        <center>  <h2>SELECTED DROP OFF POINT</h2> </center>
-                       
-                        <input type="text" id="dop_selected_name" name="dop_selected_name" value="" placeholder="Drop Off POint" readonly="readonly" class="form-control">
                         
+    
+                        <div class="form_for_old">
+                            <center>
+                                <h2>SELECTED DROP OFF POINT</h2>
+                            </center>
+                            <input type="text" id="dop_selected_name" name="dop_selected_name" value=""
+                                placeholder="Drop Off Point" readonly="readonly" class="form-control">
+    
+                            <input type="hidden" id="dop_selected_vs" name="dop_selected_vs" value=""
+                                placeholder="DATA" readonly="readonly" class="form-control">
+                            <input type="hidden" id="virtual_float_id" name="virtual_float_id" value=""
+                                placeholder="DATA" readonly="readonly" class="form-control">
+                            <input type="hidden" id="is_served" name="is_served" value="" placeholder="DATA"
+                                readonly="readonly" class="form-control">
+                        </div>
+    
                         {{-- HIDDEN DATA FOR POSTING --}}
-                        <input type="hidden" id="dop_selected_vs" name="dop_selected_vs" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
-                        <input type="hidden" id="virtual_final_area" name="virtual_final_area" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
-                        <input type="hidden" id="virtual_remaining" name="virtual_remaining" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
-                        <input type="hidden" id="virtual_claiming_prv" name="virtual_claiming_prv" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
-                        <input type="hidden" id="virtual_db_ref_parcellary" name="virtual_db_ref_parcellary" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
-                        <input type="hidden" id="virtual_float_id" name="virtual_float_id" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
-                        <input type="hidden" id="is_served" name="is_served" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
-                        
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-12">
-                        <label for="da_intervention_card">DA Intervention Card</label>
-                    </div>
-
-                    <div class="col-md-10">
-                        <input  type="text" class='form-control' id='da_intervention_card' name='da_intervention_card' disabled>
-                    </div>
-                    <div class="col-md-1">
-                        <button id="intervention_scan" name="intervention_scan" class="btn btn-success"><i class="fa fa-qrcode" aria-hidden="true"></i></button>
+                        <input type="hidden" id="virtual_final_area" name="virtual_final_area" value=""
+                            placeholder="DATA" readonly="readonly" class="form-control">
+                        <input type="hidden" id="virtual_remaining" name="virtual_remaining" value=""
+                            placeholder="DATA" readonly="readonly" class="form-control">
+                        <input type="hidden" id="virtual_claiming_prv" name="virtual_claiming_prv" value=""
+                            placeholder="DATA" readonly="readonly" class="form-control">
+                        <input type="hidden" id="virtual_db_ref_parcellary" name="virtual_db_ref_parcellary"
+                            value="" placeholder="DATA" readonly="readonly" class="form-control">
     
                     </div>
                 </div>
-
+                <div class="row form_for_old">
+                    <div class="col-md-12">
+                        <label for="da_intervention_card">DA Intervention Card</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" class='form-control' id='da_intervention_card' name='da_intervention_card'
+                            disabled>
+                    </div>
+                    <div class="col-md-1">
+                        <button id="intervention_scan" name="intervention_scan" class="btn btn-success"><i
+                                class="fa fa-qrcode" aria-hidden="true"></i></button>
+    
+                    </div>
+                </div>
+    
                 <div class="row">
                     <div class="col-md-12">
-                        <center>  <h2>DISTRIBUTION DETAILS</h2> </center>
-                      </div>
+                        <center>
+                            <h2>DISTRIBUTION DETAILS</h2>
+                        </center>
+                    </div>
                 </div>
-
+    
                 <div class="row">
                     <div class="col-md-12">
                         <label for="target_area">* Target Area for planting</label>
-                        <input  class='form-control' onkeyup='compute_bags();' onchange='compute_bags();' id='target_area' name='target_area' type="number" value="0">
-                        <label style="color: #888; font-size: 1rem; font-style: italic;" for="bags_computation" id="bags_computation">Equivalent bag(s): 0</label>
+                        <input class='form-control' onkeyup='compute_bags();' onchange='compute_bags();'
+                            id='target_area' name='target_area' type="number" value="0">
+                        <label style="color: #888; font-size: 1rem; font-style: italic;" for="bags_computation"
+                            id="bags_computation">Equivalent bag(s): 0</label>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12">
                         <label for="variety_select">* Variety</label>
                         <select class="form-control form-select" name="variety_select" id="variety_select">
-                            <option value="0">Select Variety</select>
+                            <option value="0">Select Variety
                         </select>
-  
-                        <button id="add_variety_dist" class="btn btn-success btn-sm" style="float: right; margin-top:2px;"><i class="fa fa-plus" aria-hidden="true"></i> ADD</button>
+                        </select>
+    
+                        {{-- <button id="add_variety_dist" class="btn btn-success btn-sm form_for_old"
+                            style="float: right; margin-top:2px;"><i class="fa fa-plus" aria-hidden="true"></i>
+                            ADD</button> --}}
                     </div>
                 </div>
-                
+                {{-- <div class="row">
+                    <div class="col-md-12">
+                        <label for="target_area" id="targetAreaLable">* Target Area for planting</label>
+                        <input class='form-control' id='target_area' name='target_area' type="number" value="0">
+                    </div>
+                </div> --}}
+                <div class="row form_for_new">
+                    <div class="col-md-12">
+                        <label for="target_area" id="targetKgLabel">* Total kilograms(kg)</label>
+                        <input class='form-control' id='target_kg' name='target_kg' type="number" value="0">
+                    </div>
+                </div>
+                <button id="add_variety_dist" class="btn btn-success btn-sm"
+                    style="float: right; margin-top:2px;"><i class="fa fa-plus" aria-hidden="true"></i> ADD</button>
+    
                 <div class="row">
-                    <div class="col-md-12" >
+                    <div class="col-md-12">
                         <table class="table table-hover table-striped table-bordered" id="distribution_tbl">
                             <thead>
                                 <th>Variety</th>
@@ -305,327 +339,363 @@
                                 <th>Action</th>
                             </thead>
                             <tbody id='parcelary_body'>
-                                
+    
                             </tbody>
                         </table>
-  
-  
                     </div>
                 </div>
-
-           
-                   
-
-                   
-
-
-
-
-
+    
+                <div class="row form_for_new">
+                    <div class="col-md-6">
+                        <label for="target_area">Lot</label>
+                        <input class='form-control' id='lotNumber' name='lotNumber' type="text" placeholder="Lot">
+                    </div>
+    
+                    <div class="col-md-6">
+                        <label for="target_area">Series No.</label>
+                        <input class='form-control' id='seriesNo' name='seriesNo' type="text"
+                            placeholder="Series no.">
+                    </div>
+                    <button id="add_lot_series" class="btn btn-success btn-sm" style="float: right; margin-top:2px;"><i
+                            class="fa fa-plus" aria-hidden="true"></i> ADD</button>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-hover table-striped table-bordered" id="lotseries">
+                            <thead>
+                                <th>Lot No</th>
+                                <th>Lot Series</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody id='parcelary_body'>
+    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-
         </div>
-
+    
         <div class="col-md-3">
             <div class="card" style="padding:5px;">
                 <div class="row">
                     <div class="col-md-12">
-                        <center>  <h2>LAST SEASON DATA</h2> </center>
+                        <center>
+                            <h2>LAST SEASON DATA</h2>
+                        </center>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12">
                         <label for="yield_area">* Yield Data Last Season</label>
-                      </div>
+                    </div>
                 </div>
-                
                 <div class="row">
                     <div class="col-md-12" style="padding:0;">
-                        
-                   
-
-
-                        <div class="col-md-4">              
-                            <input type="number" class="form-control" id="yield_area" name="yield_area" placeholder="Harvest Area"> 
+                        <div class="col-md-4">
+                            <input type="number" class="form-control" id="yield_area" name="yield_area"
+                                placeholder="Harvest Area">
                             <span style="font-size: 1rem; font-style: italic;">Harvested area (ha)</span>
                         </div>
-
+    
                         <div class="col-md-4">
-                            <input type="number" class="form-control"  id="yield_bags" name="yield_bags" placeholder="No. of Bag(s)"> 
+                            <input type="number" class="form-control" id="yield_bags" name="yield_bags"
+                                placeholder="No. of Bag(s)">
                             <span style="font-size: 1rem; font-style: italic;">No. of bags</span>
                         </div>
-
+    
                         <div class="col-md-4">
-                            <input type="number" class="form-control"  id="yield_weight" name="yield_weight" placeholder="Wt. per"> 
+                            <input type="number" class="form-control" id="yield_weight" name="yield_weight"
+                                placeholder="Wt. per">
                             <span style="font-size: 1rem; font-style: italic;">Wt per bag (kg)</span>
                         </div>
-
-                        <div class="col-md-4">              
-                            <input type="text" class="form-control" id="yield_variety" name="yield_variety" placeholder="Variety"> 
+    
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="yield_variety" name="yield_variety"
+                                placeholder="Variety">
                             <span style="font-size: 1rem; font-style: italic;">Variety</span>
                         </div>
-
-                        <div class="col-md-4">              
-                            <select type="number" class="form-control" id="yield_type" name="yield_type" > 
+    
+                        <div class="col-md-4">
+                            <select type="number" class="form-control" id="yield_type" name="yield_type">
                                 <option value="Hybrid"> Hybrid</option>
-                                <option value="Inbred"> Inbred</option>       
-
+                                <option value="Inbred"> Inbred</option>
+    
                             </select>
                             <span style="font-size: 1rem; font-style: italic;">Type</span>
                         </div>
-
-                        <div class="col-md-4">              
-                            <select type="number" class="form-control" id="yield_class" name="yield_class" > 
+    
+                        <div class="col-md-4 form_for_old">
+                            <select type="number" class="form-control" id="yield_class" name="yield_class">
                                 <option value="-">-</option>
                                 <option value="Good"> Good</option>
-                                <option value="Certified"> Certified</option>       
-
+                                <option value="Certified"> Certified</option>
+    
                             </select>
                             <span style="font-size: 1rem; font-style: italic;">Category</span>
-                        </div>  
-
-
+                        </div>
                     </div>
-
                 </div>
-
                 <div class="row">
                     <div class="col-md-12" style="margin-top: 2rem;">
-                        <center>  <h2>CURRENT SEASON DATA</h2> </center>
+                        <center>
+                            <h2>CURRENT SEASON DATA</h2>
+                        </center>
                     </div>
                 </div>
-               
                 <div class="row">
                     <div class="col-md-12 mt">
                         <label for="crop_est"><strong>Crop Establishment Current Season</strong></label>
-                            <div class="col-md-6">
-                                <input type="radio" name="crop_est" id="direct" value="direct"> <label class="" for="direct"><i>Direct</i></label>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="radio" name="crop_est" id="transplanted" value="transplanted"> <label class="" for="transplanted"><i>Transplanted</i></label>
-                            </div>
-                      
+                        <div class="col-md-6">
+                            <input type="radio" name="crop_est" id="direct" value="direct"> <label
+                                class="" for="direct"><i>Direct</i></label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="radio" name="crop_est" id="transplanted" value="transplanted"> <label
+                                class="" for="transplanted"><i>Transplanted</i></label>
+                        </div>
                     </div>
                 </div>
-
-
                 <div class="row">
                     <div class="col-md-12 mt">
                         <label for="eco_system"><strong>Ecosystem Current Season</strong></label>
                         <br>
-                            <div class="col-md-6">
-                                <input type="radio" name="eco_system" id="irrigated" value="irrigated"> <label class="" for="irrigated"><i>Irrigated</i></label>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="radio" name="eco_system" id="rainfed" value="rainfed"> <label class="" for="rainfed"><i>Rainfed</i></label>
-                            </div>
-                            
-                            <center>
-                                <select name="water_source" id="water_source" class="form-control form-select" style="width: 95%;">
-                                    <option value="0">Select Source</option>
-                                </select>
-                            </center>
+                        <div class="col-md-6">
+                            <input type="radio" name="eco_system" id="irrigated" value="irrigated"> <label
+                                class="" for="irrigated"><i>Irrigated</i></label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="radio" name="eco_system" id="rainfed" value="rainfed"> <label
+                                class="" for="rainfed"><i>Rainfed</i></label>
+                        </div>
+    
+                        <center>
+                            <select name="water_source" id="water_source" class="form-control form-select"
+                                style="width: 95%;">
+                                <option value="0">Select Source</option>
+                            </select>
+                        </center>
                     </div>
                 </div>
-
-               
                 <div class="row">
                     <div class="col-md-12 mt" style="margin-bottom:10px;">
                         <label for="planting_month">Planting Week Current Season</label>
-                            <div class="col-md-6">
-                                <select name="planting_month" id="planting_month" class="form-control form-select" >
-                                    <option value="0">Planting Month</option>
-                                    <option value="01">January</option>
-                                    <option value="02">February</option>
-                                    <option value="03">March</option>
-                                    <option value="04">April</option>
-                                    <option value="05">May</option>
-                                    <option value="06">June</option>
-                                    <option value="07">July</option>
-                                    <option value="08">August</option>
-                                    <option value="09">September</option>
-                                    <option value="10">October</option>
-                                    <option value="11">November</option>
-                                    <option value="12">December</option>
-                                    
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <select name="planting_week" id="planting_week" class="form-control form-select" >
-                                    <option value="0">Planting Week</option>
-                                    <option value="01">First Week</option>
-                                    <option value="02">Second Week</option>
-                                    <option value="03">Third Week</option>
-                                    <option value="04">Fouth Week</option>
-                                    
-                                </select>
-                            </div>
-                            
-                         
+                        <div class="col-md-6">
+                            <select name="planting_month" id="planting_month" class="form-control form-select">
+                                <option value="0">Planting Month</option>
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <select name="planting_week" id="planting_week" class="form-control form-select">
+                                <option value="0">Planting Week</option>
+                                <option value="01">First Week</option>
+                                <option value="02">Second Week</option>
+                                <option value="03">Third Week</option>
+                                <option value="04">Fouth Week</option>
+    
+                            </select>
+                        </div>
                     </div>
-
-
                 </div>
-
-
-             
-
-
-
             </div>
-
         </div>
-
         <div class="col-md-3">
             <div class="card" style="padding:5px;">
                 <div class="col-md-12">
-                    <center>  <h2>OTHER DISTRIBUTION DETAILS</h2> </center>
-                  </div>
+                    <center>
+                        <h2>OTHER DISTRIBUTION DETAILS</h2>
+                    </center>
+                </div>
+                <div class="form_for_new">
+                    <div class="col-md-12">
+                        <label for="cluster">* Check if you are a member of cluster (e.g. farmer cooperative,
+                            assocoations, group, organizations) </label>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <input type="radio" name="cluster" id="clusterYes" value="yes"> <label class=""
+                                for="Yes">Yes</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="radio" name="cluster" id="clusterNo" value="no"> <label class=""
+                                for="No">No</label>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-12 mt cluster" style="display: none">
+                        <label for="ayuda">Complete name of cluster</label>
+                        <div class="col-md-12">
+                            <input type="text" class="form-control" name="orgName" id="orgName">
+                        </div>
+                    </div>
+                    <br>
+                </div>
                 
-                  <div class="col-md-12">
-                      <label for="kp_kit">* Received Knowledge Product Kit (KP-Kit) </label>
-                  </div>
-                
-              
-                  <div class="col-md-12">
-                   
-                      <div class="col-md-6">
-                          <input type="radio" name="kp_kit" id="Yes" value="yes"> <label class="" for="Yes">Yes</label>
-                      </div>
-                      <div class="col-md-6">
-                          <input type="radio" name="kp_kit" id="No" value="no"> <label class="" for="No">No</label>
-                      </div>
-
-
-                  </div>
-
-                  <div class="col-md-12 mt">
-                      <label for="ayuda">Lagyan ng tsek and sumusunod kung ang magsasaka ay nakatangap ng ayuda sa pagsasaka</label>
-                      <div class="col-md-5">
-                          <input type="checkbox" name="fertilizer" id="fertilizer"> <label class="" for="fertilizer">Fertilizer</label>
-                      </div>
-                      <div class="col-md-6">
-                          <input type="checkbox" name="cash_incentive" id="cash_incentive"> <label class="" for="cash_incentive">Cash Incentives</label>
-                      </div>
-                      <div class="col-md-5">
-                          <input type="checkbox" name="credit_loan" id="credit_loan"> <label class="" for="credit_loan">Credit/Loan</label>
-                      </div>
-                  </div>
-
-                  <div class="col-md-12 mt">
-                          <input type="checkbox" name="rep" id="rep">  <label for="rep" class="">Representative of Farmer Beneficiary?</label>
-                  </div>
-               
-                  <div class="col-md-12" id="rep_info" style="margin-bottom: 12px;">
-                      <label for="rep_name">* Representative Name</label>
-                      <input type="text" class="form-control" id='rep_name' name='rep_name' placeholder="Representative Name">
-                      <label for="rep_id">* Type of ID</label>
-                      <input type="text" class="form-control" id='rep_id' name='rep_id' placeholder="Type of ID">
-                      <label for="rep_relationship">* Relationship</label>
-                      <input type="text" class="form-control" id='rep_relationship' name='rep_relationship' placeholder="Representative Relationship">
-                  </div>
-
-
+                <div class="form_for_old">
+                    <div class="col-md-12">
+                        <label for="kp_kit">* Received Knowledge Product Kit (KP-Kit) </label>
+                    </div>
+                    <div class="col-md-12">
+        
+                        <div class="col-md-6">
+                            <input type="radio" name="kp_kit" id="Yes" value="yes"> <label class=""
+                                for="Yes">Yes</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="radio" name="kp_kit" id="No" value="no"> <label class=""
+                                for="No">No</label>
+                        </div>
+        
+        
+                    </div>
+        
+                    <div class="col-md-12 mt">
+                        <label for="ayuda">Lagyan ng tsek and sumusunod kung ang magsasaka ay nakatangap ng ayuda sa
+                            pagsasaka</label>
+                        <div class="col-md-5">
+                            <input type="checkbox" name="fertilizer" id="fertilizer"> <label class=""
+                                for="fertilizer">Fertilizer</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="checkbox" name="cash_incentive" id="cash_incentive"> <label class=""
+                                for="cash_incentive">Cash Incentives</label>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="checkbox" name="credit_loan" id="credit_loan"> <label class=""
+                                for="credit_loan">Credit/Loan</label>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-12 mt">
+                        <input type="checkbox" name="rep" id="rep"> <label for="rep"
+                            class="">Representative of Farmer Beneficiary?</label>
+                    </div>
+        
+                    <div class="col-md-12" id="rep_info" style="margin-bottom: 12px;">
+                        <label for="rep_name">* Representative Name</label>
+                        <input type="text" class="form-control" id='rep_name' name='rep_name'
+                            placeholder="Representative Name">
+                        <label for="rep_id">* Type of ID</label>
+                        <input type="text" class="form-control" id='rep_id' name='rep_id'
+                            placeholder="Type of ID">
+                        <label for="rep_relationship">* Relationship</label>
+                        <input type="text" class="form-control" id='rep_relationship' name='rep_relationship'
+                            placeholder="Representative Relationship">
+                    </div>
+                </div>
             </div>
-
         </div>
-
         <div class="col-md-3">
             <div class="card" style="padding:5px;">
                 <div class="row">
                     <div class="col-md-12">
-                        <center>  <h2>ADDITIONAL INFORMATION</h2> </center>
-                      </div>
+                        <center>
+                            <h2>ADDITIONAL INFORMATION</h2>
+                        </center>
+                    </div>
                 </div>
-             
+    
                 <div class="row">
                     <div class="col-md-12 mt">
                         <label for="">* Mother's Maiden Name</label>
                     </div>
                 </div>
-                
+    
                 <div class="row">
                     <div class="col-md-12 mt">
                         <div class="col-md-6">
                             <label for="mother_last_name">* Last Name</label>
-                            <input type="text" class='form-control' id='mother_last_name' name='mother_last_name' placeholder="Last Name">
+                            <input type="text" class='form-control' id='mother_last_name' name='mother_last_name'
+                                placeholder="Last Name">
                         </div>
                         <div class="col-md-6">
                             <label for="mother_first_name"> First Name</label>
-                            <input type="text" class='form-control' id='mother_first_name' name='mother_first_name' placeholder="First Name">
+                            <input type="text" class='form-control' id='mother_first_name'
+                                name='mother_first_name' placeholder="First Name">
                         </div>
                         <div class="col-md-6">
                             <label for="mother_mid_name">Middle Name</label>
-                            <input type="text" class='form-control' id='mother_mid_name' name='mother_mid_name' placeholder="Middle Name">
+                            <input type="text" class='form-control' id='mother_mid_name' name='mother_mid_name'
+                                placeholder="Middle Name">
                         </div>
                         <div class="col-md-6">
                             <label for="mother_ext_name">Extension Name</label>
-                            <input type="text" class='form-control' id='mother_ext_name' name='mother_ext_name' placeholder="Extension Name">
+                            <input type="text" class='form-control' id='mother_ext_name' name='mother_ext_name'
+                                placeholder="Extension Name">
                         </div>
                     </div>
                 </div>
-
+    
                 <div class="row">
                     <div class="col-md-12 mt">
                         <label for="birthdate">* Farmer's Birthdate</label>
-                        <input type="text" class='form-control' id='birthdate' name='birthdate' value="{{date("m/d/Y")}}" >
-                      
+                        <input type="text" class='form-control' id='birthdate' name='birthdate'
+                            value="{{ date('m/d/Y') }}">
+    
                     </div>
                 </div>
-                  
+    
                 <div class="row">
                     <div class="col-md-12 mt">
                         <label for="phone_number">* Phone Number</label>
-                        <input type="text" class='form-control' id='phone_number' name='phone_number' placeholder="Contact Number">
+                        <input type="text" class='form-control' id='phone_number' name='phone_number'
+                            placeholder="Contact Number">
                     </div>
                 </div>
-                  
-
-                <div class="row">
-
-                    <div class="col-md-12" style="margin-top:10px;">
-                        <input type="checkbox" class="form-check" id="ip" name="ip"> <label for="ip" class="">Indigenous People </label>
-                      
+    
+                <div class="form_for_old">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:10px;">
+                            <input type="checkbox" class="form-check" id="ip" name="ip"> <label
+                                for="ip" class="">Indigenous People </label>
+        
+                        </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12" id="ip_name_div" style="margin-bottom: 10px;">
-                        <input type="text" class='form-control' id='ip_name' name='ip_name' placeholder="IP Name">
+        
+                    <div class="row">
+                        <div class="col-md-12" id="ip_name_div" style="margin-bottom: 10px;">
+                            <input type="text" class='form-control' id='ip_name' name='ip_name'
+                                placeholder="IP Name">
+                        </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="checkbox" class="form-check" id="pwd" name="pwd"> <label for="pwd" class="">PWD</label>
+        
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="checkbox" class="form-check" id="pwd" name="pwd"> <label
+                                for="pwd" class="">PWD</label>
+                        </div>
                     </div>
+        
+                    <div class="row">
+                        <div class="col-md-12 mt" style="margin-bottom:10px;">
+                            <label for="fca_name">FCA NAME</label>
+                            <input type="text" class="form-control" id='fca_name' name='fca_name'
+                                placeholder="FCA Name">
+                        </div>
+                    </div>    
                 </div>
-
-                <div class="row">
-                    <div class="col-md-12 mt" style="margin-bottom:10px;">
-                        <label for="fca_name">FCA NAME</label>
-                        <input type="text" class="form-control" id='fca_name' name='fca_name' placeholder="FCA Name">
-                    </div>
-                </div>
-
+                
                 <div class="row">
                     <div class="col-md-12">
                         <label for="claimable"></label>
-                        <a style="margin-bottom:10px;" class='btn btn-success form-control' id='save_update' name='save_update' >Save</a>
+                        <a style="margin-bottom:10px;" class='btn btn-success form-control' id='save_update'
+                            name='save_update'>Save</a>
                     </div>
                 </div>
-
-
-
             </div>
-
         </div>
-
-
-            
-
-       
     </div>
 
 
@@ -653,6 +723,7 @@
         $("#connect").hide("fast");
         $("#placeholder_name").hide("fast");
         $("#distribution_div").hide("fast");
+        // $("#distribution_div_new").hide("fast");
 
         $("#ip_name_div").hide("fast");
         $("#rep_info").hide("fast");
@@ -1033,473 +1104,654 @@
     $("#save_update").on("click", function(){
         // TRAPPER
             let connection = $("#connection").val();
-            var served =  $("#is_served").val();
-            console.log(connection);
-            if(served == "false"){
-                     var tbl_data = $('#distribution_tbl >tbody >tr').length;
-                        if(tbl_data <= 0){   Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'No Claim Details',  }); return ;  }
-                        var arrays = [];
-                        $('#distribution_tbl').eq(0).find('tr').each((r,row) => arrays.push($(row).find('td,th').map((c,cell) => $(cell).text()).toArray()))
-                    //FARMER INFO
-                    var virtual_rcef_id_new = $("#virtual_rcef_id_new").val();
-                    var virtual_rsbsa_no_new = $("#virtual_rsbsa_no_new").val();
-                    var last_name_new = $("#last_name_new").val();
-                    var first_name_new = $("#first_name_new").val();
-                    var middle_name_new = $("#middle_name_new").val();
-                    var ext_name_new = $("#ext_name_new").val();
-                    var new_sex = $("#new_sex").val();
-                    var new_province = $("#new_province").val();
-                    var new_municipality = $("#new_municipality").val();
-                    var new_brgy = $("#new_brgy").val();
-                    var float_id = $("#virtual_float_id").val();
+            
 
-                    var dop_selected_vs = $("#dop_selected_vs").val();
-                    var virtual_final_area = $("#virtual_final_area").val();
-                    var virtual_remaining = $("#virtual_remaining").val();
-                    var virtual_claiming_prv = $("#virtual_claiming_prv").val(); //THIS IS PORVINCE MUNICIPALITY
-                    var prv = virtual_claiming_prv;
-                    var db_ref = $("#virtual_db_ref_parcellary").val();
-                    var da_intervention_card = $("#da_intervention_card").val();
-                    var rcef_id = $("#virtual_rcef_id_new").val();
-                    var rsbsa_control_no = $("#virtual_rsbsa_no_new").val();
-                    var yield_area = $("#yield_area").val();
-                    var yield_bags = $("#yield_bags").val();
-                    var yield_weight = $("#yield_weight").val();
-                    var yield_variety = $("#yield_variety").val();
-                    var yield_type = $("#yield_type").val();
-                    var yield_class = $("#yield_class").val();
-                    var crop_est =  $('input[name="crop_est"]:checked').val();
-                    var eco_system =  $('input[name="eco_system"]:checked').val();
-                    var water_source = $("#water_source").val();
-                    var planting_month = $("#planting_month").val();
-                    var planting_week = $("#planting_week").val();
-                    var mother_last_name = $("#mother_last_name").val();
-                    var mother_first_name = $("#mother_first_name").val();
-                    var mother_mid_name = $("#mother_mid_name").val();
-                    var mother_ext_name = $("#mother_ext_name").val();
-                    var birthdate = $("#birthdate").val();
-                    var tel_no = $("#phone_number").val();
-                    var ip =  $("#ip").is(':checked');
-                    if(ip){
-                        ip_name = $("#ip_name").val();
-                    }else{
-                        ip_name = "";
-                    }
-                    var pwd =  $("#pwd").is(':checked');
-                    var fca_name = $("#fca_name").val();
-                    var kp_kit =  $('input[name="kp_kit"]:checked').val();
-                    var ayuda_fertilizer =  $("#fertilizer").is(':checked');
-                    var ayuda_incentives =  $("#cash_incentive").is(':checked');
-                    var ayuda_credit =  $("#credit_loan").is(':checked');
-                    var rep = $("#rep").is(':checked');
-                        if(rep){
-                            var rep_name = $("#rep_name").val();
-                            var rep_id = $("#rep_id").val();
-                            var rep_relationship = $("#rep_relationship").val();
+            if(connection == 1){
+                var served =  $("#is_served").val();
+                // console.log(connection);
+                if(served == "false"){
+                        var tbl_data = $('#distribution_tbl >tbody >tr').length;
+                            if(tbl_data <= 0){   Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'No Claim Details',  }); return ;  }
+                            var arrays = [];
+                            $('#distribution_tbl').eq(0).find('tr').each((r,row) => arrays.push($(row).find('td,th').map((c,cell) => $(cell).text()).toArray()))
+                        //FARMER INFO
+                        var virtual_rcef_id_new = $("#virtual_rcef_id_new").val();
+                        var virtual_rsbsa_no_new = $("#virtual_rsbsa_no_new").val();
+                        var last_name_new = $("#last_name_new").val();
+                        var first_name_new = $("#first_name_new").val();
+                        var middle_name_new = $("#middle_name_new").val();
+                        var ext_name_new = $("#ext_name_new").val();
+                        var new_sex = $("#new_sex").val();
+                        var new_province = $("#new_province").val();
+                        var new_municipality = $("#new_municipality").val();
+                        var new_brgy = $("#new_brgy").val();
+                        var float_id = $("#virtual_float_id").val();
+
+                        var dop_selected_vs = $("#dop_selected_vs").val();
+                        var virtual_final_area = $("#virtual_final_area").val();
+                        var virtual_remaining = $("#virtual_remaining").val();
+                        var virtual_claiming_prv = $("#virtual_claiming_prv").val(); //THIS IS PORVINCE MUNICIPALITY
+                        var prv = virtual_claiming_prv;
+                        var db_ref = $("#virtual_db_ref_parcellary").val();
+                        var da_intervention_card = $("#da_intervention_card").val();
+                        var rcef_id = $("#virtual_rcef_id_new").val();
+                        var rsbsa_control_no = $("#virtual_rsbsa_no_new").val();
+                        var yield_area = $("#yield_area").val();
+                        var yield_bags = $("#yield_bags").val();
+                        var yield_weight = $("#yield_weight").val();
+                        var yield_variety = $("#yield_variety").val();
+                        var yield_type = $("#yield_type").val();
+                        var yield_class = $("#yield_class").val();
+                        var crop_est =  $('input[name="crop_est"]:checked').val();
+                        var eco_system =  $('input[name="eco_system"]:checked').val();
+                        var water_source = $("#water_source").val();
+                        var planting_month = $("#planting_month").val();
+                        var planting_week = $("#planting_week").val();
+                        var mother_last_name = $("#mother_last_name").val();
+                        var mother_first_name = $("#mother_first_name").val();
+                        var mother_mid_name = $("#mother_mid_name").val();
+                        var mother_ext_name = $("#mother_ext_name").val();
+                        var birthdate = $("#birthdate").val();
+                        var tel_no = $("#phone_number").val();
+                        var ip =  $("#ip").is(':checked');
+                        if(ip){
+                            ip_name = $("#ip_name").val();
                         }else{
-                            var rep_name = "";
-                            var rep_id = "";
-                            var rep_relationship = "";
+                            ip_name = "";
+                        }
+                        var pwd =  $("#pwd").is(':checked');
+                        var fca_name = $("#fca_name").val();
+                        var kp_kit =  $('input[name="kp_kit"]:checked').val();
+                        var ayuda_fertilizer =  $("#fertilizer").is(':checked');
+                        var ayuda_incentives =  $("#cash_incentive").is(':checked');
+                        var ayuda_credit =  $("#credit_loan").is(':checked');
+                        var rep = $("#rep").is(':checked');
+                            if(rep){
+                                var rep_name = $("#rep_name").val();
+                                var rep_id = $("#rep_id").val();
+                                var rep_relationship = $("#rep_relationship").val();
+                            }else{
+                                var rep_name = "";
+                                var rep_id = "";
+                                var rep_relationship = "";
+                            }
+
+                        if(last_name_new == "" || first_name_new == "" || middle_name_new == ""  ){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Name Information',  });
+                            return;
                         }
 
-                    if(last_name_new == "" || first_name_new == "" || middle_name_new == ""  ){ 
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Name Information',  });
-                        return;
-                    }
+                        if(new_brgy == "0" || new_municipality == "0"  ){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Home Address Information',  });
+                            return;
+                        }
 
-                    if(new_brgy == "0" || new_municipality == "0"  ){ 
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Home Address Information',  });
-                        return;
-                    }
-
-                    if(yield_area == "" || yield_bags == "" || yield_weight == "" || yield_variety == "" || yield_type == "" ){ 
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Last Season Yield Data',  });
-                        return;
-                    }    
-                 
-                    if(mother_last_name == ""){
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother Last Name',  });
-                         return ; }
-                    // if(mother_first_name == ""){ 
-                    //     Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother First Name',  });
-                    //     return ; }
-                    if(birthdate == ""){ 
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Farmer Birthdate',  });
-                    return ; }
-
+                        if(yield_area == "" || yield_bags == "" || yield_weight == "" || yield_variety == "" || yield_type == "" ){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Last Season Yield Data',  });
+                            return;
+                        }    
                     
-                    if(eco_system == undefined){
-                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
-                    return;}
+                        if(mother_last_name == ""){
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother Last Name',  });
+                            return ; }
+                        // if(mother_first_name == ""){ 
+                        //     Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother First Name',  });
+                        //     return ; }
+                        if(birthdate == ""){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Farmer Birthdate',  });
+                        return ; }
 
-                    if(crop_est == undefined){
-                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
-                    return;}
+                        
+                        if(eco_system == undefined){
+                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
+                        return;}
 
-                    if(kp_kit == undefined){
-                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please select if farmer received KP Product',  });
-                    return;}
+                        if(crop_est == undefined){
+                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
+                        return;}
 
-                    Swal.fire({
-                        title: "This farmer will not post immidiately, this will be subject for approval",
-                        text: "** FARMER INSERTED WILL BE SUBJECT FOR APPROVAL **",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: "Yes, Wait for Approval",
-                    }).then(function(result) {
-                       
-                        if (result.value) {
-                        //    AJAX AND SAVE HERE
-                        HoldOn.open(holdon_options);
-                        $.ajax({
-                            type: 'POST',
-                            url: "{{route('virtual.insert.distribution')}}",
-                            data: {
-                                connection: connection,
-                                _token: "{{ csrf_token() }}",
-                                category: "INBRED",
-                                float_id: float_id,
-                                served: served,
-                                virtual_rcef_id_new: virtual_rcef_id_new,
-                                virtual_rsbsa_no_new: virtual_rsbsa_no_new,
-                                last_name_new: last_name_new,
-                                first_name_new: first_name_new,
-                                middle_name_new: middle_name_new,
-                                ext_name_new: ext_name_new,
-                                new_sex: new_sex,
-                                new_province: new_province,
-                                new_municipality: new_municipality,
-                                new_brgy: new_brgy,
-                                dop_selected_vs: dop_selected_vs,
-                                virtual_final_area: virtual_final_area,
-                                virtual_remaining: virtual_remaining,
-                                virtual_claiming_prv: virtual_claiming_prv,
-                                db_ref: db_ref,
-                                da_intervention_card: da_intervention_card,
-                                rcef_id: rcef_id,
-                                rsbsa_control_no: rsbsa_control_no,
-                                yield_area: yield_area,
-                                yield_bags: yield_bags,
-                                yield_weight: yield_weight,
-                                yield_variety: yield_variety,
-                                yield_type: yield_type,
-                                yield_class: yield_class,
-                                crop_est: crop_est,
-                                eco_system: eco_system,
-                                water_source: water_source,
-                                planting_month: planting_month,
-                                planting_week: planting_week,
-                                mother_last_name: mother_last_name,
-                                mother_first_name: mother_first_name,
-                                mother_mid_name: mother_mid_name,
-                                mother_ext_name: mother_ext_name,
-                                birthdate: birthdate,
-                                tel_no: tel_no,
-                                ip: ip,
-                                ip_name: ip_name,
-                                pwd: pwd,
-                                fca_name: fca_name,
-                                kp_kit: kp_kit,
-                                ayuda_fertilizer: ayuda_fertilizer,
-                                ayuda_incentives: ayuda_incentives,
-                                ayuda_credit: ayuda_credit,
-                                rep: rep,
-                                rep_name: rep_name,
-                                rep_id: rep_id,
-                                rep_relationship: rep_relationship,
-                                distribution: arrays
-                            },
-                            dataType: 'json',
-                            success: function(result){
-                         
+                        if(kp_kit == undefined){
+                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please select if farmer received KP Product',  });
+                        return;}
 
-                                if(result["status"] != "1"){
-                                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: result["msg"],  });
-                                }else{
-                                    Swal.fire(
-                                        "SAVED!",
-                                        "Your Distribution Have been Saved.",
-                                        "success"
-                                    );
-                                    
-                                    var d = result["msg"];
-                                    
-                                    $("#virtual_rcef_id_new").attr("readonly", "readonly");
-                                    $("#virtual_rcef_id_new").val(result["msg"].rcef_id);
+                        Swal.fire({
+                            title: "This farmer will not post immidiately, this will be subject for approval",
+                            text: "** FARMER INSERTED WILL BE SUBJECT FOR APPROVAL **",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, Wait for Approval",
+                        }).then(function(result) {
+                        
+                            if (result.value) {
+                            //    AJAX AND SAVE HERE
+                            HoldOn.open(holdon_options);
+                            $.ajax({
+                                type: 'POST',
+                                url: "{{route('virtual.insert.distribution')}}",
+                                data: {
+                                    connection: connection,
+                                    _token: "{{ csrf_token() }}",
+                                    category: "INBRED",
+                                    float_id: float_id,
+                                    served: served,
+                                    virtual_rcef_id_new: virtual_rcef_id_new,
+                                    virtual_rsbsa_no_new: virtual_rsbsa_no_new,
+                                    last_name_new: last_name_new,
+                                    first_name_new: first_name_new,
+                                    middle_name_new: middle_name_new,
+                                    ext_name_new: ext_name_new,
+                                    new_sex: new_sex,
+                                    new_province: new_province,
+                                    new_municipality: new_municipality,
+                                    new_brgy: new_brgy,
+                                    dop_selected_vs: dop_selected_vs,
+                                    virtual_final_area: virtual_final_area,
+                                    virtual_remaining: virtual_remaining,
+                                    virtual_claiming_prv: virtual_claiming_prv,
+                                    db_ref: db_ref,
+                                    da_intervention_card: da_intervention_card,
+                                    rcef_id: rcef_id,
+                                    rsbsa_control_no: rsbsa_control_no,
+                                    yield_area: yield_area,
+                                    yield_bags: yield_bags,
+                                    yield_weight: yield_weight,
+                                    yield_variety: yield_variety,
+                                    yield_type: yield_type,
+                                    yield_class: yield_class,
+                                    crop_est: crop_est,
+                                    eco_system: eco_system,
+                                    water_source: water_source,
+                                    planting_month: planting_month,
+                                    planting_week: planting_week,
+                                    mother_last_name: mother_last_name,
+                                    mother_first_name: mother_first_name,
+                                    mother_mid_name: mother_mid_name,
+                                    mother_ext_name: mother_ext_name,
+                                    birthdate: birthdate,
+                                    tel_no: tel_no,
+                                    ip: ip,
+                                    ip_name: ip_name,
+                                    pwd: pwd,
+                                    fca_name: fca_name,
+                                    kp_kit: kp_kit,
+                                    ayuda_fertilizer: ayuda_fertilizer,
+                                    ayuda_incentives: ayuda_incentives,
+                                    ayuda_credit: ayuda_credit,
+                                    rep: rep,
+                                    rep_name: rep_name,
+                                    rep_id: rep_id,
+                                    rep_relationship: rep_relationship,
+                                    distribution: arrays
+                                },
+                                dataType: 'json',
+                                success: function(result){
+                                    console.log(result);
 
-                                    $("#virtual_rsbsa_no_new").attr("readonly", "readonly");
-                                    $("#virtual_rsbsa_no_new").val(result["msg"].rsbsa_control_no);
-
-                                    $("#last_name_new").attr("readonly", "readonly");
-                                    $("#last_name_new").val(result["msg"].lastName);
-
-                                    $("#first_name_new").attr("readonly", "readonly");
-                                    $("#first_name_new").val(result["msg"].firstName);
-
-                                    $("#middle_name_new").attr("readonly", "readonly");
-                                    $("#middle_name_new").val(result["msg"].midName);
-
-                                    $("#ext_name_new").attr("readonly", "readonly");
-                                    $("#ext_name_new").val(result["msg"].extName);
-
-                                    $("#new_sex").attr("readonly", "readonly");
-                                    $("#new_sex").val(result["msg"].sex).change();
-
-                                    $("#new_province").attr("readonly", "readonly");
-                                    $("#new_province").val(result["msg"].province);
-
-                                    $("#new_municipality").attr("readonly", "readonly");
-                                    $("#new_municipality").val(result["msg"].municipality);
-
-                                    $("#new_brgy").attr("readonly", "readonly");
-                                    
-                                    var float_id =  result["msg"].float_id;
-                                    var total_claimed_area =  result["msg"].total_claimed_area;
-                                    var final_area =  result["msg"].final_area;
-
-                                    var remaining_new = parseFloat(final_area) - parseFloat(total_claimed_area);
-
-                                    var remaining_bags = parseInt(d.total_claimable) - parseInt(d.total_claimed);
-
-                                    if(remaining_new > 0 ){
-                                        $("#new_parcel_"+d.float_id).data("data-db_ref", d.db_ref);
-                                        $("#new_parcel_"+d.float_id).data("data-mother_lname", d.mother_lname);
-                                        $("#new_parcel_"+d.float_id).data("data-mother_fname", d.mother_fname);
-                                        $("#new_parcel_"+d.float_id).data("data-mother_mname", d.mother_mname);
-                                        $("#new_parcel_"+d.float_id).data("data-mother_suffix", d.mother_suffix);
-                                        $("#new_parcel_"+d.float_id).data("data-is_ip", d.is_ip);
-                                        $("#new_parcel_"+d.float_id).data("data-tribe_name", d.tribe_name);
-                                        $("#new_parcel_"+d.float_id).data("data-is_pwd", d.is_pwd);
-                                        $("#new_parcel_"+d.float_id).data("data-birthdate", d.birthdate);
-                                        $("#new_parcel_"+d.float_id).data("data-claiming_prv", d.claiming_prv);
-                                        $("#new_parcel_"+d.float_id).data("data-tel_no", d.tel_no);
-                                        $("#new_parcel_"+d.float_id).data("data-fca_name", d.fca_name);
-                                        $("#new_parcel_"+d.float_id).data("data-served", "true");
-                                        $("#new_parcel_"+d.float_id).data("data-remaining", remaining_bags);
-                                        $("#new_parcel_"+d.float_id).data("data-final_area", d.final_area);
-                                        $("#new_parcel_"+d.float_id).data("data-prv", d.prv);
-                                        $("#new_parcel_"+d.float_id).data("data-municipality", d.municipality);
-                                        $("#new_parcel_"+d.float_id).data("data-province", d.province);
-                                        $("#new_parcel_"+d.float_id).data("class", "btn btn-dark btn-lg parcel_btn");
-                                        
-                                        $("#new_parcel_"+d.float_id).attr("disabled", "true");
-                                        $("#new_parcel_"+d.float_id).empty().append(d.province+"<br> "+d.municipality+"<br>"+remaining_new+" available out of "+d.final_area+" (ha)");
-
+                                    if(result["status"] != "1"){
+                                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: result["msg"],  });
                                     }else{
-                                        $("#new_parcel_"+d.float_id).data("data-served", "true");
-                                        $("#new_parcel_"+d.float_id).attr("class", "btn btn-warning btn-lg parcel_btn");
-                                        $("#new_parcel_"+d.float_id).attr("disabled", "true");
+                                        Swal.fire(
+                                            "SAVED!",
+                                            "Your Distribution Have been Saved.",
+                                            "success"
+                                        );
                                         
-                                        $("#new_parcel_"+d.float_id).empty().append(d.province+"<br> "+d.municipality+"<br>"+remaining_new+" available out of "+d.final_area+" (ha)");
+                                        var d = result["msg"];
+                                        
+                                        $("#virtual_rcef_id_new").attr("readonly", "readonly");
+                                        $("#virtual_rcef_id_new").val(result["msg"].rcef_id);
+
+                                        $("#virtual_rsbsa_no_new").attr("readonly", "readonly");
+                                        $("#virtual_rsbsa_no_new").val(result["msg"].rsbsa_control_no);
+
+                                        $("#last_name_new").attr("readonly", "readonly");
+                                        $("#last_name_new").val(result["msg"].lastName);
+
+                                        $("#first_name_new").attr("readonly", "readonly");
+                                        $("#first_name_new").val(result["msg"].firstName);
+
+                                        $("#middle_name_new").attr("readonly", "readonly");
+                                        $("#middle_name_new").val(result["msg"].midName);
+
+                                        $("#ext_name_new").attr("readonly", "readonly");
+                                        $("#ext_name_new").val(result["msg"].extName);
+
+                                        $("#new_sex").attr("readonly", "readonly");
+                                        $("#new_sex").val(result["msg"].sex).change();
+
+                                        $("#new_province").attr("readonly", "readonly");
+                                        $("#new_province").val(result["msg"].province);
+
+                                        $("#new_municipality").attr("readonly", "readonly");
+                                        $("#new_municipality").val(result["msg"].municipality);
+
+                                        $("#new_brgy").attr("readonly", "readonly");
+                                        
+                                        var float_id =  result["msg"].float_id;
+                                        var total_claimed_area =  result["msg"].total_claimed_area;
+                                        var final_area =  result["msg"].final_area;
+
+                                        var remaining_new = parseFloat(final_area) - parseFloat(total_claimed_area);
+
+                                        var remaining_bags = parseInt(d.total_claimable) - parseInt(d.total_claimed);
+
+                                        if(remaining_new > 0 ){
+                                            $("#new_parcel_"+d.float_id).data("data-db_ref", d.db_ref);
+                                            $("#new_parcel_"+d.float_id).data("data-mother_lname", d.mother_lname);
+                                            $("#new_parcel_"+d.float_id).data("data-mother_fname", d.mother_fname);
+                                            $("#new_parcel_"+d.float_id).data("data-mother_mname", d.mother_mname);
+                                            $("#new_parcel_"+d.float_id).data("data-mother_suffix", d.mother_suffix);
+                                            $("#new_parcel_"+d.float_id).data("data-is_ip", d.is_ip);
+                                            $("#new_parcel_"+d.float_id).data("data-tribe_name", d.tribe_name);
+                                            $("#new_parcel_"+d.float_id).data("data-is_pwd", d.is_pwd);
+                                            $("#new_parcel_"+d.float_id).data("data-birthdate", d.birthdate);
+                                            $("#new_parcel_"+d.float_id).data("data-claiming_prv", d.claiming_prv);
+                                            $("#new_parcel_"+d.float_id).data("data-tel_no", d.tel_no);
+                                            $("#new_parcel_"+d.float_id).data("data-fca_name", d.fca_name);
+                                            $("#new_parcel_"+d.float_id).data("data-served", "true");
+                                            $("#new_parcel_"+d.float_id).data("data-remaining", remaining_bags);
+                                            $("#new_parcel_"+d.float_id).data("data-final_area", d.final_area);
+                                            $("#new_parcel_"+d.float_id).data("data-prv", d.prv);
+                                            $("#new_parcel_"+d.float_id).data("data-municipality", d.municipality);
+                                            $("#new_parcel_"+d.float_id).data("data-province", d.province);
+                                            $("#new_parcel_"+d.float_id).data("class", "btn btn-dark btn-lg parcel_btn");
+                                            
+                                            $("#new_parcel_"+d.float_id).attr("disabled", "true");
+                                            $("#new_parcel_"+d.float_id).empty().append(d.province+"<br> "+d.municipality+"<br>"+remaining_new+" available out of "+d.final_area+" (ha)");
+
+                                        }else{
+                                            $("#new_parcel_"+d.float_id).data("data-served", "true");
+                                            $("#new_parcel_"+d.float_id).attr("class", "btn btn-warning btn-lg parcel_btn");
+                                            $("#new_parcel_"+d.float_id).attr("disabled", "true");
+                                            
+                                            $("#new_parcel_"+d.float_id).empty().append(d.province+"<br> "+d.municipality+"<br>"+remaining_new+" available out of "+d.final_area+" (ha)");
+
+                                        }
+                                    
+
+                                        $("#distribution_div").hide("fast");
+                                        clear_distri_form_new();
 
                                     }
+
                                 
-
-                                    $("#distribution_div").hide("fast");
-                                    clear_distri_form_new();
-
+                                    // downloadData();
+                                    HoldOn.close();
+                                },
+                                error: function(result){
+                                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Server Unreachable',  });
+                                    // downloadData();
+                                    HoldOn.close();
                                 }
-
-                            
-                                // downloadData();
-                                HoldOn.close();
-                            },
-                            error: function(result){
-                                Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Server Unreachable',  });
-                                // downloadData();
-                                HoldOn.close();
-                            }
-                            });
-                     }
-                    });
-
-
-
-
-
-
-            }else{
-                var tbl_data = $('#distribution_tbl >tbody >tr').length;
-                    if(tbl_data <= 0){
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'No Claim Details',  });
-                        return ;
-                    }
-                    var arrays = [];
-                    $('#distribution_tbl').eq(0).find('tr').each((r,row) => arrays.push($(row).find('td,th').map((c,cell) => $(cell).text()).toArray()))
-
-                    var dop_selected_vs = $("#dop_selected_vs").val();
-                    var virtual_final_area = $("#virtual_final_area").val();
-                    var virtual_remaining = $("#virtual_remaining").val();
-                    var virtual_claiming_prv = $("#virtual_claiming_prv").val();
-
-                    var prv = virtual_claiming_prv.substring(0,5);
-                    prv = prv.replace("-", "");
-                    var db_ref = $("#virtual_db_ref_parcellary").val();
-                    var da_intervention_card = $("#da_intervention_card").val();
-                    var rcef_id = $("#virtual_rcef_id").val();
-                    var rsbsa_control_no = $("#virtual_rsbsa_no").val();
-                    var yield_area = $("#yield_area").val();
-                    var yield_bags = $("#yield_bags").val();
-                    var yield_weight = $("#yield_weight").val();
-                    var yield_variety = $("#yield_variety").val();
-                    var yield_type = $("#yield_type").val();
-                    var yield_class = $("#yield_class").val();
-                    var crop_est =  $('input[name="crop_est"]:checked').val();
-                    var eco_system =  $('input[name="eco_system"]:checked').val();
-                    var water_source = $("#water_source").val();
-                    var planting_month = $("#planting_month").val();
-                    var planting_week = $("#planting_week").val();
-                    var mother_last_name = $("#mother_last_name").val();
-                    var mother_first_name = $("#mother_first_name").val();
-                    var mother_mid_name = $("#mother_mid_name").val();
-                    var mother_ext_name = $("#mother_ext_name").val();
-                    var birthdate = $("#birthdate").val();
-                    var tel_no = $("#phone_number").val();
-                    var ip =  $("#ip").is(':checked');
-                    if(ip){
-                        ip_name = $("#ip_name").val();
-                    }else{
-                        ip_name = "";
-                    }
-                    var pwd =  $("#pwd").is(':checked');
-                    var fca_name = $("#fca_name").val();
-                    var kp_kit =  $('input[name="kp_kit"]:checked').val();
-                    var ayuda_fertilizer =  $("#fertilizer").is(':checked');
-                    var ayuda_incentives =  $("#cash_incentive").is(':checked');
-                    var ayuda_credit =  $("#credit_loan").is(':checked');
-                    var rep = $("#rep").is(':checked');
-                        if(rep){
-                            var rep_name = $("#rep_name").val();
-                            var rep_id = $("#rep_id").val();
-                            var rep_relationship = $("#rep_relationship").val();
-                        }else{
-                            var rep_name = "";
-                            var rep_id = "";
-                            var rep_relationship = "";
+                                });
                         }
-                
-                        
-
-                    
-                    if(yield_area == "" || yield_bags == "" || yield_weight == "" || yield_variety == "" || yield_type == "" ){ 
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Last Season Yield Data',  });
-                        return;
-                    }    
-                 
-                    if(mother_last_name == ""){
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother Last Name',  });
-                         return ; }
-                    // if(mother_first_name == ""){ 
-                    //     Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother First Name',  });
-                    //     return ; }
-                    if(birthdate == ""){ 
-                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Farmer Birthdate',  });
-                    return ; }
-
-                    
-                    if(eco_system == undefined){
-                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
-                    return;}
-
-                    if(crop_est == undefined){
-                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
-                    return;}
-
-                    if(kp_kit == undefined){
-                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please select if farmer received KP Product',  });
-                    return;}
-
-                  
-                    Swal.fire({
-                        title: "Save Distribution?",
-                        text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: "Yes, Save It!"
-                    }).then(function(result) {
-                        if (result.value) {
-                        //    AJAX AND SAVE HERE
-                        HoldOn.open(holdon_options);
-                        $.ajax({
-                            type: 'POST',
-                            url: "{{route('virtual.save.distribution')}}",
-                            data: {
-                                connection: connection,
-                                _token: "{{ csrf_token() }}",
-                                category: "INBRED",
-                                dop_selected_vs: dop_selected_vs,
-                                virtual_final_area: virtual_final_area,
-                                virtual_remaining: virtual_remaining,
-                                virtual_claiming_prv: virtual_claiming_prv,
-                                db_ref: db_ref,
-                                da_intervention_card: da_intervention_card,
-                                rcef_id: rcef_id,
-                                rsbsa_control_no: rsbsa_control_no,
-                                yield_area: yield_area,
-                                yield_bags: yield_bags,
-                                yield_weight: yield_weight,
-                                yield_variety: yield_variety,
-                                yield_type: yield_type,
-                                yield_class: yield_class,
-                                crop_est: crop_est,
-                                eco_system: eco_system,
-                                water_source: water_source,
-                                planting_month: planting_month,
-                                planting_week: planting_week,
-                                mother_last_name: mother_last_name,
-                                mother_first_name: mother_first_name,
-                                mother_mid_name: mother_mid_name,
-                                mother_ext_name: mother_ext_name,
-                                birthdate: birthdate,
-                                tel_no: tel_no,
-                                ip: ip,
-                                ip_name: ip_name,
-                                pwd: pwd,
-                                fca_name: fca_name,
-                                kp_kit: kp_kit,
-                                ayuda_fertilizer: ayuda_fertilizer,
-                                ayuda_incentives: ayuda_incentives,
-                                ayuda_credit: ayuda_credit,
-                                rep: rep,
-                                rep_name: rep_name,
-                                rep_id: rep_id,
-                                rep_relationship: rep_relationship,
-                                distribution: arrays
-                            },
-                            dataType: 'json',
-                            success: function(result){
-                                if(result != "true"){
-                                
-                                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: result,  });
-                                }else{
-
-                                    Swal.fire(
-                                        "SAVED!",
-                                        "Your Distribution Have been Saved.",
-                                        "success"
-                                    );
-                                    
-                                    select_farmer(db_ref, prv);
-                                }
-
-                            
-
-
-                            
+                        });
 
 
 
-                                // downloadData();
-                                HoldOn.close();
-                            },
-                            error: function(result){
-                                Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Server Unreachable',  });
-                                // downloadData();
-                                HoldOn.close();
+
+
+
+                }else{
+                    var tbl_data = $('#distribution_tbl >tbody >tr').length;
+                        if(tbl_data <= 0){
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'No Claim Details',  });
+                            return ;
+                        }
+                        var arrays = [];
+                        $('#distribution_tbl').eq(0).find('tr').each((r,row) => arrays.push($(row).find('td,th').map((c,cell) => $(cell).text()).toArray()))
+
+                        var dop_selected_vs = $("#dop_selected_vs").val();
+                        var virtual_final_area = $("#virtual_final_area").val();
+                        var virtual_remaining = $("#virtual_remaining").val();
+                        var virtual_claiming_prv = $("#virtual_claiming_prv").val();
+
+                        var prv = virtual_claiming_prv.substring(0,5);
+                        prv = prv.replace("-", "");
+                        var db_ref = $("#virtual_db_ref_parcellary").val();
+                        var da_intervention_card = $("#da_intervention_card").val();
+                        var rcef_id = $("#virtual_rcef_id").val();
+                        var rsbsa_control_no = $("#virtual_rsbsa_no").val();
+                        var yield_area = $("#yield_area").val();
+                        var yield_bags = $("#yield_bags").val();
+                        var yield_weight = $("#yield_weight").val();
+                        var yield_variety = $("#yield_variety").val();
+                        var yield_type = $("#yield_type").val();
+                        var yield_class = $("#yield_class").val();
+                        var crop_est =  $('input[name="crop_est"]:checked').val();
+                        var eco_system =  $('input[name="eco_system"]:checked').val();
+                        var water_source = $("#water_source").val();
+                        var planting_month = $("#planting_month").val();
+                        var planting_week = $("#planting_week").val();
+                        var mother_last_name = $("#mother_last_name").val();
+                        var mother_first_name = $("#mother_first_name").val();
+                        var mother_mid_name = $("#mother_mid_name").val();
+                        var mother_ext_name = $("#mother_ext_name").val();
+                        var birthdate = $("#birthdate").val();
+                        var tel_no = $("#phone_number").val();
+                        var ip =  $("#ip").is(':checked');
+                        if(ip){
+                            ip_name = $("#ip_name").val();
+                        }else{
+                            ip_name = "";
+                        }
+                        var pwd =  $("#pwd").is(':checked');
+                        var fca_name = $("#fca_name").val();
+                        var kp_kit =  $('input[name="kp_kit"]:checked').val();
+                        var ayuda_fertilizer =  $("#fertilizer").is(':checked');
+                        var ayuda_incentives =  $("#cash_incentive").is(':checked');
+                        var ayuda_credit =  $("#credit_loan").is(':checked');
+                        var rep = $("#rep").is(':checked');
+                            if(rep){
+                                var rep_name = $("#rep_name").val();
+                                var rep_id = $("#rep_id").val();
+                                var rep_relationship = $("#rep_relationship").val();
+                            }else{
+                                var rep_name = "";
+                                var rep_id = "";
+                                var rep_relationship = "";
                             }
+                    
+                            
+
+                        
+                        if(yield_area == "" || yield_bags == "" || yield_weight == "" || yield_variety == "" || yield_type == "" ){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Last Season Yield Data',  });
+                            return;
+                        }    
+                    
+                        if(mother_last_name == ""){
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother Last Name',  });
+                            return ; }
+                        // if(mother_first_name == ""){ 
+                        //     Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother First Name',  });
+                        //     return ; }
+                        if(birthdate == ""){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Farmer Birthdate',  });
+                        return ; }
+
+                        
+                        if(eco_system == undefined){
+                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
+                        return;}
+
+                        if(crop_est == undefined){
+                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Choose Eco System',  });
+                        return;}
+
+                        if(kp_kit == undefined){
+                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please select if farmer received KP Product',  });
+                        return;}
+
+                    
+                        Swal.fire({
+                            title: "Save Distribution?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, Save It!"
+                        }).then(function(result) {
+                            if (result.value) {
+                            //    AJAX AND SAVE HERE
+                            HoldOn.open(holdon_options);
+                            $.ajax({
+                                type: 'POST',
+                                url: "{{route('virtual.save.distribution')}}",
+                                data: {
+                                    connection: connection,
+                                    _token: "{{ csrf_token() }}",
+                                    category: "INBRED",
+                                    dop_selected_vs: dop_selected_vs,
+                                    virtual_final_area: virtual_final_area,
+                                    virtual_remaining: virtual_remaining,
+                                    virtual_claiming_prv: virtual_claiming_prv,
+                                    db_ref: db_ref,
+                                    da_intervention_card: da_intervention_card,
+                                    rcef_id: rcef_id,
+                                    rsbsa_control_no: rsbsa_control_no,
+                                    yield_area: yield_area,
+                                    yield_bags: yield_bags,
+                                    yield_weight: yield_weight,
+                                    yield_variety: yield_variety,
+                                    yield_type: yield_type,
+                                    yield_class: yield_class,
+                                    crop_est: crop_est,
+                                    eco_system: eco_system,
+                                    water_source: water_source,
+                                    planting_month: planting_month,
+                                    planting_week: planting_week,
+                                    mother_last_name: mother_last_name,
+                                    mother_first_name: mother_first_name,
+                                    mother_mid_name: mother_mid_name,
+                                    mother_ext_name: mother_ext_name,
+                                    birthdate: birthdate,
+                                    tel_no: tel_no,
+                                    ip: ip,
+                                    ip_name: ip_name,
+                                    pwd: pwd,
+                                    fca_name: fca_name,
+                                    kp_kit: kp_kit,
+                                    ayuda_fertilizer: ayuda_fertilizer,
+                                    ayuda_incentives: ayuda_incentives,
+                                    ayuda_credit: ayuda_credit,
+                                    rep: rep,
+                                    rep_name: rep_name,
+                                    rep_id: rep_id,
+                                    rep_relationship: rep_relationship,
+                                    distribution: arrays
+                                },
+                                dataType: 'json',
+                                success: function(result){
+                                    if(result != "true"){
+                                    
+                                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: result,  });
+                                    }else{
+
+                                        Swal.fire(
+                                            "SAVED!",
+                                            "Your Distribution Have been Saved.",
+                                            "success"
+                                        );
+                                        
+                                        select_farmer(db_ref, prv);
+                                    }
+
+                                
+
+
+                                
+
+
+
+                                    // downloadData();
+                                    HoldOn.close();
+                                },
+                                error: function(result){
+                                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Server Unreachable',  });
+                                    // downloadData();
+                                    HoldOn.close();
+                                }
+                                });
+                        }
+                        });
+                }
+            } else {
+                if(served == "false"){}
+                else{
+                    var tbl_data = $('#distribution_tbl >tbody >tr').length;
+                        if(tbl_data <= 0){
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'No Claim Details',  });
+                            return ;
+                        }
+                        var arrays = [];
+                        $('#distribution_tbl').eq(0).find('tr').each((r,row) => arrays.push($(row).find('td,th').map((c,cell) => $(cell).text()).toArray()))
+    
+                        var arrays2 = [];
+                        $('#lotseries').eq(0).find('tr').each((r,row) => arrays2.push($(row).find('td,th').map((c,cell) => $(cell).text()).toArray()))
+    
+    
+                        var dop_selected_vs = $("#dop_selected_vs").val();
+                        var virtual_final_area = $("#virtual_final_area").val();
+                        var virtual_remaining = $("#virtual_remaining").val();
+                        var virtual_claiming_prv = $("#virtual_claiming_prv").val();
+    
+                        var prv = virtual_claiming_prv.substring(0,5);
+                        prv = prv.replace("-", "");
+                        var db_ref = $("#virtual_db_ref_parcellary").val();
+                        var da_intervention_card = $("#da_intervention_card").val();
+                        var rcef_id = $("#virtual_rcef_id").val();
+                        var rsbsa_control_no = $("#virtual_rsbsa_no").val();
+                        var yield_area = $("#yield_area").val();
+                        var yield_bags = $("#yield_bags").val();
+                        var yield_weight = $("#yield_weight").val();
+                        var yield_variety = $("#yield_variety").val();
+                        var yield_type = $("#yield_type").val();
+                        var yield_class = $("#yield_class").val();
+                        var crop_est =  $('input[name="crop_est"]:checked').val();
+                        var eco_system =  $('input[name="eco_system"]:checked').val();
+                        var water_source = $("#water_source").val();
+                        var planting_month = $("#planting_month").val();
+                        var planting_week = $("#planting_week").val();
+                        var mother_last_name = $("#mother_last_name").val();
+                        var mother_first_name = $("#mother_first_name").val();
+                        var mother_mid_name = $("#mother_mid_name").val();
+                        var mother_ext_name = $("#mother_ext_name").val();
+                        var birthdate = $("#birthdate").val();
+                        var tel_no = $("#phone_number").val();
+                        var ip =  $("#ip").is(':checked');
+                        if(ip){
+                            ip_name = $("#ip_name").val();
+                        }else{
+                            ip_name = "";
+                        }
+                        var pwd =  $("#pwd").is(':checked');
+                        var fca_name = $("#orgName").val();
+                        var kp_kit =  $('input[name="kp_kit"]:checked').val();
+                        var ayuda_fertilizer =  $("#fertilizer").is(':checked');
+                        var ayuda_incentives =  $("#cash_incentive").is(':checked');
+                        var ayuda_credit =  $("#credit_loan").is(':checked');
+                        var rep = $("#rep").is(':checked');
+                            if(rep){
+                                var rep_name = $("#rep_name").val();
+                                var rep_id = $("#rep_id").val();
+                                var rep_relationship = $("#rep_relationship").val();
+                            }else{
+                                var rep_name = "";
+                                var rep_id = "";
+                                var rep_relationship = "";
+                            }
+                    
+                            
+    
+                        
+                        if(yield_area == "" || yield_bags == "" || yield_weight == "" || yield_variety == "" || yield_type == "" ){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Complete Last Season Yield Data',  });
+                            return;
+                        }    
+                     
+                        if(mother_last_name == ""){
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother Last Name',  });
+                             return ; }
+                        // if(mother_first_name == ""){ 
+                        //     Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Mother First Name',  });
+                        //     return ; }
+                        if(birthdate == ""){ 
+                            Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Please Input Farmer Birthdate',  });
+                        return ; }                
+    
+                      
+                        Swal.fire({
+                            title: "Save Distribution?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, Save It!"
+                        }).then(function(result) {
+                            if (result.value) {
+                            //    AJAX AND SAVE HERE
+                            HoldOn.open(holdon_options);
+                            $.ajax({
+                                type: 'POST',
+                                url: "{{route('virtual.save.distribution')}}",
+                                data: {
+                                    connection: connection,
+                                    _token: "{{ csrf_token() }}",
+                                    category: "HYBRID",
+                                    dop_selected_vs: dop_selected_vs,
+                                    virtual_final_area: virtual_final_area,
+                                    virtual_remaining: virtual_remaining,
+                                    virtual_claiming_prv: virtual_claiming_prv,
+                                    db_ref: db_ref,
+                                    da_intervention_card: da_intervention_card,
+                                    rcef_id: rcef_id,
+                                    rsbsa_control_no: rsbsa_control_no,
+                                    yield_area: yield_area,
+                                    yield_bags: yield_bags,
+                                    yield_weight: yield_weight,
+                                    yield_variety: yield_variety,
+                                    yield_type: yield_type,
+                                    yield_class: yield_class,
+                                    crop_est: crop_est,
+                                    eco_system: eco_system,
+                                    water_source: water_source,
+                                    planting_month: planting_month,
+                                    planting_week: planting_week,
+                                    mother_last_name: mother_last_name,
+                                    mother_first_name: mother_first_name,
+                                    mother_mid_name: mother_mid_name,
+                                    mother_ext_name: mother_ext_name,
+                                    birthdate: birthdate,
+                                    tel_no: tel_no,
+                                    fca_name: fca_name,
+                                    kp_kit: kp_kit,
+                                    ayuda_fertilizer: ayuda_fertilizer,
+                                    ayuda_incentives: ayuda_incentives,
+                                    ayuda_credit: ayuda_credit,
+                                    rep: rep,
+                                    rep_name: rep_name,
+                                    rep_id: rep_id,
+                                    rep_relationship: rep_relationship,
+                                    distribution: arrays,
+                                    lots: arrays2
+                                },
+                                dataType: 'json',
+                                success: function(result){
+                                    if(result != "true"){
+                                    
+                                        Swal.fire({   icon: 'error',    title: 'Oops...',  text: result,  });
+                                    }else{
+    
+                                        Swal.fire(
+                                            "SAVED!",
+                                            "Your Distribution Have been Saved.",
+                                            "success"
+                                        );
+                                        
+                                        select_farmer(db_ref, prv);
+                                        $("#placeholder_name").hide("fast");
+                                        $("#distribution_div").hide("fast");
+                                        /* $("#farmer_info_rec").hide("fast"); */
+                                    }
+    
+                                
+    
+    
+                                
+    
+    
+    
+                                    // downloadData();
+                                    HoldOn.close();
+                                },
+                                error: function(result){
+                                    Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Server Unreachable',  });
+                                    // downloadData();
+                                    HoldOn.close();
+                                }
                             });
-                     }
-                    });
+                         }
+                        });
+                }
             }
     });
 
@@ -1667,12 +1919,20 @@
 
 
         $("#dop_select").on("click", function(){
+            let conn = $("#connection").val();
+                if(conn == 1){
+                    $(".form_for_new").hide();
+                    $(".form_for_old").show();
+                } else {
+                    $(".form_for_new").show();
+                    $(".form_for_old").hide();
+                }
                 $("#distribution_div").show("fast");
                 var select_dop =  $("#select_dop").val();
                 var dop_selected_name = $('#select_dop').find(":selected").text();
                 console.log(select_dop,dop_selected_name);
-               $("#dop_selected_vs").val(select_dop);
-               $("#dop_selected_name").val(dop_selected_name);
+                $("#dop_selected_vs").val(select_dop);
+                $("#dop_selected_name").val(dop_selected_name);
         });
 
         $('#select_dop_modal').on('show.bs.modal', function (e) {
@@ -1828,6 +2088,7 @@
                  
                 
                 $("#parcelary_list").empty();
+                console.log(result["parcel_list"]);
                 $.each(result["parcel_list"], function (i, d) {
                 
 
