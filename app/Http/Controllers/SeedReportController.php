@@ -117,6 +117,7 @@ class SeedReportController extends Controller
     }
 
     public function seed_report_overall(){
+        //ws2024_rcep_reports
         $overall_seed_data = DB::connection('rcep_reports_db')
             ->table('lib_variety_report')
             ->select(DB::raw('SUM(total_volume) as seed_total_volume'),'seed_variety')

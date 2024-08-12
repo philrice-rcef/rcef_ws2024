@@ -25,7 +25,13 @@ join_2 = lib_dropoff_point.join(tbl_delivery, left_on='ldp_con_data', right_on='
 join_3 = lib_dropoff_point.join(tbl_paymaya_claim, left_on='ldp_con_data', right_on='paymaya_claim_con_data', how='left')
 
 # Perform aggregations
-acceptedAndTransferred = join_1.group_by("t3_municipality").agg([
+# acceptedAndTransferred = join_1.group_by("t3_municipality").agg([
+#     pl.col("t3_totalBagCount").sum().alias("totalBagCount_sum"),
+#     pl.when(pl.col("t3_transferCategory") == 'P').then(pl.col("t3_totalBagCount")).sum().alias("totalBagCount_sum_p"),
+#     pl.when(pl.col("t3_transferCategory") == 'T').then(pl.col("t3_totalBagCount")).sum().alias("totalBagCount_sum_t")
+# ])
+
+acceptedAndTransferred = tbl_actual_delivery.group_by("t3_municipality").agg([
     pl.col("t3_totalBagCount").sum().alias("totalBagCount_sum"),
     pl.when(pl.col("t3_transferCategory") == 'P').then(pl.col("t3_totalBagCount")).sum().alias("totalBagCount_sum_p"),
     pl.when(pl.col("t3_transferCategory") == 'T').then(pl.col("t3_totalBagCount")).sum().alias("totalBagCount_sum_t")
@@ -33,10 +39,10 @@ acceptedAndTransferred = join_1.group_by("t3_municipality").agg([
 accept = acceptedAndTransferred.with_columns(
     (pl.col("totalBagCount_sum") - pl.col("totalBagCount_sum_p") - pl.col("totalBagCount_sum_t")).alias("totalBagCount_sum_a")
 )
-ebinhi_distri = join_3.group_by("t4_municipality").agg([
+ebinhi_distri = tbl_paymaya_claim.group_by("t4_municipality").agg([
     pl.col("t4_municipality").count().fill_nan(0).alias("ebinhi_distri")
 ])
-ebinhi_bene = join_3.group_by("t4_municipality").agg([
+ebinhi_bene = tbl_paymaya_claim.group_by("t4_municipality").agg([
     pl.col("t4_paymaya_code").unique().count().fill_nan(0).alias("ebinhi_bene")
 ])
 regular_bene = new_released.group_by("t5_municipality").agg([
