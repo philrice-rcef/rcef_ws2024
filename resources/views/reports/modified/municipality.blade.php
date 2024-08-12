@@ -74,7 +74,7 @@
 
                     <div class="col-md-4">
                        
-                        <button class="btn btn-success form-control" id="load_report_btn_live"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA OLD</button>
+                        <!-- <button class="btn btn-success form-control" id="load_report_btn_live"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA OLD</button> -->
                         <button class="btn btn-success form-control" id="load_report_btn_live_py"><i class="fa fa-circle-o" aria-hidden="true"></i> LOAD LIVE DATA</button>
 
                         

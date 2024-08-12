@@ -9457,7 +9457,7 @@ public function generateLiveMunicipalReportDataPy(Request $request){
 
 //original code of 
 public function generateLiveMunicipalReportData(Request $request){
-    //dd($request);
+    dd($request);
         $lib_drop = DB::connection("delivery_inspection_db")->table("lib_dropoff_point")
             ->where("province", $request->province)
             ->groupBy("municipality")
