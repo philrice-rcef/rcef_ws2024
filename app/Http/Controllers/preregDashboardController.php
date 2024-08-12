@@ -37,91 +37,6 @@ class preregDashboardController extends Controller
                 ->orderBy('lib_prv.region_sort', 'ASC')
                 ->get();
         }
-        $count_fca = [0];
-        // $count_fca = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-        //     ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.province_name', '=', 'lib_station.province')
-        //     ->select(DB::raw("count(ecosystem) as 'count'"), 'municipality_name', 'province_name')
-        //     ->where('isPrereg', 1)
-        //     ->where(DB::raw("province_name not in ('', null)"))
-        //     ->where('municipality_name', '<>', 'AGUINALDO')
-        //     ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-        //     // ->where('municipality_name', '<>', 'NEW CORELLA')
-        //     ->groupBy('province_name')
-        //     ->get();
-        $count_fca_reg = [0];
-        // $count_fca_reg = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-        //     ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.province_name', '=', 'lib_station.province')
-        //     ->select('sed_verified.region')
-        //     ->where('isPrereg', 1)
-        //     ->where(DB::raw("province_name not in ('', null)"))
-        //     ->where('municipality_name', '<>', 'AGUINALDO')
-        //     ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-        //     // ->where('municipality_name', '<>', 'NEW CORELLA')
-        //     ->groupBy('region')
-        //     ->get();
-
-        $count_fca_muni = [0];
-        // $count_fca_muni = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-        //     ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.province_name', '=', 'lib_station.province')
-        //     ->select(DB::raw("count(sed_verified.municipality_name) as 'count'"), 'sed_verified.municipality_name', 'sed_verified.province_name')
-        //     ->where('sed_verified.isPrereg', 1)
-        //     ->where(DB::raw("province_name not in ('', null)"))
-        //     ->where('sed_verified.municipality_name', '<>', 'AGUINALDO')
-        //     ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-        //     // ->where('municipality_name', '<>', 'NEW CORELLA')
-        //     ->groupBy('sed_verified.municipality_name')
-        //     ->get();
-
-        $sum_fca = [0];
-        // $sum_fca = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-        //     ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.province_name', '=', 'lib_station.province')
-        //     ->select(DB::raw("count(sed_id) as total"))
-        //     ->where('sed_verified.isPrereg', 1)
-        //     ->where(DB::raw("province_name not in ('', null)"))
-        //     ->where('sed_verified.municipality_name', '<>', 'AGUINALDO')
-        //     ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-        //     // ->where("region", '<>', '11')
-        //     ->get();
-
-        $glbl_sex_m = [0];
-        // $glbl_sex_m = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-        //     ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.province_name', '=', 'lib_station.province')
-        //     ->select(DB::raw("count(sed_verified.ver_sex) as total"))
-        //     ->where('sed_verified.isPrereg', 1)
-        //     ->where(DB::raw("sed_verified.province_name not in ('', null)"))
-        //     ->where('sed_verified.municipality_name', '<>', 'AGUINALDO')
-        //     ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-        //     // ->where("region", '<>', '11')
-        //     ->where('sed_verified.ver_sex', 'like', 'M%')
-        //     ->groupBy('ver_sex')
-        //     ->get();
-
-        $glbl_sex_f = [0];
-        // $glbl_sex_f = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-        //     ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.province_name', '=', 'lib_station.province')
-        //     ->select(DB::raw("count(ver_sex) as total"))
-        //     ->where('sed_verified.isPrereg', 1)
-        //     ->where(DB::raw("province_name not in ('', null)"))
-        //     ->where('sed_verified.municipality_name', '<>', 'AGUINALDO')
-        //     // ->where("region", '<>', '11')
-        //     ->where('sed_verified.ver_sex', 'like', 'F%')
-        //     ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-        //     ->groupBy('sed_verified.ver_sex')
-        //     ->get();
-
-        $glbl_bags_dist = [0];
-        $glbl_bags_dist = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-            ->join($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim', 'sed_verified.rcef_id', '=', 'tbl_claim.paymaya_code')
-            ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.farm_addr_prv', '=', 'lib_station.province')
-            ->select('sed_verified.rcef_id')
-            ->where('sed_verified.isPrereg', 1)
-            // ->where('sed_verified.municipality_name', '<>', 'AGUINALDO')
-            // ->where('sed_verified.province_name', '<>', '')
-            ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-            ->get();
-
-        
-        // dd($chartReg);
 
         $lastSyncAgeRange = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.prereg_age_range_view')
         ->select("dateSync")
@@ -134,61 +49,74 @@ class preregDashboardController extends Controller
             // array_push($regArr, $row->regionName);
             array_push($regArr, 0);
         }
+
+        // $pythonPath = 'C://Python312//python.exe';
+
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+
+        $scriptPath = base_path('app/Http/PyScript/prereg.scripts/prereg_dashboard_index.py');
+
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
+        $reg = $taggedRegion;
+
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedReg = escapeshellarg($reg);
+
+        // Construct the command with arguments as a single string
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedReg";
+    
+        // Create a new process
+        $process = new Process($command);
         
+        try {
+            // Run the process
+            $process->mustRun();
+
+            $output = $process->getOutput();
+            $result = json_decode($output, true);
             
-        $total_fca = count($count_fca);
-        $total_fca_reg = count($count_fca_reg);
-        $total_fca_prv = count($count_fca);
-        $total_fca_muni = count($count_fca_muni);
+            $total_fca = $result['total_fca_org'];
+            $total_fca_reg = $result['count_fca_region'];
+            $total_fca_prv = $result['count_fca_province'];
+            $total_fca_muni = $result['count_fca_municipality'];
 
-        // $total_fca_prereg = $sum_fca[0]->total; //Original
-        $total_fca_prereg = 0;
+            // $total_fca_prereg = $sum_fca[0]->total; //Original
+            $total_fca_prereg = $result['total_fca_members'];
 
-        // if($sum_fca[0]->total > 0 && count($count_fca) > 0)
-        //     $total_fca_prereg_ave = ($sum_fca[0]->total) / count($count_fca);
-        // else
-        //     $total_fca_prereg_ave = 0;
-        $total_fca_prereg_ave = 0;
+            $total_fca_prereg_ave = $result['total_fca_members'] / $result['total_fca_org'];
 
-        if($total_fca_prereg > 0){
-            // $total_male_percent = round((collect($glbl_sex_m)->sum('total') / $total_fca_prereg) * 100, 2);
-            // $total_female_percent = round((collect($glbl_sex_f)->sum('total') / $total_fca_prereg) * 100, 2);
+            $total_male_percent = number_format($result['perc_male'], 2);
+            $total_female_percent = number_format($result['perc_female'], 2);
 
-            $total_male_percent = 0;
-            $total_female_percent = 0;
+            $total_bags = $result['total_distributed_bags'];
+            if($lastSyncAgeRange)
+                $lastSyncDate = $lastSyncAgeRange->dateSync;
+            else
+                $lastSyncDate = "0000-00-00 00:00:00";
+
+            return view('prereg.dashboard', 
+            compact(
+                'coop_list', 
+                'count_fca', 
+                'total_fca_prereg',
+                'total_fca_prereg_ave',
+                'total_fca', 
+                'total_fca_muni', 
+                'total_fca_reg', 
+                'total_fca_prv',
+                'total_male_percent',
+                'total_female_percent',
+                'total_bags',
+                'regArr',
+                'chartReg',
+                'lastSyncDate'
+            ));
+
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
         }
-        else{
-            $total_male_percent = 0;
-            $total_female_percent = 0;
-        }
-        $total_bags = count($glbl_bags_dist);
-        if($lastSyncAgeRange)
-            $lastSyncDate = $lastSyncAgeRange->dateSync;
-        else
-            $lastSyncDate = "0000-00-00 00:00:00";
-        // dd($lastSyncDate);
-
-
-
-        // dd($total_bags);
-
-        return view('prereg.dashboard', 
-        compact(
-            'coop_list', 
-            'count_fca', 
-            'total_fca_prereg',
-            'total_fca_prereg_ave',
-            'total_fca', 
-            'total_fca_muni', 
-            'total_fca_reg', 
-            'total_fca_prv',
-            'total_male_percent',
-            'total_female_percent',
-            'total_bags',
-            'regArr',
-            'chartReg',
-            'lastSyncDate'
-        ));
     }
 
     public function loadChartDataDefault(){
