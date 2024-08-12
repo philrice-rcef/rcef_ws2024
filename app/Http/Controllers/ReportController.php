@@ -9354,10 +9354,10 @@ public function generateLiveMunicipalReportDataPy(Request $request){
         ->first();
 
         //uncomment for development
-        //$pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//bmsdelossantos//AppData//Local//Programs//Python//Python311//python.exe';
 
         //production
-        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        // $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
         $scriptPath = base_path('app/Http/PyScript/load_live_data.py');
 
@@ -9384,6 +9384,8 @@ public function generateLiveMunicipalReportDataPy(Request $request){
             $output = $process->getOutput();
             $return_output = json_decode($output, true);
             $tbl = array();
+
+            dd($return_output);
             foreach($return_output as $data)
             {
                 $municipality = $data['t3_municipality'];
