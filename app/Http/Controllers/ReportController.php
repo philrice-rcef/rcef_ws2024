@@ -9383,10 +9383,7 @@ public function generateLiveMunicipalReportDataPy(Request $request){
 
             $output = $process->getOutput();
             $return_output = json_decode($output, true);
-            //dd($return_output);
             $tbl = array();
-
-            dd($return_output);
             foreach($return_output as $data)
             {
                 $municipality = $data['t3_municipality'];
