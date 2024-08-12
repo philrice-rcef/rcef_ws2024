@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
 use Auth;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
+
 class preregDashboardController extends Controller
 {
     public function index(){
@@ -189,42 +193,45 @@ class preregDashboardController extends Controller
 
     public function loadChartDataDefault(){
         $taggedRegion = Auth::user()->stationId;
-        if(Auth::user()->stationId == "11005"){
-            $taggedRegion = "%";
-        }
-        $chartReg = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-            ->join($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv', DB::raw('LEFT(sed_verified.claiming_prv, 2)'), '=', 'lib_prv.regCode')
-            ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'lib_prv.regionName', '=', 'lib_station.region')
-            ->select('lib_prv.regionName', 'lib_prv.regCode')
-            ->where('sed_verified.isPrereg', 1)
-            ->groupBy('sed_verified.farm_addr_reg')
-            ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-            ->orderBy('lib_prv.regCode', 'ASC')
-            ->get();
-
-        $chartRegValue = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-            ->join($GLOBALS['season_prefix'].'sdms_db_dev.lib_station', 'sed_verified.farm_addr_prv', '=', 'lib_station.province')
-            ->select(DB::raw("count(sed_verified.sed_id) as regTotal"))
-            ->where('sed_verified.isPrereg', 1)
-            ->where('lib_station.stationID', 'LIKE', $taggedRegion)
-            ->groupBy('sed_verified.farm_addr_reg')
-            ->get();
         
+        // $pythonPath = 'C://Python312//python.exe';
 
-        $regArr = array();
-        $regVol = array();
+        //production
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
-        foreach($chartReg as $row){
-            array_push($regArr, $row->regionName);
+        $scriptPath = base_path('app/Http/PyScript/prereg.scripts/prereg_dashboard_regions.py');
+
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
+        $reg = $taggedRegion;
+
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedReg = escapeshellarg($reg);
+
+        // Construct the command with arguments as a single string
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedReg";
+    
+        // Create a new process
+        $process = new Process($command);
+
+        try {
+            // Run the process
+            $process->mustRun();
+
+            $output = $process->getOutput();
+            $regions_arr = json_decode($output, true);
+
+            return array(
+                "regArr" => $regions_arr['regions'],
+                "regVol" => $regions_arr['values'],
+            );
+
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
         }
-        foreach($chartRegValue as $row){
-            array_push($regVol, $row->regTotal);
-        }
 
-        return array(
-            "regArr" => $regArr,
-            "regVol" => $regVol,
-        );
+        
     }
 
     public function getMuni(Request $request){
@@ -463,187 +470,63 @@ class preregDashboardController extends Controller
     }
 
     public function getPrv(){
-
-        $prvs = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-            ->select(DB::raw("LEFT(rcef_id, 4) as 'prv_code'"), 'farm_addr_mun', 'rcef_id')
-            ->where('isPrereg', 1)
-            // ->where(DB::raw("province_name not in ('', null)"))
-            ->where('farm_addr_mun', '<>', 'AGUINALDO')
-            ->orderBy('prv_code', 'ASC')
-            ->groupBy('prv_code')
-            ->get();
         
-        $prvarr = array();
-        $ageArr = array();
-        foreach($prvs as $row){
-            array_push($prvarr, $row->prv_code);
-        }
-        // dd($prvarr);
+        //uncomment for development
+        // $pythonPath = 'C://Python312//python.exe';
 
-        
-        
-        foreach($prvarr as $row){
-            $entries = DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')
-            ->join($GLOBALS['season_prefix'].'prv_'.$row.'.farmer_information_final', 'sed_verified.rcef_id', '=', 'farmer_information_final.rcef_id')
-            ->select('farmer_information_final.rcef_id', 
-                'farmer_information_final.birthdate as bday', 
-                DB::raw("TIMESTAMPDIFF(YEAR, STR_TO_DATE(farmer_information_final.birthdate, '%m/%d/%Y'), CURDATE()) AS age"), 
-                DB::raw('UCASE(SUBSTRING(sed_verified.ver_sex, 1, 1)) as sex'),
-                'sed_verified.yield as yield'
-                )
-            ->where('sed_verified.isPrereg', 1)
-            // ->where(DB::raw("sed_verified.province_name not in ('', null)"))
-            // ->where('sed_verified.farm_addr_mun', '<>', 'AGUINALDO')
-            ->orderBy('sed_verified.prv_code', 'ASC')
-            ->get();
+        //production
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
-            foreach($entries as $key){
-                array_push($ageArr, $key);
-            }
-        }
+        $scriptPath = base_path('app/Http/PyScript/prereg.scripts/prereg_dashboard.py');
 
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
 
-        $allYield = array(
-            "age_min" => 0,
-            "age_mid" => 0,
-            "age_max" => 0
-        );
-        $allMinCount = 0;
-        $allMidCount = 0;
-        $allMaxCount = 0;
+        $escapedSsn = escapeshellarg($ssn);
 
-        $maleYield = array(
-            "age_min" => 0,
-            "age_mid" => 0,
-            "age_max" => 0
-        );
-        $maleMinCount = 0;
-        $maleMidCount = 0;
-        $maleMaxCount = 0;
+        // Construct the command with arguments as a single string
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn";
 
-        $femaleYield = array(
-            "age_min" => 0,
-            "age_mid" => 0,
-            "age_max" => 0
-        );
-        $femaleMinCount = 0;
-        $femaleMidCount = 0;
-        $femaleMaxCount = 0;
+    
+        // Create a new process
+        $process = new Process($command);
 
-        // $maleCount = 0;
-        // $femaleCount = 0;
-        // $overAllCount = count($ageArr);
+        try {
+            // Run the process
+            $process->mustRun();
 
-        // TODO::::::Do male, female and age range yield
-        foreach($ageArr as $row){
-            if($row->age <= 29){
-                $allYield['age_min'] = $allYield['age_min'] + $row->yield;
-                $allMinCount++;
-            }
-            else if($row->age <= 59){
-                $allYield['age_mid'] = $allYield['age_mid'] + $row->yield;
-                $allMidCount++;
-            }
-            else if($row->age > 60){
-                $allYield['age_max'] = $allYield['age_max'] + $row->yield;
-                $allMaxCount++;
+            $output = $process->getOutput();
+            $yields_array = json_decode($output, true);
+            
+            $result =  DB::table($GLOBALS['season_prefix']."rcep_paymaya.prereg_age_range_view")
+                ->insert(["a_min" => $yields_array['allYield']['age_min'],
+                            "a_mid" => $yields_array['allYield']['age_mid'],
+                            "a_max" => $yields_array['allYield']['age_max'],
+                            "f_min" => $yields_array['femaleYield']['age_min'],
+                            "f_mid" => $yields_array['femaleYield']['age_mid'],
+                            "f_max" => $yields_array['femaleYield']['age_max'],
+                            "m_min" => $yields_array['maleYield']['age_min'],
+                            "m_mid" => $yields_array['maleYield']['age_mid'],
+                            "m_max" => $yields_array['maleYield']['age_max'],
+            ]);
+
+            
+
+            if(json_encode($result)=="true"){
+                $syncDate = DB::table($GLOBALS['season_prefix']."rcep_paymaya.prereg_age_range_view")
+                    ->Select("dateSync")
+                    ->orderBy("_id", "DESC")
+                    ->first();
+
+                return $syncDate->dateSync;
+            }else{
+                echo "Sync Failed. Try again later.";
             }
 
-            if($row->sex == "m" || $row->sex == "M"){
-                if($row->age <= 29){
-                    $maleYield['age_min'] = $maleYield['age_min'] + $row->yield;
-                    $maleMinCount++;
-                }
-                else if($row->age <= 59){
-                    $maleYield['age_mid'] = $maleYield['age_mid'] + $row->yield;
-                    $maleMidCount++;
-                }
-                else if($row->age > 60){
-                    $maleYield['age_max'] = $maleYield['age_max'] + $row->yield;
-                    $maleMaxCount++;
-                }
-            }
-
-            if($row->sex == "f" || $row->sex == "F"){
-                if($row->age <= 29){
-                    $femaleYield['age_min'] = $femaleYield['age_min'] + $row->yield;
-                    $femaleMinCount++;
-                }
-                else if($row->age <= 59){
-                    $femaleYield['age_mid'] = $femaleYield['age_mid'] + $row->yield;
-                    $femaleMidCount++;
-                }
-                else if($row->age > 60){
-                    $femaleYield['age_max'] = $femaleYield['age_max'] + $row->yield;
-                    $femaleMaxCount++;
-                }
-            }
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
         }
-
-        if($allYield['age_min'] > 0 && $allMinCount > 0 && $maleYield['age_min'] > 0 && $maleMinCount > 0 && $femaleYield['age_min'] > 0 && $femaleMinCount > 0){
-            $allYield['age_min'] = round(($allYield['age_min'] / $allMinCount), 2);
-            $maleYield['age_min'] = round(($maleYield['age_min'] / $maleMinCount), 2);
-            $femaleYield['age_min'] = round(($femaleYield['age_min'] / $femaleMinCount), 2);
-        }else{
-            $allYield['age_min'] = 0.00;
-            $maleYield['age_min'] = 0.00;
-            $femaleYield['age_min'] = 0.00; 
-        }
-
-        if($allYield['age_mid'] > 0 && $allMidCount > 0 && $maleYield['age_mid'] > 0 && $maleMidCount > 0 && $femaleYield['age_mid'] > 0 && $femaleMidCount > 0){
-            $allYield['age_mid'] = round(($allYield['age_mid'] / $allMidCount), 2);
-            $maleYield['age_mid'] = round(($maleYield['age_mid'] / $maleMidCount), 2);
-            $femaleYield['age_mid'] = round(($femaleYield['age_mid'] / $femaleMidCount), 2);
-        }else{
-            $allYield['age_mid'] = 0.00;
-            $maleYield['age_mid'] = 0.00;
-            $femaleYield['age_mid'] = 0.00;
-        }
-
-        if($allYield['age_max'] > 0 && $allMaxCount > 0 && $maleYield['age_max'] > 0 && $maleMaxCount > 0 && $femaleYield['age_max'] > 0 && $femaleMaxCount > 0){
-            $allYield['age_max'] = round(($allYield['age_max'] / $allMaxCount), 2);
-            $maleYield['age_max'] = round(($maleYield['age_max'] / $maleMaxCount), 2);
-            $femaleYield['age_max'] = round(($femaleYield['age_max'] / $femaleMaxCount), 2);
-        }else{
-            $allYield['age_max'] = 0.00;
-            $maleYield['age_max'] = 0.00;
-            $femaleYield['age_max'] = 0.00;
-        }
-
-
-
-
-        // return array(
-        //     "overAllArray" => $allYield,
-        //     "maleArray" => $maleYield,
-        //     "femaleArray" => $femaleYield
-        // );
-
-        $result =  DB::table($GLOBALS['season_prefix']."rcep_paymaya.prereg_age_range_view")
-            ->insert(["a_min" => $allYield['age_min'],
-                        "a_mid" => $allYield['age_mid'],
-                        "a_max" => $allYield['age_max'],
-                        "f_min" => $femaleYield['age_min'],
-                        "f_mid" => $femaleYield['age_mid'],
-                        "f_max" => $femaleYield['age_max'],
-                        "m_min" => $maleYield['age_min'],
-                        "m_mid" => $maleYield['age_mid'],
-                        "m_max" => $maleYield['age_max'],
-        ]);
-
-        
-
-        if(json_encode($result)=="true"){
-            $syncDate = DB::table($GLOBALS['season_prefix']."rcep_paymaya.prereg_age_range_view")
-                ->Select("dateSync")
-                ->orderBy("_id", "DESC")
-                ->first();
-
-            return $syncDate->dateSync;
-        }else{
-            echo "Sync Failed. Try again later.";
-        }
-        // dd($status);
     }
 
     public function toCSV(Request $request){

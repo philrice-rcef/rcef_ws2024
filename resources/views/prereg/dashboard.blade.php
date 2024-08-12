@@ -882,6 +882,7 @@
         }
 
         function load_avg_yield_chart(overall, male, female){
+            console.log(overall, male, female);
             $('#avg_stats').highcharts({
                 chart: {
                         type: 'column',
@@ -971,9 +972,11 @@
                     _token: "{{ csrf_token() }}",
                 },
                 success: function(data){
-                    overAllArr = data.overAllArray;
-                    maleArr = data.maleArray;
-                    femaleArr = data.femaleArray;
+                    
+                    parsed = JSON.parse(data);
+                    overAllArr = parsed.overAllArray;
+                    maleArr = parsed.maleArray;
+                    femaleArr = parsed.femaleArray;
                     
                     load_avg_yield_chart(overAllArr, maleArr, femaleArr);
                     $('._loader2').addClass('gone');
