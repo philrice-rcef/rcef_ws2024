@@ -1112,6 +1112,9 @@ $db = $GLOBALS['season_prefix'].'prv_'.$request->prv;
                         "total_claimed" => 0,
                         "total_claimed_area" => 0,
                         "is_claimed" => 0,
+                        "is_replacement" => 0,
+                        "replacement_area" => 0,
+                        "replacement_bags" => 0,
                        
                     ]);
                 
