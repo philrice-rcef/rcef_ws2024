@@ -15,6 +15,9 @@ use App\SeedGrowers;
 use App\RegistryFarmerRole;
 use Illuminate\Support\Str;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 use Auth;
 
 class DashboardController extends Controller {
@@ -52,7 +55,6 @@ class DashboardController extends Controller {
     }
 
     public function index() {
-
 		// if(Auth::user()->roles->first()->name == "da-icts"){
         //     $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection_mirror.tbl_delivery")
         //         ->where('region', '!=', '')
@@ -360,7 +362,6 @@ class DashboardController extends Controller {
                     ->where('batchTicketNumber',"!=","TRANSFER")
                     ->first();
 
-            
             $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports" . '.lib_national_reports')
                     ->select('*')
                     ->first();
@@ -454,59 +455,60 @@ class DashboardController extends Controller {
         }else if(Auth::user()->roles->first()->name == "it-sra"){
             return redirect('sra/paymaya');
         }else{
+
             
-            $actuals = DB::connection('delivery_inspection_db')
-            ->table('tbl_actual_delivery')
-            ->select(\DB::RAW('SUM(totalBagCount) as total_bag_count'))
-            ->where('batchTicketNumber', "!=", "TRANSFER")
-            ->get();
-        
+            // $actuals = DB::connection('delivery_inspection_db')
+            // ->table('tbl_actual_delivery')
+            // ->select(\DB::RAW('SUM(totalBagCount) as total_bag_count'))
+            // ->where('batchTicketNumber', "!=", "TRANSFER")
+            // ->get();
             $actualSum = 0; 
 
-            foreach($actuals as $actual)
-            {
-                $actualSum = $actual->total_bag_count;
-            }
+            // foreach($actuals as $actual)
+            // {
+            //     $actualSum = $actual->total_bag_count;
+            // }
             
-            $targets = DB::connection('delivery_inspection_db')
-            ->table('tbl_delivery_sum')
-            ->selectRaw('SUM(targetVolume) as total_target_volume')
-            // ->where('targetMonthFrom', '>=', '2023-09-01')
-            ->where('targetMonthTo', 'LIKE', '2024-02-29')
-            ->get();
+            // $targets = DB::connection('delivery_inspection_db')
+            // ->table('tbl_delivery_sum')
+            // ->selectRaw('SUM(targetVolume) as total_target_volume')
+            // // ->where('targetMonthFrom', '>=', '2023-09-01')
+            // ->where('targetMonthTo', 'LIKE', '2024-02-29')
+            // ->get();
         
             // dd($targets);
             $targetSum = 0;
             
-            foreach ($targets as $target) {
-                $targetSum = $target->total_target_volume;
-            }
+            // foreach ($targets as $target) {
+            //     $targetSum = $target->total_target_volume;
+            // }
             
-            if($targets && $targetSum > 0 && $actualSum > 0){
-                $percentage = ($targetSum !== 0) ? ($actualSum / $targetSum) * 100 : 0;
-            }else{
-                $percentage = 0;
-            }
+            $percentage = 0;
+            // if($targets && $targetSum > 0 && $actualSum > 0){
+            //     $percentage = ($targetSum !== 0) ? ($actualSum / $targetSum) * 100 : 0;
+            // }else{
+            //     $percentage = 0;
+            // }
             
-            $getRegions = $this->get_regions();
-            $coops = array();
-            foreach ($getRegions as $reg) {  
-                $get_coops = $this->get_coops($reg->id);
-                $get_coops_ctr = $this->get_coops_ctr($reg->id);
-                if ($get_coops_ctr > 0) {
-                    $data = array(
-                        'cooperatives' => $get_coops,
-                        'region' => $reg->regDesc,
-                        'coop_count' => $get_coops_ctr
-                    );
-                    array_push($coops, $data);
-                }
-            }
+            // $getRegions = $this->get_regions();
+            // $coops = array();
+            // foreach ($getRegions as $reg) {  
+            //     $get_coops = $this->get_coops($reg->id);
+            //     $get_coops_ctr = $this->get_coops_ctr($reg->id);
+            //     if ($get_coops_ctr > 0) {
+            //         $data = array(
+            //             'cooperatives' => $get_coops,
+            //             'region' => $reg->regDesc,
+            //             'coop_count' => $get_coops_ctr
+            //         );
+            //         array_push($coops, $data);
+            //     }
+            // }
 
           
             $national_data = DB::table($GLOBALS['season_prefix']."rcep_reports.lib_national_reports")
                 ->first();
-
+                
             // if(Auth::user()->roles->first()->name == "rcef-programmer"){
               
             // }else{
@@ -517,7 +519,7 @@ class DashboardController extends Controller {
                 return $this->live_index();
             }
 
-     
+
             
             try {
                 $distributed =  $national_data;
@@ -534,15 +536,15 @@ class DashboardController extends Controller {
                 $distributed = "N/A";
             }
 
-            $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
-                ->where('region', '!=', '')
-                ->groupBy('region')
-                ->orderBy('region')
-                ->get();
+            // $regions = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+            //     ->where('region', '!=', '')
+            //     ->groupBy('region')
+            //     ->orderBy('region')
+            //     ->get();
             
-			$total_coops =  DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")->groupBy('coopAccreditation')->get();
-            $total_seed_growers = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_seed_grower")->get();
-            $total_seed_tags = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_rla_details")->get();
+			// $total_coops =  DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")->groupBy('coopAccreditation')->get();
+            // $total_seed_growers = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_seed_grower")->get();
+            // $total_seed_tags = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_rla_details")->get();
             
      
             
@@ -552,14 +554,12 @@ class DashboardController extends Controller {
                     //->where('batchTicketNumber',"TRANSFER")
                     ->where('transferCategory', 'P')
                     ->first();
-			
             $transfer_seedTag = \DB::connection('delivery_inspection_db')
                     ->table('tbl_actual_delivery')
                     ->select("seedTag")
                     ->where('transferCategory', 'P')
                     ->groupBy("seedTag")
                     ->get();
-                  
             $transfer_seedTag = json_decode(json_encode($transfer_seedTag), true);
 
 
@@ -567,7 +567,7 @@ class DashboardController extends Controller {
                 ->table("tbl_actual_delivery")
                 ->whereIn("seedTag", $transfer_seedTag)
                 ->sum("totalBagCount");
-
+            
 
 
 			$current_week = $this->get_current_week();
@@ -582,56 +582,37 @@ class DashboardController extends Controller {
                 'week_end' => date("Y-m-d", strtotime($current_week['end'])),
             ));
             if(count($confirmed_delivery_regions) > 0){ $region_list = $confirmed_delivery_regions; }else{ $region_list = "no_deliveries"; };
-			
-			$paymaya_beneficiaries = count(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')->groupBy('beneficiary_id')->get());
-            $paymaya_bags = count(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')->get());
+            // $pythonPath = 'C://Python312//python.exe';
+            $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
-            $raw = "SELECT * from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_beneficiaries where sex !='' and substr(sex, 1, 2) like 'M' and paymaya_code in (SELECT paymaya_code from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_claim)";
+            $scriptPath = base_path('app/Http/PyScript/home-dashboard.scripts/index.py');
 
-            $paymaya_beneficiaries_male = count(DB::select(DB::raw($raw)));
+            // Escape the arguments
+            $ssn = $GLOBALS["season_prefix"];
 
+            $escapedSsn = escapeshellarg($ssn);
+
+            // Construct the command with arguments as a single string
+            $command = "$pythonPath \"$scriptPath\" $escapedSsn";
         
-            
-            $raw = "SELECT * from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_beneficiaries where sex !='' and substr(sex, 1, 2) like 'F' and paymaya_code in (SELECT paymaya_code from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_claim)";
-            $paymaya_beneficiaries_female = count(DB::select(DB::raw($raw)));
+            // Create a new process
+            $process = new Process($command);
 
-			$paymaya_delivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')->where('qrValStart', '!=', '')->where('qrValEnd','!=','')->sum('totalBagCount');
-			
-			//get all rrp data for all prv
-            $nrp_dropoff = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_dropoff_point')->groupBy('province')->get();
-            $nrp_farmers = 0;
-            $nrp_bags = 0;
-            $nrp_area = 0;
-            foreach($nrp_dropoff as $nrp_row){
-                $database = $GLOBALS['season_prefix']."prv_".substr($nrp_row->prv,0,4);
-                $nrp_prv_details = DB::table($database.".new_released")
-                    ->select(DB::raw('SUM(bags_claimed) as total_bags'),
-                        DB::raw('COUNT(new_released_id) as total_farmers'),
-                        DB::raw('SUM(claimed_area) as total_area'))
-                        ->where("category", "HYBRID")
-                    ->first();
+            try {
+                // Run the process
+                $process->mustRun();
+    
+                $output = $process->getOutput();
+                $result = json_decode($output, true);
 
-                $nrp_farmers += $nrp_prv_details->total_farmers;
-                $nrp_bags += $nrp_prv_details->total_bags;
-                $nrp_area += $nrp_prv_details->total_area;
-            }
-
-            if($distributed == "N/A"){
-                $process_time = DB::table($GLOBALS['season_prefix']."rcep_reports.lib_regional_reports")
-                    ->groupBy("region")
-                    ->get();
-
-                $load = (count($process_time)/16)*100;
-                $load = number_format($load,2);
-            }else{
-                $load = 100;
-            }
-
-            // $buffer = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
-            // ->where('isBuffer',1)
-            // ->sum('totalBagCount');
-            
-            $buffer = $distributed->total_buffer;
+                  
+                $paymaya_beneficiaries = $result["paymaya_beneficiaries"];
+                $paymaya_bags = $result["paymaya_bags"];
+                $paymaya_beneficiaries_male = $result["paymaya_beneficiaries_male"];
+                $paymaya_beneficiaries_female = $result["paymaya_beneficiaries_female"];
+                $paymaya_delivery = $result["paymaya_delivery"];
+                
+                $buffer = $distributed->total_buffer;
 
             $totalMaleFemale = $distributed->total_male + $distributed->total_female;
 
@@ -643,59 +624,150 @@ class DashboardController extends Controller {
             $confirmed = json_decode(json_encode(array("total_bag_count"=> $distributed->total_coop_confirmed,"total_bag_count_RCEF"=> $distributed->total_coop_confirmed_RCEF,"total_bag_count_NRP"=> $distributed->total_coop_confirmed_NRP,"commitment" => $distributed->total_coop_commitments)),false);
 
 
-
+            
             $actual = json_decode(json_encode(array("total_bag_count"=> $distributed->total_actual)),false);
             
             $yield_data = json_decode(json_encode(array("yield"=> $distributed->yield)),false);
             $yield_data_all = json_decode(json_encode(array("yield"=> $distributed->yield_ws2021)),false);
             
             $pre_registered_data = (object) array();
-                            $pre_registered_data->total_farmers = 0;
-                            $pre_registered_data->total_male = 0;
-                            $pre_registered_data->total_female = 0;
-                            $pre_registered_data->total_claimed_area = 0;
-                            $pre_registered_data->total_actual_area = 0;
-                            $pre_registered_data->total_bags = 0;
-
+            $pre_registered_data->total_farmers = 0;
+            $pre_registered_data->total_male = 0;
+            $pre_registered_data->total_female = 0;
+            $pre_registered_data->total_claimed_area = 0;
+            $pre_registered_data->total_actual_area = 0;
+            $pre_registered_data->total_bags = 0;
             $rcefDelivery = 0;
             $nrpDelivery = 0;
-            // dd($percentage);
-            return view('dashboard.index')
-				->with(compact('confirmed'))
-				->with(compact('actual'))
-				->with(compact('buffer'))
-				->with(compact('transferred'))
-                ->with(compact('transferred_2'))
-                ->with(compact('malePercentage'))
-                ->with(compact('femalePercentage'))
-                ->with(compact('total_yield'))
-                ->with("yield_data",$yield_data)
-                ->with("yield_data_all",$yield_data_all)
-				->with(compact('distributed'))
-				->with(compact('pre_registered_data'))
-				->with('coops', $coops)
-				->with('regions', $regions)
-				->with('week_start', $current_week['start'])
-				->with('week_end', $current_week['end'])
-				->with('filter_start', $current_week['filter_start'])
-				->with('filter_end', $current_week['filter_end'])
-				->with('delivery_regions', $region_list)
-				->with('total_coops', count($total_coops))
-				->with('total_seed_growers', count($total_seed_growers))
-				->with('total_seed_tags', count($total_seed_tags))
-				->with('paymaya_beneficiaries', $paymaya_beneficiaries)
-				->with('paymaya_bags', $paymaya_bags)
-				->with('paymaya_delivery', $paymaya_delivery)
-				->with('paymaya_male', $paymaya_beneficiaries_male)
-                ->with('paymaya_female', $paymaya_beneficiaries_female)
-                ->with('load', $load)
-                ->with('nrp_farmers', $nrp_farmers)
-                ->with('nrp_bags', $nrp_bags)
-                ->with('nrp_area', number_format($nrp_area,2,".",","))
-                ->with('actualSum', number_format($actualSum,2))
-                ->with('targetSum', number_format($targetSum))
-                ->with('percentage', number_format($percentage,2));
+
+            $week_start = $current_week['start'];
+            $week_end = $current_week['end'];
+            $filter_start = $current_week['filter_start'];
+            $filter_end = $current_week['filter_end'];
+
+            // $nrp_area = number_format($nrp_area,2,".",",");
+            $actualSum = number_format($actualSum,2);
+            $targetSum = number_format($targetSum);
+            $percentage = number_format($percentage,2);
+
+            $delivery_regions = $region_list;
+            return view('dashboard.index', 
+                compact(
+                    "confirmed",
+                    "actual",
+                    "buffer",
+                    "transferred_2",
+                    "malePercentage",
+                    "femalePercentage",
+                    "total_yield",
+                    "yield_data",
+                    "distributed",
+                    "pre_registered_data",
+                    "week_start",
+                    "week_end",
+                    "filter_start",
+                    "filter_end",
+                    "delivery_regions",
+                    "paymaya_beneficiaries",
+                    "paymaya_bags",
+                    "paymaya_delivery",
+                    "paymaya_male",
+                    "paymaya_female",
+                    "actualSum",
+                    "targetSum",
+                    "percentage"
+                    )
+                );
+
+            } catch (ProcessFailedException $exception) {
+                // Handle the exception
+                echo $exception->getMessage();
+            }
+			// $paymaya_beneficiaries = count(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.sed_verified')->get());
+            // $paymaya_bags = count(DB::table($GLOBALS['season_prefix'].'rcep_paymaya.tbl_claim')->get());
+            
+            // $raw = "SELECT * from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_beneficiaries where sex !='' and substr(sex, 1, 2) like 'M' and paymaya_code in (SELECT paymaya_code from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_claim)";
+
+            // $paymaya_beneficiaries_male = count(DB::select(DB::raw($raw)));
+
+        
+            
+            // $raw = "SELECT * from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_beneficiaries where sex !='' and substr(sex, 1, 2) like 'F' and paymaya_code in (SELECT paymaya_code from ".$GLOBALS['season_prefix']."rcep_paymaya.tbl_claim)";
+            // $paymaya_beneficiaries_female = count(DB::select(DB::raw($raw)));
+
+			// $paymaya_delivery = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')->where('qrValStart', '!=', '')->where('qrValEnd','!=','')->sum('totalBagCount');
+			
+			//get all rrp data for all prv
+            // $nrp_dropoff = [];//DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_dropoff_point')->groupBy('province')->get();
+            // $nrp_farmers = 0;
+            // $nrp_bags = 0;
+            // $nrp_area = 0;
+            // foreach($nrp_dropoff as $nrp_row){
+            //     $database = $GLOBALS['season_prefix']."prv_".substr($nrp_row->prv,0,4);
+            //     $nrp_prv_details = DB::table($database.".new_released")
+            //         ->select(DB::raw('SUM(bags_claimed) as total_bags'),
+            //             DB::raw('COUNT(new_released_id) as total_farmers'),
+            //             DB::raw('SUM(claimed_area) as total_area'))
+            //             ->where("category", "HYBRID")
+            //         ->first();
+
+            //     $nrp_farmers += $nrp_prv_details->total_farmers;
+            //     $nrp_bags += $nrp_prv_details->total_bags;
+            //     $nrp_area += $nrp_prv_details->total_area;
+            // }
+            
+            
+            // if($distributed == "N/A"){
+            //     $process_time = DB::table($GLOBALS['season_prefix']."rcep_reports.lib_regional_reports")
+            //         ->groupBy("region")
+            //         ->get();
+
+            //     $load = (count($process_time)/16)*100;
+            //     $load = number_format($load,2);
+            // }else{
+            //     $load = 100;
+            // }
+            
+            // $buffer = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_delivery")
+            // ->where('isBuffer',1)
+            // ->sum('totalBagCount');
+            
+            
         }
+        //     return view('dashboard.index')
+		// 		->with(compact('confirmed'))
+		// 		->with(compact('actual'))
+		// 		->with(compact('buffer'))
+		// 		->with(compact('transferred'))
+        //         ->with(compact('transferred_2'))
+        //         ->with(compact('malePercentage'))
+        //         ->with(compact('femalePercentage'))
+        //         ->with(compact('total_yield'))
+        //         ->with("yield_data",$yield_data)
+        //         ->with("yield_data_all",$yield_data_all)
+		// 		->with(compact('distributed'))
+		// 		->with(compact('pre_registered_data'))
+		// 		// ->with('regions', $regions)
+		// 		->with('week_start', $current_week['start'])
+		// 		->with('week_end', $current_week['end'])
+		// 		->with('filter_start', $current_week['filter_start'])
+		// 		->with('filter_end', $current_week['filter_end'])
+		// 		->with('delivery_regions', $region_list)
+		// 		// ->with('total_coops', count($total_coops))
+		// 		// ->with('total_seed_growers', count($total_seed_growers))
+		// 		// ->with('total_seed_tags', count($total_seed_tags))
+		// 		->with('paymaya_beneficiaries', $paymaya_beneficiaries)
+		// 		->with('paymaya_bags', $paymaya_bags)
+		// 		->with('paymaya_delivery', $paymaya_delivery)
+		// 		->with('paymaya_male', $paymaya_beneficiaries_male)
+        //         ->with('paymaya_female', $paymaya_beneficiaries_female)
+        //         // ->with('load', $load)
+        //         ->with('nrp_farmers', $nrp_farmers)
+        //         ->with('nrp_bags', $nrp_bags)
+        //         ->with('nrp_area', number_format($nrp_area,2,".",","))
+        //         ->with('actualSum', number_format($actualSum,2))
+        //         ->with('targetSum', number_format($targetSum))
+        //         ->with('percentage', number_format($percentage,2));
     }
 	
 
@@ -826,7 +898,7 @@ class DashboardController extends Controller {
                     ->where('isBuffer',  0)
                     ->where('is_cancelled', 0)
                     ->first();
-
+            
             $confirmed_tickets = \DB::connection('delivery_inspection_db')
                     ->table('tbl_delivery')
                     ->select("batchTicketNumber")
@@ -854,7 +926,6 @@ class DashboardController extends Controller {
 
                 $distributed = null;
                 $add_on_distributed = null;
-
 
                 // $distributed = DB::table($GLOBALS['season_prefix']."rcep_reports_view.distribution_report")
                 //     ->select(DB::raw("SUM(total_farmer) as total_farmers"),DB::raw("SUM(total_claimed_area) as total_claimed_area"),DB::raw("SUM(total_bags) as total_bags"))->first();
