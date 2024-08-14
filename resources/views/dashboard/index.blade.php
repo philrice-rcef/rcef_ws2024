@@ -36,6 +36,121 @@
             height: 100%;
             border-radius: 0.6em;
         }
+
+        main {
+            color: brown;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        main .content-wrapper{
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 1em;
+        }
+
+        main .content-wrapper:nth-of-type(2n){
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 1em;
+        }
+
+        main .content-wrapper > div {
+            position: relative;
+            background-color: white;
+            border-radius: 1.8em;
+            box-shadow: 0 1px 1px rgba(0,0,0,.08), 0 2px 2px rgba(0,0,0,.16);
+            padding: 1.6em;
+            display: flex;
+            flex-direction: column;
+            gap: 1.6em;
+        }
+
+        main .content-wrapper > div .insight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        main .content-wrapper > div .insight-header .title {
+            font-weight: 900;
+            font-size: 1.2em;
+        }
+
+        main .content-wrapper > div .insight-header .controls {
+            font-size: 1.45em;
+            cursor: pointer;
+            background: #d8d8d800;
+            transition: background 0.1s linear;
+        }
+
+        main .content-wrapper > div .insight-content {
+            background-color: #d8d8d820;
+            overflow-x: scroll;
+            border-radius: 1.4em;
+            height: 100%;
+            padding: 1em;
+            position: relative;
+            display: flex;
+            gap: 1em;
+            overflow-x: hidden;
+        }
+
+        main .content-wrapper > div .insight-content .insight-card {
+            box-sizing: border-box;
+            background: #fff;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04), 0 1px 1px rgba(0,0,0,.08);
+            width: 200px;
+            height: 100%;
+            flex-shrink: 0;
+            border-radius: 0.8em;
+            position: relative;
+            overflow: visible;
+        }
+
+        main .content-wrapper > div .insight-content .insight-card .card-content{
+            padding: 1em;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        main .content-wrapper > div .insight-content .insight-card .card-content > .title{
+            font-weight: 900;
+        }
+
+        
+        main .content-wrapper > div .insight-content .insight-card .card-content > .value{
+            font-weight: 900;
+            font-size: 1.8em;
+        }
+
+        main .content-wrapper > div .insight-content .insight-card .card-content > .breakdown{
+            display: flex;
+            flex-direction: column;
+        }
+
+        main .content-wrapper > div .insight-content .insight-card .card-content > .breakdown > .small-title{
+            font-size: 0.8em;
+            font-weight: 700;
+        }
+
+        main .content-wrapper > div .insight-content .insight-card .card-content > .breakdown > .small-value{
+            font-size: 1.2em;
+            font-weight: 900;
+        }
+
+        main .content-wrapper > div .insight-content .insight-card:nth-last-child(1)::after {
+            content: "";
+            background-color: #ffffff80;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            border-radius: 0.8em;
+            margin-inline-start: 1em;
+            transform: translateX(100%);
+        }
     </style>
 @endsection
 
@@ -44,7 +159,152 @@
 <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 <div>
-    <div class="row">
+    <main>
+        <div id="content-wrapper" class="content-wrapper">
+            <div class="delivery-insights">
+                <div class="insight-header">
+                    <span class="title">Delivery Insights</span>
+                    <div class="controls"><i class="fa fa-external-link" aria-hidden="true"></i></div>
+                </div>
+                <div class="insight-content">
+                    <div class="declared-delivery insight-card">
+                        <div class="card-content">
+                            <span class="title">Total Delivery Declared by SGC/A (bags)</span>
+                            <span class="value">{{number_format($confirmed->total_bag_count)}}</span>
+                            <div class="breakdown" style="color: #234f1e">
+                                <span class="small-title">RCEF</span>
+                                <span class="small-value">{{number_format($confirmed->total_bag_count_RCEF)}}</span>
+                            </div>
+                            <div class="breakdown" style="color: #241571">
+                                <span class="small-title">NRP (Inbred)</span>
+                                <span class="small-value">{{number_format($confirmed->total_bag_count_NRP)}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="actual-delivery insight-card">
+                        <div class="card-content">
+                            <span class="title">Total Actual Delivery (20kg/bag)</span>
+                            <span class="value">{{number_format($actual->total_bag_count +  $transferred_2 )}}</span>
+                            <div class="breakdown" style="color: #234f1e">
+                                <span class="small-title">Inspected</span>
+                                <span class="small-value">{{number_format($actual->total_bag_count - $paymaya_delivery)}}</span>
+                            </div>
+                            <div class="breakdown" style="color: #241571">
+                                <span class="small-title">From Previous Season</span>
+                                <span class="small-value">{{number_format($transferred_2)}}</span>
+                            </div>
+                            <div class="breakdown" style="color: #234f1e">
+                                <span class="small-title">Binhi ePadala</span>
+                                <span class="small-value">{{number_format($paymaya_delivery)}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="declared-delivery insight-card">
+                        <i class="fa fa-plus-circle" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #00000020; font-size: 2.4em;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="distri-insights">
+            <div class="insight-header">
+                    <span class="title">Distribution Insights</span>
+                    <div class="controls"><i class="fa fa-external-link" aria-hidden="true"></i></div>
+                </div>
+                <div class="insight-content">
+                    <div class="insight-card">
+                        <div class="card-content">
+                        @if(isset($distributed->date_generated))
+                            <span class="title">Distributed Bags (as of <span style="color: #00000040">{{date( 'm/d/y', strtotime($distributed->date_generated))}}</span>)</span>
+                        @else
+                            <span class="title">Distributed Bags</span>
+                        @endif
+                            <span class="value">{{number_format($distributed->total_bags + $paymaya_bags)}}</span>
+                            <div class="breakdown" style="color: #241571">
+                                <span class="small-title">Regular Distribution</span>
+                                <span class="small-value">{{number_format($distributed->total_bags)}}</span>
+                            </div>
+                            <div class="breakdown" style="color: #234f1e">
+                                <span class="small-title">Binhi ePadala</span>
+                                <span class="small-value">{{number_format($paymaya_bags)}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <i class="fa fa-plus-circle" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #00000020; font-size: 2.4em;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="content-wrapper" class="content-wrapper">
+            <div class="delivery-insights">
+                <div class="insight-header">
+                    <span class="title">Miscellaneous</span>
+                    <div class="controls"><i class="fa fa-external-link" aria-hidden="true"></i></div>
+                </div>
+                <div class="insight-content">
+                    <div class="actual-delivery insight-card">
+                        <div class="card-content">
+                            <span class="title">Estimated Area Planted (ha)</span>
+                            <span class="value">{{number_format($distributed->total_claimed_area,'2','.',',')}}</span>
+                            <div class="breakdown" style="color: #241571">
+                                <span class="small-title">Regular</span>
+                                <span class="small-value">{{number_format(($distributed->total_farmers / ($distributed->total_farmers + $paymaya_beneficiaries) * 100), 2)}}%</span>
+                            </div>
+                            <div class="breakdown" style="color: #234f1e">
+                                <span class="small-title">Binhi ePadala</span>
+                                <span class="small-value">{{number_format(($paymaya_beneficiaries / ($distributed->total_farmers + $paymaya_beneficiaries) * 100), 2)}}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="declared-delivery insight-card">
+                        <i class="fa fa-plus-circle" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #00000020; font-size: 2.4em;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="distri-insights">
+                <div class="insight-header">
+                    <span class="title">Beneficiary Insights</span>
+                    <div class="controls"><i class="fa fa-external-link" aria-hidden="true"></i></div>
+                </div>
+                <div class="insight-content">
+                    <div class="insight-card">
+                        <div class="card-content">
+                            <span class="title">Total Seed Beneficiaries</span>
+                            <span class="value">{{number_format($distributed->total_farmers + $paymaya_beneficiaries)}}</span>
+                            <div class="breakdown" style="color: #241571">
+                                <span class="small-title">Regular Distribution</span>
+                                <span class="small-value">{{number_format($distributed->total_farmers)}}</span>
+                            </div>
+                            <div class="breakdown" style="color: #234f1e">
+                                <span class="small-title">Binhi ePadala</span>
+                                <span class="small-value">{{number_format($paymaya_beneficiaries)}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="card-content">
+                            <span class="title">Seed Beneficiaries' Sex Percentage</span>
+                            <!-- <span class="value">{{number_format($distributed->total_farmers + $paymaya_beneficiaries)}}</span> -->
+                            <div class="breakdown" style="color: #234f1e">
+                                <span class="small-title">Female</span>
+                                <span class="small-value">{{number_format($femalePercentage, 2)}}% </span>
+                            </div>
+                            <div class="breakdown" style="color: #241571">
+                                <span class="small-title">Male</span>
+                                <span class="small-value">{{number_format($malePercentage, 2)}}% </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <i class="fa fa-plus-circle" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #00000020; font-size: 2.4em;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if(Auth::user()->roles->first()->name == "rcef-programmer" || Auth::user()->roles->first()->name == "rcef-finance")
+            <button onclick="refresh_national();" style="float:right; margin-bottom:0px;" class="btn btn-success btn-sm"> <i class="fa fa-refresh" aria-hidden="true" ></i> REFRESH STATISTICS</button>
+        @endif
+    </main>
+    <div class="row" style="display: none;">
          <div class="col-md-12">
                 @if($distributed != "N/A")
                @else
@@ -71,6 +331,7 @@
                 </div>
             </div>
      --}}
+        
 
         <!-- Start Flex -->
         <div class="flex" style="">
