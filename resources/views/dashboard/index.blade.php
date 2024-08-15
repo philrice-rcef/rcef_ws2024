@@ -159,7 +159,7 @@
 <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 <div>
-    <main>
+    <main style="display: none">
         <div id="content-wrapper" class="content-wrapper">
             <div class="delivery-insights">
                 <div class="insight-header">
@@ -304,7 +304,7 @@
             <button onclick="refresh_national();" style="float:right; margin-bottom:0px;" class="btn btn-success btn-sm"> <i class="fa fa-refresh" aria-hidden="true" ></i> REFRESH STATISTICS</button>
         @endif
     </main>
-    <div class="row" style="display: none;">
+    <div class="row">
          <div class="col-md-12">
                 @if($distributed != "N/A")
                @else

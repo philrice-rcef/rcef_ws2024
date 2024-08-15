@@ -2,6 +2,7 @@ import polars as pl
 from urllib.parse import quote
 import sys
 import json
+import time
 
 season = sys.argv[1] if len(sys.argv) > 1 else "ws2024_"
 
@@ -18,6 +19,7 @@ if __name__ == "__main__":
     # paymaya_beneficiaries_female = len(glbl['tbl_beneficiaries'].filter(pl.col("sex").str.starts_with('F'), pl.col("paymaya_code").is_in(glbl['tbl_claim'].select(pl.col("paymaya_code")))))
     paymaya_delivery = tbl_actual_delivery.filter(pl.col("qrValStart").ne("")).select(pl.col("totalBagCount")).sum().item()
 
+    time.sleep(3)
     json_string = json.dumps({
         "paymaya_beneficiaries": paymaya_beneficiaries,
         "paymaya_bags": paymaya_bags,
