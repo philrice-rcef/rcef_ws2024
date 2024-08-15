@@ -248,14 +248,11 @@ class virtual_encodingController extends Controller
         }
  
         $user_provinces = json_decode(json_encode($user_provinces), true);
-        
-        $provinces = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
-        ->whereIn("province", $user_provinces)
-        ->groupBy('province')->get();
 
-        if(Auth::user()->stationId == '11006' ||Auth::user()->roles->first()->name == "rcef-programmer"){
-            array_push($provinces, (object) ['province' => 'CITY OF ISABELA (Not a Province)']);
-        }
+        $provinces = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
+                ->whereIn("province", $user_provinces)
+                ->groupBy('province')->get();
+           
         return view('virtual_encoding.index',compact('provinces'));
     }
 
