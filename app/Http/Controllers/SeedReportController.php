@@ -122,24 +122,17 @@ class SeedReportController extends Controller
     public function seed_report_overall(){
 
         //uncomment for development
-        $pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
+        //$pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
 
         //production
-        //$pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
-        $scriptPath = base_path('app/Http/PyScript/seed-variety-report/test.py');
-        //$scriptPath = base_path('app/Http/PyScript/seed-variety-report/test.py');
+        $scriptPath = base_path('app/Http/PyScript/seed-variety-report/seed_variety_report.py');
 
-/*         $ssn = $GLOBALS["season_prefix"];
-        $prov = $request->province;
-        $prv = substr($prv->prv, 0, 4);
-
+        $ssn = $GLOBALS["season_prefix"];
         $escapedSsn = escapeshellarg($ssn);
-        $escapedProvince = escapeshellarg($prov);
-        $escapedPrv = escapeshellarg($prv); */
 
-        //$command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedProvince $escapedPrv";
-        $command = "$pythonPath \"$scriptPath\"";
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn";
 
         // Create a new process
         $process = new Process($command);

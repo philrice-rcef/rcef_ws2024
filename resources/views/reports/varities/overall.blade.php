@@ -72,8 +72,8 @@
                 <div class="col-md-3">
                     <select name="region" id="region" name="reegion" class="form-control">
                         <option value="0">Please select a region</option>
-                        @foreach ($regions as $row)
-                            <option value="{{$row['region']}}">{{$row['region']}}</option>
+                        @foreach ($regions['region'] as $row)
+                            <option value="{{$row}}">{{$row}}</option>
                         @endforeach
                     </select>
                 </div>
