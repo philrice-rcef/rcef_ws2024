@@ -51,7 +51,18 @@
         <div class="x_content">
             <div class="bs-example" data-example-id="simple-jumbotron">     
                 <div class="jumbotron">
-                    <h3 style="font-size: 41px;font-weight: 600;">{{number_format($total_seed_data)}} bags (20kg/bag), {{$total_seed_variety}} seed varieties</span></h3>
+                    <h3 style="font-size: 41px;font-weight: 600;">@if(!empty($total_seed_data['total_seed_data']) && isset($total_seed_data['total_seed_data'][0]))
+    {{ number_format($total_seed_data['total_seed_data'][0]) }}
+@else
+    <!-- Handle the case where there is no data -->
+    0
+@endif bags (20kg/bag), @if(!empty($total_seed_variety['total_seed_variety']) && isset($total_seed_variety['total_seed_variety'][0]))
+    {{ $total_seed_variety['total_seed_variety'][0] }}
+@else
+    <!-- Handle the case where there is no data -->
+    0
+@endif
+ seed varieties</span></h3>
                     <p>This report displays the overall total of distributed seeds for each seed variety.</p>
                 </div>
             </div>
@@ -62,7 +73,7 @@
                     <select name="region" id="region" name="reegion" class="form-control">
                         <option value="0">Please select a region</option>
                         @foreach ($regions as $row)
-                            <option value="{{$row->region}}">{{$row->region}}</option>
+                            <option value="{{$row['region']}}">{{$row['region']}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -94,13 +105,13 @@
                             <th>Total Voume (20kg/bag)</th>
                         </thead>
                         <tbody>
-                            @foreach ($overall_seed_data as $seed_ctr => $seed_row)
-                                <tr>
-                                    <td>{{$seed_ctr+1}}</td>
-                                    <td>{{$seed_row->seed_variety}}</td>
-                                    <td>{{number_format($seed_row->seed_total_volume)}} bag(s)</td>
-                                </tr>
-                            @endforeach
+                        @foreach ($overall_seed_data['seed_variety'] as $index => $variety)
+                            <tr>
+                                <td>{{$index+1}}</td>
+                                    <td>{{ $variety }}</td>
+                                    <td>{{$overall_seed_data['total_seed_bags'][$index]}} bag(s)</td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -110,7 +121,7 @@
     </div>
 
 
-    <div class="x_panel">
+<!--     <div class="x_panel">
         <div class="x_title">
             <h2>
                 Graphical Representation
@@ -121,7 +132,7 @@
             <img id="chart_gif" src="{{asset('public/images/load_chart.gif')}}" alt="" id="loading_gif" style="display: block;margin: auto;height: 300px;padding-top: 25px;">
             <div id="seed_chart" style="width:100%; height:500px;"></div>
         </div>
-    </div>
+    </div> -->
 
 @endsection()
 
@@ -160,30 +171,6 @@
                 $("#chart_gif").css("display", "none");
             }
         });
-
-        function load_seed_chart(varieties, bags){
-            $('#seed_chart').highcharts({
-                chart: {
-                        type: 'bar'
-                    },
-                    title:{
-                        text:''
-                    },
-                    xAxis: {
-                        categories: varieties
-                    },
-                    yAxis: {
-                        title: {
-                            text: ''
-                        }
-                    },
-                    series: [{
-                        name: 'Total volume (20kg/bag)',
-                        data: bags,
-                        color: "rgb(120,235,117)"
-                    }]
-            });
-        }
 
         $("#download_btn").on("click", function(e){
             $("#download_btn").empty().html("Fetching data...");
@@ -283,7 +270,6 @@
                     ]
                 });
 
-                $("#seed_chart").empty();
                 $("#chart_gif").css("display", "block");
 
                 //refresh chart

@@ -9,6 +9,9 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use App\DeliveryInspect;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 use Auth;
 use DB;
 use Session;
@@ -117,25 +120,69 @@ class SeedReportController extends Controller
     }
 
     public function seed_report_overall(){
+
+        //uncomment for development
+        $pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
+
+        //production
+        //$pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+
+        $scriptPath = base_path('app/Http/PyScript/seed-variety-report/test.py');
+        //$scriptPath = base_path('app/Http/PyScript/seed-variety-report/test.py');
+
+/*         $ssn = $GLOBALS["season_prefix"];
+        $prov = $request->province;
+        $prv = substr($prv->prv, 0, 4);
+
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedProvince = escapeshellarg($prov);
+        $escapedPrv = escapeshellarg($prv); */
+
+        //$command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedProvince $escapedPrv";
+        $command = "$pythonPath \"$scriptPath\"";
+
+        // Create a new process
+        $process = new Process($command);
+
+        try {
+            // Run the process
+            $process->mustRun();
+
+            $output = $process->getOutput();
+            $result = json_decode($output, true);
+
+            $regions = $result['regions'];
+            $overall_seed_data = $result['overall_seed_data'];
+            $total_seed_variety = $result['total_seed_variety'];//[0]['total_seed_variety'];
+            $total_seed_data = $result['total_seed_data'];//[0]['total_seed_data'];
+
+            
+
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
+        }
+
+//old code
         //ws2024_rcep_reports
-        $overall_seed_data = DB::connection('rcep_reports_db')
+/*         $overall_seed_data = DB::connection('rcep_reports_db')
             ->table('lib_variety_report')
             ->select(DB::raw('SUM(total_volume) as seed_total_volume'),'seed_variety')
             ->groupBy('seed_variety')
             ->orderBy('seed_total_volume', 'DESC')
             ->get();
-
+        //ws2024_rcep_reports
         $total_seed_variety = DB::connection('rcep_reports_db')
             ->table('lib_variety_report')
             ->select('seed_variety')
             ->groupBy('seed_variety')
             ->get();
-
+        //ws2024_rcep_reports
         $total_seed_data = DB::connection('rcep_reports_db')
             ->table('lib_variety_report')
             ->select(DB::raw('SUM(total_volume) as seed_total_volume'))
             ->value('total_volume');
-            
+        
         $regions = DB::table($GLOBALS['season_prefix'].'rcep_reports.lib_variety_report')
 			->select('lib_variety_report.region')
 			->join($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv', function ($table_join) {
@@ -143,13 +190,14 @@ class SeedReportController extends Controller
             })
 			->orderBy('lib_prv.region_sort', 'ASC')
 			->groupBy('lib_variety_report.region')
-			->get();
+			->get(); */
 			
-        return view('reports.varities.overall')
+/*         return view('reports.varities.overall')
             ->with('overall_seed_data', $overall_seed_data)
             ->with('total_seed_data', $total_seed_data)
             ->with('total_seed_variety', count($total_seed_variety))
-            ->with('regions', $regions);
+            ->with('regions', $regions); */
+            return view('reports.varities.overall',compact("regions","overall_seed_data","total_seed_variety","total_seed_data"));
     }
 
 
