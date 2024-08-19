@@ -122,10 +122,10 @@ class SeedReportController extends Controller
     public function seed_report_overall(){
 
         //uncomment for development
-        //$pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
 
         //production
-        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        //$pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
         $scriptPath = base_path('app/Http/PyScript/seed-variety-report/seed_variety_report.py');
 
@@ -269,7 +269,78 @@ class SeedReportController extends Controller
         $province = $request->province;
         $municipality = $request->municipality;
 
-        if($region != "0" && $province =="0" && $municipality == "0"){
+        $query = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
+        ->select('prv')
+        ->where('regionName', '=', $region);
+        
+        if ($province !== '0') {
+            $query->where('province', '=', $province);
+        }
+
+        $prv = $query->limit(1)->value('prv');
+        
+        //local
+        //$pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
+
+        //production
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+
+        $scriptPath = base_path('app/Http/PyScript/seed-variety-report/seed_variety_filter.py');
+
+        if($province=='0'){
+            //trim prv 2 only
+            $prv = substr($prv, 0, 2);
+        }else{
+            $prv = substr($prv, 0, 4);
+        }
+
+        $ssn = $GLOBALS["season_prefix"];
+
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedPrv = escapeshellarg($prv);
+        $escapedProv = escapeshellarg($province);
+        $escapedMuni = escapeshellarg($municipality);
+
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedPrv $escapedProv $escapedMuni";
+
+        // Create a new process
+        $process = new Process($command);
+
+        try {
+            // Run the process
+            $process->mustRun();
+
+            $output = $process->getOutput();
+            $result2 = json_decode($output, true);
+
+
+            $result = $result2['overall_seed_data'];
+            
+            $overall_seed_data = [];
+
+            foreach ($result['seed_variety'] as $index => $variety) {
+                $overall_seed_data[] = [
+                    'seed_variety' => $variety,
+                    'total_seed_bags' => $result['total_seed_bags'][$index]
+                ];
+            }
+            
+            return Datatables::of(collect($overall_seed_data))
+            ->addColumn('volume', function($row){
+                return number_format($row['total_seed_bags'])." bag(s)";
+            })
+            ->addIndexColumn()
+            ->make(true);
+            
+
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
+        }
+
+        //return array([$region, $province, $municipality]);
+
+        /* if($region != "0" && $province =="0" && $municipality == "0"){
             return Datatables::of(DB::connection('rcep_reports_db')
                 ->table('lib_variety_report')
                 ->select(DB::raw('SUM(total_volume) as seed_total_volume'),'seed_variety')
@@ -313,7 +384,8 @@ class SeedReportController extends Controller
             })
             ->addIndexColumn()
             ->make(true);
-        }
+        } */
+
     }
 
     // Seed tag tracker
