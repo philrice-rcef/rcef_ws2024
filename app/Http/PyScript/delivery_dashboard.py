@@ -4,10 +4,12 @@ import polars as pl
 from urllib.parse import quote
 import threading, time
 import datetime
+import requests
 from xlsxwriter import Workbook
 
 
 os.chdir("report/home/")
+api_url = "https://asia-southeast1-rcef-ims.cloudfunctions.net/api/rsms/getIarData?apikey=rc3f1m5-XApiKey"
 uri ="mysql://json:%s@192.168.10.44:3306/information_schema" % quote('Zeijan@13')
 
 
@@ -32,11 +34,17 @@ tbl_transfer_logs = pl.DataFrame()
 ps_transfer_logs = pl.DataFrame()
 lib_prv = pl.DataFrame()
 next_ssn_tbl_actual_delivery = pl.DataFrame()
+iar_details = pl.DataFrame()
 
 replacement_arr = pl.DataFrame()
 buffer_arr = pl.DataFrame()
 bep_arr = pl.DataFrame()
 
+
+def load_iar_details():
+    global iar_details
+    json_string = requests.get(api_url).json()
+    iar_details = pl.from_dict(json_string)
 def load_view_coop_deliveries():
     global _view_coop_deliveries
     _view_coop_deliveries = pl.read_database_uri(f"select a.batchTicketNumber AS'batchTicketNumber', a.coopAccreditation AS'coopAccreditation', a.seedVariety AS'seedVariety', a.deliveryDate AS'deliveryDate', a.dropOffPoint AS'dropOffPoint', a.region AS'region', a.province AS'province', a.municipality AS'municipality', a.seedTag AS'seedTag', a.isBuffer AS'isBuffer', a.sg_id AS'sg_id',( select b.seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery_transaction b where a.coopAccreditation = b.accreditation_no and a.region = b.region limit 1 ) AS seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery a where a.is_cancelled = 0 and a.isBuffer = 0 and a.coopAccreditation ='{_coop_a}' group by a.batchTicketNumber, a.seedVariety, a.seedTag order by a.deliveryDate desc", uri)
@@ -1292,12 +1300,12 @@ if __name__ == "__main__":
         threading.Thread(target=load_breakdown_buffer).start()
         threading.Thread(target=load_tbl_actual_delivery_breakdown).start()
         threading.Thread(target=load_lib_prv).start()
-
+        # threading.Thread(target=load_iar_details).start()
 
         while threading.active_count() > 1:
             time.sleep(0.005)
             pass
-
+        
         # end timer
         _view_coop_delivery = _view_coop_deliveries.filter(pl.col("coopAccreditation").eq(_coop_a)).with_columns(pl.col("deliveryDate").str.strptime(pl.Datetime(time_unit="ms", time_zone=None), format='%Y-%m-%d %H:%M:%S', strict=False).alias("deliveryDate"))
         

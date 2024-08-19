@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Schema;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 use App\SeedCooperatives;
 use App\SeedGrowers;
 use Config;
@@ -24,27 +27,58 @@ class reportGADController extends Controller
 {
     public function generateGadGraph(Request $request){
 
-        if($request->type=="variety_sex"){
-            $data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
-            ->select("seed_variety", DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male) as total_male"), DB::raw("SUM(farmer_1_female + farmer_2_female + farmer_3_female) as total_female"))
-            ->groupBy("seed_variety")
-            ->orderBy(DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male + farmer_1_female + farmer_2_female + farmer_3_female)"), "DESC")
-            ->get();
+        // if($request->type=="variety_sex"){
+        //     $data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
+        //     ->select("seed_variety", DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male) as total_male"), DB::raw("SUM(farmer_1_female + farmer_2_female + farmer_3_female) as total_female"))
+        //     ->groupBy("seed_variety")
+        //     ->orderBy(DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male + farmer_1_female + farmer_2_female + farmer_3_female)"), "DESC")
+        //     ->get();
 
-         return json_encode($data);
+        //  return json_encode($data);
 
-        }elseif($request->type=="variety_group"){
+        // }elseif($request->type=="variety_group"){
 
-            $data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
-            ->select("seed_variety", DB::raw("SUM(farmer_1_male + farmer_1_female) as cat1"), DB::raw("SUM(farmer_2_female + farmer_2_male) as cat2"), DB::raw("SUM(farmer_3_female + farmer_3_male) as cat3"))
-            ->groupBy("seed_variety")
-            ->orderBy(DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male + farmer_1_female + farmer_2_female + farmer_3_female)"), "DESC")
-            ->get();
+        //     $data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
+        //     ->select("seed_variety", DB::raw("SUM(farmer_1_male + farmer_1_female) as cat1"), DB::raw("SUM(farmer_2_female + farmer_2_male) as cat2"), DB::raw("SUM(farmer_3_female + farmer_3_male) as cat3"))
+        //     ->groupBy("seed_variety")
+        //     ->orderBy(DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male + farmer_1_female + farmer_2_female + farmer_3_female)"), "DESC")
+        //     ->get();
 
-            return json_encode($data);
-        }
+        //     return json_encode($data);
+        // }
 
+        // $pythonPath = 'C://Python312//python.exe';
+
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+
+        $scriptPath = base_path('app/Http/PyScript/gad-report/gad-charts2.py');
+
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
+        $type = $request->type;
+
+        $escapedSsn = escapeshellarg($ssn);
+        $escapedType = escapeshellarg($type);
+
+        // Construct the command with arguments as a single string
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedType";
+
+        // Create a new process
+        $process = new Process($command);
         
+        try {
+            // Run the process
+            $process->mustRun();
+
+            $output = $process->getOutput();
+            $result = json_decode($output, true);
+
+            $result = json_encode($result);
+            return $result;
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
+        }
 
     }
 
@@ -929,167 +963,191 @@ class reportGADController extends Controller
 
     public function index(){
        
-        $region = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
-            ->groupBy("regionName")
-            ->orderBy("region_sort")
-            ->get();
-        // $dash_data = (object)[];
-        // $dash_data->total_male = 1;
-        // $dash_data->percent_male = 1;
-        // $dash_data->total_female = 1;
-        // $dash_data->percent_female = 1;
-        // $dash_data->over_all = 1;
-        // $dash_data->claimed_male = 1;
-        // $dash_data->claimed_female = 1;
-        
-        
+        // $region = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
+        //     ->groupBy("regionName")
+        //     ->orderBy("region_sort")
+        //     ->get();
+        //     dd($region);
 
-        // $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_report")
-        //         ->select(DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male) as total_male"),
-        //         DB::raw("FORMAT(((SUM(farmer_1_male + farmer_2_male + farmer_3_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male + farmer_1_female + farmer_2_female + farmer_3_female)) * 100),2) as percent_male"),
-        //         DB::raw("SUM(farmer_1_male + farmer_2_male + farmer_3_male + farmer_1_female + farmer_2_female + farmer_3_female) over_all"),
+        // $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_data")
+        //         ->select( DB::raw("SUM(male)as total_male"),
+        //         DB::raw("(SUM(male)/SUM(total_farmer)) * 100 as percent_male"),
+        //         DB::raw("SUM(female)as total_female"),
+        //         DB::raw("(SUM(female)/SUM(total_farmer)) * 100 as percent_female"),
+        //         DB::raw("SUM(claimed_1_male + claimed_2_male + claimed_3_male) as claimed_male"),
+        //         DB::raw("SUM(claimed_1_female + claimed_2_female + claimed_3_female) as claimed_female")
+        //         // DB::raw("SUM(farmer_1_male+farmer_1_female) as overall_cat1"),
+        //         // DB::raw("SUM(farmer_2_male+farmer_2_female) as overall_cat2"),
+        //         // DB::raw("SUM(farmer_3_male+farmer_3_female) as overall_cat3")
 
-        //         DB::raw("SUM(farmer_1_female + farmer_2_female + farmer_3_female) as total_female"),
-        //         DB::raw("FORMAT(((SUM(farmer_1_female + farmer_2_female + farmer_3_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male + farmer_1_female + farmer_2_female + farmer_3_female)) * 100),2) as percent_female"),
-        //         DB::raw("SUM(claimed_1_male + claimed_2_male + claimed_2_male) as claimed_male"),
-        //         DB::raw("SUM(claimed_1_female + claimed_2_female + claimed_2_female) as claimed_female"),
-        //         DB::raw("SUM(farmer_1_male+farmer_1_female) as overall_cat1"),DB::raw("SUM(farmer_2_male+farmer_2_female) as overall_cat2"),DB::raw("SUM(farmer_3_male+farmer_3_female) as overall_cat3")
         //         )
         //         ->first();
-
-        $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_data")
-                ->select( DB::raw("SUM(male)as total_male"),
-                DB::raw("(SUM(male)/SUM(total_farmer)) * 100 as percent_male"),
-                DB::raw("SUM(female)as total_female"),
-                DB::raw("(SUM(female)/SUM(total_farmer)) * 100 as percent_female"),
-                DB::raw("SUM(claimed_1_male + claimed_2_male + claimed_3_male) as claimed_male"),
-                DB::raw("SUM(claimed_1_female + claimed_2_female + claimed_3_female) as claimed_female"),
-                DB::raw("SUM(farmer_1_male+farmer_1_female) as overall_cat1"),
-                DB::raw("SUM(farmer_2_male+farmer_2_female) as overall_cat2"),
-                DB::raw("SUM(farmer_3_male+farmer_3_female) as overall_cat3")
-
-                )
-                ->first();
-        // dd($dash_data);
-
         
-        // $seed_variety_male = DB::table($GLOBALS['season_prefix']."rcep_gad_views.variety_report")
-        //         ->select("seed_variety")
-        //         ->orderBy(DB::raw("(farmer_1_male+farmer_2_male+farmer_3_male)"),"DESC")
-        //         ->first();
-        // $seed_data = DB::table("seed_seed.seed_characteristics")
-        //     ->where("variety", "LIKE",$seed_variety_male->seed_variety)
-        //     ->first();
-        //     if($seed_data != null){
-        //             $quality_male = substr($seed_data->amylose, -1);
-        //     }else{
-        //         $quality_male = "NONE";
-        //     }
+        // $pythonPath = 'C://Python312//python.exe';
 
-        return view("dashboard.gad_dashboard")
-            ->with("dash_data", $dash_data)
-            // ->with("seed_variety_male", $seed_variety_male)
-            ->with("region", $region)
-                ;
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
+        $scriptPath = base_path('app/Http/PyScript/gad-report/gad-index.py');
+
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
+
+        $escapedSsn = escapeshellarg($ssn);
+
+        // Construct the command with arguments as a single string
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn";
+    
+        // Create a new process
+        $process = new Process($command);
+        
+        try {
+            // Run the process
+            $process->mustRun();
+
+            $output = $process->getOutput();
+            $result = json_decode($output, true);
+            
+            $region = json_decode(json_encode($result['regions']));
+            $dash_data = json_decode(json_encode($result));
+            unset($dash_data->regions);
+            return view("dashboard.gad_dashboard", 
+            compact(
+                "dash_data", 
+                "region"
+            ));
+
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
+        }
     }
 
     
 
 
     public function gadData(Request $request){
+    // if($request->type == "stacked"){
 
-    if($request->type == "stacked"){
+    //     // $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_report")
+    //     // ->select(
+    //     // DB::raw(" ROUND((SUM(farmer_1_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as male_1_percent"),
+    //     // DB::raw(" ROUND((SUM(farmer_2_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as male_2_percent"),
+    //     // DB::raw(" ROUND((SUM(farmer_3_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as male_3_percent"),
+    //     // DB::raw(" ROUND((SUM(farmer_1_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as female_1_percent"),
+    //     // DB::raw(" ROUND((SUM(farmer_2_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as female_2_percent"),
+    //     // DB::raw(" ROUND((SUM(farmer_3_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as female_3_percent")
+    //     // )
+    //     // ->first();
 
-        // $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_report")
-        // ->select(
-        // DB::raw(" ROUND((SUM(farmer_1_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as male_1_percent"),
-        // DB::raw(" ROUND((SUM(farmer_2_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as male_2_percent"),
-        // DB::raw(" ROUND((SUM(farmer_3_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as male_3_percent"),
-        // DB::raw(" ROUND((SUM(farmer_1_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as female_1_percent"),
-        // DB::raw(" ROUND((SUM(farmer_2_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as female_2_percent"),
-        // DB::raw(" ROUND((SUM(farmer_3_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female))*100,2) as female_3_percent")
-        // )
-        // ->first();
-
-         $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_data")
-        ->select(
-        DB::raw(" ROUND((SUM(farmer_1_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as male_1_percent"),
-        DB::raw(" ROUND((SUM(farmer_2_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2 ) as male_2_percent"),
-        DB::raw(" ROUND((SUM(farmer_3_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as male_3_percent"),
-        DB::raw(" ROUND((SUM(farmer_1_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as female_1_percent"),
-        DB::raw(" ROUND((SUM(farmer_2_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as female_2_percent"),
-        DB::raw(" ROUND((SUM(farmer_3_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as female_3_percent")
-        )
-        ->first();
+    //      $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_data")
+    //     ->select(
+    //     DB::raw(" ROUND((SUM(farmer_1_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as male_1_percent"),
+    //     DB::raw(" ROUND((SUM(farmer_2_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2 ) as male_2_percent"),
+    //     DB::raw(" ROUND((SUM(farmer_3_male) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as male_3_percent"),
+    //     DB::raw(" ROUND((SUM(farmer_1_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as female_1_percent"),
+    //     DB::raw(" ROUND((SUM(farmer_2_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as female_2_percent"),
+    //     DB::raw(" ROUND((SUM(farmer_3_female) / SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female + total_invalid_age))*100,2) as female_3_percent")
+    //     )
+    //     ->first();
 
 
-        return json_encode($dash_data);
+    //     return json_encode($dash_data);
+    // }
+    // elseif($request->type == "bar_land"){
+    //     $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_data")
+    //     ->select(
+        
+    //     DB::raw(" SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female  + total_invalid_age) total_farmer"),
+        
+    //     DB::raw("SUM(farmer_1_male ) as farmer_male_1"),
+    //     DB::raw("SUM(farmer_2_male ) as farmer_male_2"),
+    //     DB::raw("SUM(farmer_3_male ) as farmer_male_3"),
+
+    //     DB::raw("SUM(farmer_1_female ) as farmer_female_1"),
+    //     DB::raw("SUM(farmer_2_female ) as farmer_female_2"),
+    //     DB::raw("SUM(farmer_3_female ) as farmer_female_3"),
+        
+    //     DB::raw("SUM(farmer_1_male + farmer_1_female ) as farmer_1"),
+    //     DB::raw("SUM(farmer_2_male + farmer_2_female ) as farmer_2"),
+    //     DB::raw("SUM(farmer_3_male + farmer_3_female ) as farmer_3"),
+        
+    //     DB::raw("SUM(claimed_1_male ) as claimed_male_1"),
+    //     DB::raw("SUM(claimed_2_male ) as claimed_male_2"),
+    //     DB::raw("SUM(claimed_3_male ) as claimed_male_3"),
+
+    //     DB::raw("SUM(claimed_1_female ) as claimed_female_1"),
+    //     DB::raw("SUM(claimed_2_female ) as claimed_female_2"),
+    //     DB::raw("SUM(claimed_3_female ) as claimed_female_3"),
+        
+    //     DB::raw("SUM(claimed_1_male + claimed_1_female ) as claimed_1"),
+    //     DB::raw("SUM(claimed_2_male + claimed_2_female ) as claimed_2"),
+    //     DB::raw("SUM(claimed_3_male + claimed_3_female ) as claimed_3")
+    //     )
+    //     ->first();
+
+
+    //     return json_encode($dash_data);
+    // }
+    // $pythonPath = 'C://Python312//python.exe';
+
+    $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+
+    $scriptPath = base_path('app/Http/PyScript/gad-report/gad-charts.py');
+
+    // Escape the arguments
+    $ssn = $GLOBALS["season_prefix"];
+    $type = $request->type;
+
+    $escapedSsn = escapeshellarg($ssn);
+    $escapedType = escapeshellarg($type);
+
+    // Construct the command with arguments as a single string
+    $command = "$pythonPath \"$scriptPath\" $escapedSsn $escapedType";
+
+    // Create a new process
+    $process = new Process($command);
+    
+    try {
+        // Run the process
+        $process->mustRun();
+
+        $output = $process->getOutput();
+        $result = json_decode($output, true);
+
+        $result = json_encode($result);
+        return $result;
+    } catch (ProcessFailedException $exception) {
+        // Handle the exception
+        echo $exception->getMessage();
     }
-    elseif($request->type == "bar_land"){
-        $dash_data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_data")
-        ->select(
-        
-        DB::raw(" SUM(farmer_1_male + farmer_2_male + farmer_3_male+ farmer_1_female + farmer_2_female + farmer_3_female  + total_invalid_age) total_farmer"),
-        
-        DB::raw("SUM(farmer_1_male ) as farmer_male_1"),
-        DB::raw("SUM(farmer_2_male ) as farmer_male_2"),
-        DB::raw("SUM(farmer_3_male ) as farmer_male_3"),
-
-        DB::raw("SUM(farmer_1_female ) as farmer_female_1"),
-        DB::raw("SUM(farmer_2_female ) as farmer_female_2"),
-        DB::raw("SUM(farmer_3_female ) as farmer_female_3"),
-        
-        DB::raw("SUM(farmer_1_male + farmer_1_female ) as farmer_1"),
-        DB::raw("SUM(farmer_2_male + farmer_2_female ) as farmer_2"),
-        DB::raw("SUM(farmer_3_male + farmer_3_female ) as farmer_3"),
-        
-        DB::raw("SUM(claimed_1_male ) as claimed_male_1"),
-        DB::raw("SUM(claimed_2_male ) as claimed_male_2"),
-        DB::raw("SUM(claimed_3_male ) as claimed_male_3"),
-
-        DB::raw("SUM(claimed_1_female ) as claimed_female_1"),
-        DB::raw("SUM(claimed_2_female ) as claimed_female_2"),
-        DB::raw("SUM(claimed_3_female ) as claimed_female_3"),
-        
-        DB::raw("SUM(claimed_1_male + claimed_1_female ) as claimed_1"),
-        DB::raw("SUM(claimed_2_male + claimed_2_female ) as claimed_2"),
-        DB::raw("SUM(claimed_3_male + claimed_3_female ) as claimed_3")
-        )
-        ->first();
-
-
-        return json_encode($dash_data);
-    }
-
 
     }
      
     public function dashboardtbl(){
-        $data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
-        ->select( "seed_variety",
-        DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 ) as total_bag"),
-        DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3) as male_bag"), 
-        DB::raw("SUM( bags_female_1 +bags_female_2 +bags_female_3) as female_bag"),
-        DB::raw("SUM(bags_male_1 + bags_female_1) as cat1_bag"),
-        DB::raw("SUM(bags_male_2 + bags_female_2) as cat2_bag"), 
-        DB::raw("SUM(bags_male_3 + bags_female_3) as cat3_bag")
-        )
-       ->groupBy("seed_variety")
-        ->orderBy(DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 )"), "DESC")
-        ->get();
+        // $data = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
+        // ->select( "seed_variety",
+        //     DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 ) as total_bag"),
+        //     DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3) as male_bag"), 
+        //     DB::raw("SUM( bags_female_1 +bags_female_2 +bags_female_3) as female_bag"),
+        //     DB::raw("SUM(bags_male_1 + bags_female_1) as cat1_bag"),
+        //     DB::raw("SUM(bags_male_2 + bags_female_2) as cat2_bag"), 
+        //     DB::raw("SUM(bags_male_3 + bags_female_3) as cat3_bag") 
+        // )
+        // ->groupBy("seed_variety")
+        // ->orderBy(DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 )"), "DESC")
+        // ->get();
 
-        $data_cent = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
-            ->select( 
-        DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 ) as total_bag"),
-        DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3) as male_bag"), 
-        DB::raw("SUM( bags_female_1 +bags_female_2 +bags_female_3) as female_bag"),
-        DB::raw("SUM(bags_male_1 + bags_female_1) as cat1_bag"),
-        DB::raw("SUM(bags_male_2 + bags_female_2) as cat2_bag"), 
-        DB::raw("SUM(bags_male_3 + bags_female_3) as cat3_bag")
-    )
-    ->orderBy(DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 )"), "DESC")
-        ->first();
+        // $data_cent = DB::table($GLOBALS['season_prefix']."rcep_gad_views.gad_variety")
+        //     ->select( 
+        //     DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 ) as total_bag"),
+        //     DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3) as male_bag"), 
+        //     DB::raw("SUM( bags_female_1 +bags_female_2 +bags_female_3) as female_bag"),
+        //     DB::raw("SUM(bags_male_1 + bags_female_1) as cat1_bag"),
+        //     DB::raw("SUM(bags_male_2 + bags_female_2) as cat2_bag"), 
+        //     DB::raw("SUM(bags_male_3 + bags_female_3) as cat3_bag")
+        // )
+        // ->orderBy(DB::raw("SUM(bags_male_1 +bags_male_2 +bags_male_3 + bags_female_1 +bags_female_2 +bags_female_3 )"), "DESC")
+        // ->first();
         
         //14
        $color_fam = array(
@@ -1098,33 +1156,80 @@ class reportGADController extends Controller
         
 
 
-        $tbl_arr = array();
-        foreach($data as $data_info){
-            array_push($tbl_arr, array(
-                "seed_variety" => $data_info->seed_variety,
-                "total_bag" => number_format($data_info->total_bag),
-                "cent_bag" => number_format(($data_info->total_bag / $data_cent->total_bag)*100,2)."%" ,
-                "male_bag" => number_format($data_info->male_bag) ,
-                "male_cent" => number_format(($data_info->male_bag / $data_cent->male_bag)*100,2)."%" ,
-                "female_bag" => number_format($data_info->female_bag) ,
-                "female_cent" => number_format(($data_info->female_bag / $data_cent->female_bag)*100,2)."%" ,
-                "blank" => "" ,
-                "cat1_bag" => number_format($data_info->cat1_bag) ,
-                "cat1_cent" => number_format(($data_info->cat1_bag / $data_cent->cat1_bag)*100,2)."%" ,
-                "cat2_bag" => number_format($data_info->cat2_bag) ,
-                "cat2_cent" => number_format(($data_info->cat2_bag / $data_cent->cat2_bag)*100,2)."%" ,
-                "cat3_bag" => number_format($data_info->cat3_bag) ,
-                "cat3_cent" => number_format(($data_info->cat3_bag / $data_cent->cat3_bag)*100,2)."%" ,
-            ));
+        // $tbl_arr = array();
+        // foreach($data as $data_info){
+        //     array_push($tbl_arr, array(
+        //         "seed_variety" => $data_info->seed_variety,
+        //         "total_bag" => number_format($data_info->total_bag),
+        //         "cent_bag" => number_format(($data_info->total_bag / $data_cent->total_bag)*100,2)."%" ,
+        //         "male_bag" => number_format($data_info->male_bag) ,
+        //         "male_cent" => number_format(($data_info->male_bag / $data_cent->male_bag)*100,2)."%" ,
+        //         "female_bag" => number_format($data_info->female_bag) ,
+        //         "female_cent" => number_format(($data_info->female_bag / $data_cent->female_bag)*100,2)."%" ,
+        //         "blank" => "" ,
+        //         "cat1_bag" => number_format($data_info->cat1_bag) ,
+        //         "cat1_cent" => number_format(($data_info->cat1_bag / $data_cent->cat1_bag)*100,2)."%" ,
+        //         "cat2_bag" => number_format($data_info->cat2_bag) ,
+        //         "cat2_cent" => number_format(($data_info->cat2_bag / $data_cent->cat2_bag)*100,2)."%" ,
+        //         "cat3_bag" => number_format($data_info->cat3_bag) ,
+        //         "cat3_cent" => number_format(($data_info->cat3_bag / $data_cent->cat3_bag)*100,2)."%" ,
+        //     ));
+        // }
 
-        }
+        // dd($tbl_arr);
+
+        // $pythonPath = 'C://Python312//python.exe';
+
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+
+        $scriptPath = base_path('app/Http/PyScript/gad-report/gad-seed-variety.py');
+
+        // Escape the arguments
+        $ssn = $GLOBALS["season_prefix"];
+
+        $escapedSsn = escapeshellarg($ssn);
+
+        // Construct the command with arguments as a single string
+        $command = "$pythonPath \"$scriptPath\" $escapedSsn";
+    
+        // Create a new process
+        $process = new Process($command);
         
+        try {
+            // Run the process
+            $process->mustRun();
 
-        $data = collect($tbl_arr);
+            $output = $process->getOutput();
+            $result = json_decode($output, true);
 
-        return Datatables::of($data)->make(true);
+            $tbl_arr = array();
+            foreach($result as $data_info){
+                array_push($tbl_arr, array(
+                    "seed_variety" => $data_info["seed_variety"],
+                    "total_bag" => number_format($data_info["total_bags"]),
+                    "cent_bag" => number_format($data_info['cent_bag'], 2)."%",
+                    "male_bag" => number_format($data_info["male_bag"]),
+                    "male_cent" => number_format($data_info['male_cent'], 2)."%",
+                    "female_bag" => number_format($data_info["female_bag"]),
+                    "female_cent" => number_format($data_info['female_cent'], 2)."%",
+                    "blank" => "",
+                    "cat1_bag" => number_format($data_info["cat1_bag"]),
+                    "cat1_cent" => number_format($data_info['cat1_cent'], 2)."%",
+                    "cat2_bag" => number_format($data_info["cat2_bag"]),
+                    "cat2_cent" => number_format($data_info['cat2_cent'], 2)."%",
+                    "cat3_bag" => number_format($data_info["cat3_bag"]),
+                    "cat3_cent" => number_format($data_info['cat3_cent'], 2)."%"
+                ));
+            }
 
 
+            $data = collect($tbl_arr);
+            return Datatables::of($data)->make(true);
+
+        } catch (ProcessFailedException $exception) {
+            // Handle the exception
+            echo $exception->getMessage();
+        }
     }
 
   

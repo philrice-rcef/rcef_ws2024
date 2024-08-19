@@ -119,7 +119,7 @@
                                 Population: 
                             </div>
                             <div class="dash_div_data col-md-6">
-                                  {{number_format($dash_data->total_male)}} ({{$dash_data->percent_male}}%) 
+                                  {{number_format($dash_data->total_male)}} ({{number_format($dash_data->percent_male, 2)}}%) 
                             </div>
                         
                             <div class="dash_div col-md-6">
@@ -173,7 +173,7 @@
                                 Population: 
                             </div>
                             <div class="dash_div_data col-md-6">
-                                  {{number_format($dash_data->total_female)}} ({{$dash_data->percent_female}}%) 
+                                  {{number_format($dash_data->total_female)}} ({{number_format($dash_data->percent_female, 2)}}%) 
                             </div>
                         
                             <div class="dash_div col-md-6">
@@ -220,7 +220,15 @@
                 0 32px 64px rgba(0,0,0,0.07);">
             <div class="card">
             <div class="col-md-12"  style="font-size:21px; font-weight:bold;">
-                2023 DS by sex & age group
+                @php
+                    $season = $GLOBALS['season_prefix'];
+                    $code = substr($season, 0, 2);
+                    $year = substr($season, 2, 4);
+                    $code = strtoupper($code);
+                    echo "{$year} {$code}";
+                @endphp
+                
+                by sex & age group
             </div>
             <div class="col-md-12" >
                     <div id="stacked_data" name="stacked_data"> </div>
@@ -238,7 +246,11 @@
                 0 32px 64px rgba(0,0,0,0.07);">
             <div class="card">
             <div class="col-md-12"  style="font-size:21px; font-weight:bold;">
-                2023 DS ave. landholding, by sex & age group
+                @php
+                    echo "{$year} {$code}";
+                @endphp 
+                
+                avg. landholding, by sex & age group
             </div>
             <div class="col-md-12" id="bar_land" name="bar_land" >
     
@@ -383,7 +395,7 @@
 
     <div class="col-md-12">
         
-        <div class="col-md-8" style="padding-left:10px;">
+        <!-- <div class="col-md-8" style="padding-left:10px;">
             <div style="width: auto;height:695px;  box-shadow: 0 1px 2px rgba(0,0,0,0.07), 
                 0 2px 4px rgba(0,0,0,0.07), 
                 0 4px 8px rgba(0,0,0,0.07), 
@@ -404,11 +416,11 @@
 
             
             </div>
-        </div>
+        </div> -->
 
 
   
-        <div class="col-md-4">
+        <div class="col-md-12">
             <div  style="width: auto;  box-shadow: 0 1px 2px rgba(0,0,0,0.07), 
                 0 2px 4px rgba(0,0,0,0.07), 
                 0 4px 8px rgba(0,0,0,0.07), 
@@ -614,19 +626,19 @@
 
         <script type="text/javascript">
   //mapboxgl.accessToken = 'pk.eyJ1IjoiYWhyamhhY2UiLCJhIjoiY2t0bzQya3Y2MDk0aTJvcWludnF4c3B2ZiJ9.VPW25_j0CgfdOgrfgD6ojg';
-  mapboxgl.accessToken = 'pk.eyJ1IjoiYWhyamhhY2UiLCJhIjoiY2t0bzNvYjZhMDkwazJ1cDd5dG0xZGZoaiJ9.ODpa0PhB4E-fzNLONSoAHA';
+//   mapboxgl.accessToken = 'pk.eyJ1IjoiYWhyamhhY2UiLCJhIjoiY2t0bzNvYjZhMDkwazJ1cDd5dG0xZGZoaiJ9.ODpa0PhB4E-fzNLONSoAHA';
 
-const map = new mapboxgl.Map({
-  container: 'map_gad',
-  style: 'mapbox://styles/mapbox/streets-v11',
-  center: [121.7740, 12.8797], //long, lat
-    //center: [120.6856995, 15.3909118], //zoom 8 for region
-  zoom: 5,
-});
+// const map = new mapboxgl.Map({
+//   container: 'map_gad',
+//   style: 'mapbox://styles/mapbox/streets-v11',
+//   center: [121.7740, 12.8797], //long, lat
+//     //center: [120.6856995, 15.3909118], //zoom 8 for region
+//   zoom: 5,
+// });
 
-map.on('load', () => {
-                map.resize();
-            }); //MAP ONLOAD
+// map.on('load', () => {
+//                 map.resize();
+//             }); //MAP ONLOAD
 
 
         function deleteLayer(arr){
@@ -651,9 +663,9 @@ map.on('load', () => {
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
-            }
-            localStorage.clear();
-function generateMap(){
+        }
+        localStorage.clear();
+        function generateMap(){
 
            var layer_created = JSON.parse(localStorage.getItem("layer_created"));
            var source_created = JSON.parse(localStorage.getItem("source_created"));
@@ -1257,7 +1269,7 @@ $.ajax({
                     type: 'column'
                 },
                 title: {
-                    text: '2022WS relative share of varieties by sex'
+                    text: '{{$year}} {{$code}} relative share of varieties by sex'
                 },
                
                 xAxis: {
@@ -1337,7 +1349,7 @@ $.ajax({
                     type: 'column'
                 },
                 title: {
-                    text: '2022WS relative share of varieties by age group'
+                    text: '{{$year}} {{$code}} relative share of varieties by age group'
                 },
                
                 xAxis: {
@@ -1401,7 +1413,6 @@ $.ajax({
 
 
           function load_bar_land(data){
-
 
             var overall_1 = parseFloat(data.claimed_1) / parseFloat(data.farmer_1);
             var overall_2 = parseFloat(data.claimed_2) / parseFloat(data.farmer_2);
@@ -1566,16 +1577,16 @@ $.ajax({
                 },
                 series: [ {
                     name: '18-29',
-                    data: [parseFloat(data.male_1_percent), parseFloat(data.female_1_percent)]
+                    data: [parseFloat(data.male_1_percent.toFixed(2)), parseFloat(data.female_1_percent.toFixed(2))]
                 }
                 , {
                     name: '30-59',
-                    data: [parseFloat(data.male_2_percent), parseFloat(data.female_2_percent)]
+                    data: [parseFloat(data.male_2_percent.toFixed(2)), parseFloat(data.female_2_percent.toFixed(2))]
                 },
                 {
                     
                     name: '60 up',
-                    data: [parseFloat(data.male_3_percent), parseFloat(data.female_3_percent)]
+                    data: [parseFloat(data.male_3_percent.toFixed(2)), parseFloat(data.female_3_percent.toFixed(2))]
                 }
                
             ]
