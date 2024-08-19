@@ -122,10 +122,10 @@ class SeedReportController extends Controller
     public function seed_report_overall(){
 
         //uncomment for development
-        $pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
+        //$pythonPath = 'C://Users//admin//AppData//Local//Programs//Python//Python312//python.exe';
 
         //production
-        //$pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
         $scriptPath = base_path('app/Http/PyScript/seed-variety-report/seed_variety_report.py');
 
@@ -272,7 +272,7 @@ class SeedReportController extends Controller
         $query = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('prv')
         ->where('regionName', '=', $region);
-        
+
         if ($province !== '0') {
             $query->where('province', '=', $province);
         }
