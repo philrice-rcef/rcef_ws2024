@@ -1462,6 +1462,8 @@ class virtual_encodingController extends Controller
 
 
     public function save_distribution_homeClaim(Request $request){
+
+        
         
         if($request->db_ref != 'new'){
 
@@ -1517,33 +1519,60 @@ class virtual_encodingController extends Controller
                     //1 -> normal; 3-created a virtual
                     $status_vs = 1;
                     //CLAIMING_PRV
+                    // dd($request->dop_home);
                     $prv_code_parcel = str_replace("-", "", substr($claiming_prv, 0,5));
                     $prv_code_released = substr($prv_dropoff_id,0,4);
-    
+                    $home_code_released = explode('(',$request->dop_home);
+                    $home_dop_name = $home_code_released[0];
+                    $home_dop = str_replace(')','',$home_code_released[1]);
+                    $home_code_released = substr($home_code_released[1],0,4);
+
+                    // dd($home_dop_name,$request->dop_home);
+                    
                     $code_parcel = str_replace("-", "", $claiming_prv);
                     $code_released = substr($prv_dropoff_id,0,6);
-    
+
+                    if($prv_dropoff_id == '')
+                    {
+                        $prv_code_released = str_replace("-", "", substr($rsbsa_control_no, 0,5));
+                        $code_released = str_replace("-", "", substr($rsbsa_control_no, 0,5));
+                    }
+                    
+                    // dd($prv_code_parcel,$prv_code_released, $code_parcel, $code_released);
                    
-              
-                        $release_location= DB::connection('delivery_inspection_db')->table('lib_dropoff_point')
-                                ->where("prv_dropoff_id", $prv_dropoff_id)
-                                ->first();
-                        if($release_location == null){
-                            return json_encode("Release Location Undefined!");
+                    $release_location= DB::connection('delivery_inspection_db')->table('lib_dropoff_point')
+                    ->where("prv_dropoff_id", $prv_dropoff_id)
+                    ->first();
+                    // if($release_location == null){
+                    //     return json_encode("Release Location Undefined!");
+                    // }
+                    if(!$release_location)
+                    {
+                        $relProv = '';
+                        $relMun = '';
+                    }
+                    else{
+                        $relProv = $release_location->province;
+                        $relMun = $release_location->municipality;
+                    }
+
+                    $seed_stock= DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
+                        ->where("prv_dropoff_id", $prv_dropoff_id)
+                        ->where("seedVariety", $variety)
+                        ->sum("totalBagCount");
+                    //  if($seed_stock < $bags_claimed ){return json_encode("Seed stocks exhausted");}
+                    
+                    $dropOffPoint =  DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_dropoff_point")
+                        ->where("prv_dropoff_id", $prv_dropoff_id)
+                        ->value("dropOffPoint");
+
+                        
+                        
+                        if($prv_dropoff_id == '')
+                        {    
+                            $dropOffPoint = '';
                         }
                         
-    
-                        $seed_stock= DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
-                            ->where("prv_dropoff_id", $prv_dropoff_id)
-                            ->where("seedVariety", $variety)
-                            ->sum("totalBagCount");
-                         if($seed_stock < $bags_claimed ){return json_encode("Seed stocks exhausted");}
-                        
-                         $dropOffPoint =  DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_dropoff_point")
-                            ->where("prv_dropoff_id", $prv_dropoff_id)
-                            ->value("dropOffPoint");
-    
-                           
                                 
                                         if($prv_code_parcel != $prv_code_released){
                                             //NOT THE SAME PROVINCE            
@@ -1551,6 +1580,8 @@ class virtual_encodingController extends Controller
                                             $farmer_data = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                 ->where("db_ref", $db_ref)
                                                 ->first();
+                                                
+                                                
                                             if($farmer_data != null){
                                                 if($request->is_lowland){
                                                     DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
@@ -1579,6 +1610,16 @@ class virtual_encodingController extends Controller
 
                                                 }
                                                 else{
+                                                    if($farmer_data->is_replacement == 1)
+                                                    {
+                                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
+                                                            ->where("db_ref", $db_ref)
+                                                            ->update([
+                                                                "replacement_bags_claimed" => $bags_claimed,
+                                                                "replacement_area_claimed" => $claimed_area,
+                                                            ]);
+                                                    }
+                                                    else{
                                                     DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
                                                         ->where("db_ref", $db_ref)
                                                         ->update([
@@ -1597,6 +1638,7 @@ class virtual_encodingController extends Controller
                                                             "is_ip" => $ip,
                                                             "tribe_name" => $ip_name,
                                                         ]);
+                                                    }
                                                 }
                         
                                                 //GET CURRENT FARMER ON CLAIMING PRV
@@ -1617,24 +1659,24 @@ class virtual_encodingController extends Controller
                                                     $db_ref = $get_db_ref->db_ref;
                                                     $rsbsa_control_no = $get_db_ref->rsbsa_control_no;
                                                 }else{
-                                                    $clone_data = $farmer_data;
-                                                    $clone_data = json_decode(json_encode($clone_data), true);
-                                                    unset($clone_data["id"]);
-                                                    unset($clone_data["db_ref"]);
-                                                    $clone_data["to_prv_code"] = "clone: ".$list_version;
+                                                    // $clone_data = $farmer_data;
+                                                    // $clone_data = json_decode(json_encode($clone_data), true);
+                                                    // unset($clone_data["id"]);
+                                                    // unset($clone_data["db_ref"]);
+                                                    // $clone_data["to_prv_code"] = "clone: ".$list_version;
+                                                    
+                                                    // $new_farmer_id_clone =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
+                                                    //         ->insertGetId($clone_data);
 
-                                                    $new_farmer_id_clone =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
-                                                            ->insertGetId($clone_data);
-
-                                                    //UPDATE
-                                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
-                                                            ->where("id", $new_farmer_id_clone)
-                                                            ->update(["db_ref" => $new_farmer_id_clone]);
+                                                    // //UPDATE
+                                                    //     DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
+                                                    //         ->where("id", $new_farmer_id_clone)
+                                                    //         ->update(["db_ref" => $new_farmer_id_clone]);
 
 
-                                                    $rcef_id = $farmer_data->rcef_id;
-                                                    $db_ref = $new_farmer_id_clone;
-                                                    $rsbsa_control_no = $farmer_data->rsbsa_control_no;
+                                                    // $rcef_id = $farmer_data->rcef_id;
+                                                    // $db_ref = $new_farmer_id_clone;
+                                                    // $rsbsa_control_no = $farmer_data->rsbsa_control_no;
 
                                                             
 
@@ -1652,16 +1694,18 @@ class virtual_encodingController extends Controller
                                         else{
     
                                             
-    
+                                            
                                             if($code_parcel != $code_released){
                                                 //NOT THE SAME MUNICIPAL
-                                                $status_vs = 3;
+                                                // $status_vs = 3;
                                             }
     
     
                                             $farmer_data = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
                                                 ->where("db_ref", $db_ref)
                                                 ->first();
+
+                                               
                                             if($farmer_data != null){
                                                 $sex = $farmer_data->sex;
                                                 if($request->is_lowland){
@@ -1690,24 +1734,36 @@ class virtual_encodingController extends Controller
                                                         ]);
                                                 }
                                                 else{
-                                                    DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
-                                                        ->where("db_ref", $db_ref)
-                                                        ->update([
-                                                            "da_intervention_card" => $da_intervention_card,
-                                                            "birthdate" => $birthdate,
-                                                            "is_claimed" => 1,
-                                                            "fca_name" => $fca_name,
-                                                            "total_claimed" => $farmer_data->total_claimed + $bags_claimed,
-                                                            "total_claimed_area" => $farmer_data->total_claimed_area + $claimed_area,
-                                                            "mother_lname" => $mother_last_name,
-                                                            "mother_fname" => $mother_first_name,
-                                                            "mother_mname" => $mother_mid_name,
-                                                            "mother_suffix" => $mother_ext_name,
-                                                            "tel_no" => $tel_no,
-                                                            "is_pwd" => $pwd,
-                                                            "is_ip" => $ip,
-                                                            "tribe_name" => $ip_name,
-                                                        ]);
+
+                                                    if($farmer_data->is_replacement == 1)
+                                                    {
+                                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
+                                                            ->where("db_ref", $db_ref)
+                                                            ->update([
+                                                                "replacement_bags_claimed" => $bags_claimed,
+                                                                "replacement_area_claimed" => $claimed_area,
+                                                            ]);
+                                                    }
+                                                    else{
+                                                        DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
+                                                            ->where("db_ref", $db_ref)
+                                                            ->update([
+                                                                "da_intervention_card" => $da_intervention_card,
+                                                                "birthdate" => $birthdate,
+                                                                "is_claimed" => 1,
+                                                                "fca_name" => $fca_name,
+                                                                "total_claimed" => $farmer_data->total_claimed + $bags_claimed,
+                                                                "total_claimed_area" => $farmer_data->total_claimed_area + $claimed_area,
+                                                                "mother_lname" => $mother_last_name,
+                                                                "mother_fname" => $mother_first_name,
+                                                                "mother_mname" => $mother_mid_name,
+                                                                "mother_suffix" => $mother_ext_name,
+                                                                "tel_no" => $tel_no,
+                                                                "is_pwd" => $pwd,
+                                                                "is_ip" => $ip,
+                                                                "tribe_name" => $ip_name,
+                                                            ]);
+                                                    }
                                                 }
                                             }else{
                                                 return json_encode("Cannot Find Farmer Info");
@@ -1725,8 +1781,8 @@ class virtual_encodingController extends Controller
                                         "rcef_id" => $rcef_id,
                                         "db_ref" => $db_ref,
                                         "prv_dropoff_id" => $prv_dropoff_id,
-                                        "province" => $release_location->province,
-                                        "municipality" => $release_location->municipality,
+                                        "province" => $relProv,
+                                        "municipality" =>$relMun,
                                         "dropOffPoint" => $dropOffPoint,
                                         "transaction_code" => "web",
                                         "dataSharing" => 1,
@@ -1795,141 +1851,72 @@ class virtual_encodingController extends Controller
 
                                 }
                                 else{
-                                    $release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".new_released")
-                                    ->insertGetId([
-                                        "id" =>  "111111111",
-                                        "rcef_id" => $rcef_id,
-                                        "db_ref" => $db_ref,
-                                        "prv_dropoff_id" => $prv_dropoff_id,
-                                        "province" => $release_location->province,
-                                        "municipality" => $release_location->municipality,
-                                        "dropOffPoint" => $dropOffPoint,
-                                        "transaction_code" => "web",
-                                        "dataSharing" => 1,
-                                        "is_representative" => $is_representative,
-                                        "rep_name" => $rep_name,
-                                        "rep_id" => $rep_id,
-                                        "rep_relation" => $rep_relationship,
-                                        "claimed_area" => 0.00,
-                                        "bags_claimed" => 0,
-                                        "seed_variety" => $variety,
-                                        "remarks" => $bags_claimed.' bag(s) claimed in home address with area of '.$claimed_area,
-                                        "recipient_ls" => "-",
-                                        "planted_rcvd_seeds_ls" => "-",
-                                        "reason_not_planted_rcvd_seeds_ls" => "-",
-                                        "yield_area_harvested_ls" => $request->yield_area,
-                                        "yield_no_of_bags_ls" => $request->yield_bags,
-                                        "yield_wt_per_bag" => $request->yield_weight,
-                                        "crop_establishment_cs" => $crop_est,
-                                        "seedling_age" => 0,
-                                        "ecosystem_cs" => $eco_system,
-                                        "ecosystem_source_cs" => $water_source,
-                                        "planting_week" => $planting_date,
-                                        "has_kp_kit" => $kp_kit,
-                                        "other_benefits_received" => $ayuda,
-                                        "date_released" => date("Y-m-d"),
-                                        "released_by" => Auth::user()->username,
-                                        "time_start" => "-",
-                                        "time_end" => "-",
-                                        "app_version" => "web",
-                                        "distribution_type" => "Regular",
-                                        "mode" => "search",
-                                        "farmer_id_address" => $db_ref,
-                                        "content_rsbsa" => $rsbsa_control_no,
-                                        "yield_last_season_details" => $yield_last_season,
-                                        "category" => $category,
-                                        "birthdate"=> $birthdate,
-                                        "final_area" => $final_area,
-                                        "sex" => $sex,
-                                        "list_version" => $list_version,
-                                        "status" => $status_vs,
-                                        "process_report_status" => "not process"
-                                    ]);
-                                }
-                               
-    
-    
-    
-                                    if($status_vs == 3){
-    
-                                        //GET THE 
-                                        
-                                        
-                                        $prv_location = DB::connection('delivery_inspection_db')->table('lib_prv')
-                                            ->where("prv", $code_parcel)
-                                            ->first();
-                                        $vs_lib_drop_off = "";
-                                        $vs_lib_dop_name = "";
-                                        
-                                        
-                                        if($prv_location != null){
-                                            $vs_province = $prv_location->province;
-                                            $vs_municipality = $prv_location->municipality;
-                                            $vs_region = $prv_location->region;
-                                           $vs_dop =  DB::connection('delivery_inspection_db')->table('lib_dropoff_point')
-                                                ->where("municipality", $vs_municipality)
-                                                ->where("province", $vs_province)
-                                                ->first();
-                                            if($vs_dop != null){
-                                                $vs_lib_drop_off = $vs_dop->prv_dropoff_id;
-                                                $vs_lib_dop_name = $vs_dop->dropOffPoint;
-                                            }   
-                                        }else{
-                                            return json_encode("Server Unreachable");
-                                        }
-    
-                                        //GET STOCKS DETAILS
-    
-                                        $act_batch = "";
-                                        $act_prv = "";
-                                        $act_region = "";
-                                        $act_province = "";
-                                        $act_municipality = "";
-                                        $act_dop_name = "";
 
-                                        $seed_actual =  DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
-                                            ->where("prv_dropoff_id", $prv_dropoff_id)
-                                            ->where("seedVariety", $variety)
-                                            ->first();
-                                        if($seed_actual != null ){
-                                            $act_batch = $seed_actual->batchTicketNumber;
-                                            $act_prv = $seed_actual->prv;
-                                            $act_region = $seed_actual->region;
-                                            $act_province = $seed_actual->province;
-                                            $act_municipality = $seed_actual->municipality;
-                                            $act_dop_name = $seed_actual->dropOffPoint;
-                                        }
-    
-    
-                                        $vs_stock_ins = array(
-                                            "batchTicketNumber_ref" => $act_batch,
-                                            "prv_ref" => $act_prv,
-                                            "region_ref" => $act_region,
-                                            "province_ref" => $act_province,
-                                            "municipality_ref" => $act_municipality,
-                                            "dropOffPoint_ref" => $act_dop_name,
-                                            "seedVariety_ref" => $variety,
-                                            "prv" => $code_parcel,
-                                            "prv_dropoff_id" =>$vs_lib_drop_off ,
-                                            "dropOffPoint" =>$vs_lib_dop_name ,
-                                            "region" =>$vs_region ,
-                                            "province" => $vs_province,
-                                            "municipality" => $vs_municipality,
-                                            "totalBagCount" => $bags_claimed,
-                                            "virtual_release_ref" => $release_ref_id
-                                        );
-    
-    
-    
-                                        $vs_release_ins = array(
-                                            "new_released_id_ref" => $release_ref_id,
+                                    $farmerData = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".farmer_information_final")
+                                                ->where("db_ref", $db_ref)
+                                                ->first();
+                                    
+                                    
+                                    if($farmer_data->is_replacement == 1)
+                                    {
+                                        $releaseReplacement = 1;
+                                    }
+                                    else
+                                    {
+                                        $releaseReplacement = 0;
+                                    }
+
+
+                                    if($prv_dropoff_id == ''){
+                                        $parcel_dop = '';
+                                        $checkParcelDop = '';
+                                    }
+                                    else{
+                                        $checkParcelDop = $prv_dropoff_id;
+                                        $parcel_dop = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_dropoff_point')
+                                        ->where('prv_dropoff_id','LIKE',$prv_dropoff_id.'%')
+                                        ->first();
+                                        // dd($prv_dropoff_id,$parcel_dop);
+                                        $parcel_dop = $parcel_dop->dropOffPoint.' ('.$parcel_dop->prv_dropoff_id.')';
+                                    }
+
+                                    $getHomeDopInfo = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_dropoff_point')
+                                    ->where('prv_dropoff_id','LIKE',$home_dop.'%')
+                                    ->first();
+
+
+                                    
+                                    if($prv_dropoff_id == ''){
+                                        $prv_dropoff_id = $home_dop;
+                                        $relProv = $getHomeDopInfo->province;
+                                        $relMun = $getHomeDopInfo->municipality;
+                                        $dropOffPoint = $home_dop_name;
+                                        $claimRemarks = $bags_claimed.' bags claimed in home address DOP '.$request->dop_home.' with area of '.$claimed_area.' but no DOP and delivery in farm parcel address.';
+                                    }
+                                    else if($prv_dropoff_id == '' && $request->dop_home=='')
+                                    {
+                                        $claimRemarks = 'This is a special case. Please reach out to the IT team. Bags claimed: '.$bags_claimed.' Area claimed: '.$claimed_area;
+                                    }
+                                    else{
+                                        $prv_dropoff_id = $prv_dropoff_id;
+                                        $relProv = $relProv;
+                                        $relMun = $relMun;
+                                        $dropOffPoint = $dropOffPoint;
+                                        $claimRemarks = $bags_claimed.' bags claimed in home address DOP '.$request->dop_home.' with area of '.$claimed_area;
+                                    }
+
+                                    
+                                    
+                                    try{
+                                        $release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".new_released")
+                                        ->insertGetId([
                                             "id" =>  "111111111",
-                                            "rcef_id" => $rcef_id_vs,
-                                            "db_ref" => $db_ref_vs,
-                                            "prv_dropoff_id" => $vs_lib_drop_off,
-                                            "province" => $vs_province,
-                                            "municipality" => $vs_municipality,
-                                            "dropOffPoint" => $vs_lib_dop_name,
+                                            "rcef_id" => $rcef_id,
+                                            "db_ref" => $db_ref,
+                                            "prv_dropoff_id" => $prv_dropoff_id,
+                                            "province" => $relProv,
+                                            "municipality" => $relMun,
+                                            "dropOffPoint" => $dropOffPoint,
                                             "transaction_code" => "web",
                                             "dataSharing" => 1,
                                             "is_representative" => $is_representative,
@@ -1939,7 +1926,7 @@ class virtual_encodingController extends Controller
                                             "claimed_area" => 0.00,
                                             "bags_claimed" => 0,
                                             "seed_variety" => $variety,
-                                            "remarks" => $bags_claimed.' bags claimed in home address with area of '.$claimed_area,
+                                            "remarks" => $claimRemarks,
                                             "recipient_ls" => "-",
                                             "planted_rcvd_seeds_ls" => "-",
                                             "reason_not_planted_rcvd_seeds_ls" => "-",
@@ -1968,14 +1955,255 @@ class virtual_encodingController extends Controller
                                             "final_area" => $final_area,
                                             "sex" => $sex,
                                             "list_version" => $list_version,
-                                            "prv_ref" => $prv_code_released
-                                            );
+                                            "status" => $status_vs,
+                                            "process_report_status" => "not process",
+                                            "is_replacement" => $releaseReplacement
+                                        ]);
+                                    }
+                                    catch(\Exception $e){
+                                        return $e;
+                                    }
+
+                                    
+                                    
+                                    // dd($getHomeDopInfo);
+                                    // dd($checkParcelDop);
+                                    if($checkParcelDop !=''){
+                                        $home_release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$home_code_released.".new_released")
+                                        ->insertGetId([
+                                            "id" =>  "111111111",
+                                            "rcef_id" => $rcef_id,
+                                            "db_ref" => $db_ref,
+                                            "prv_dropoff_id" => $home_dop,
+                                            "province" => $getHomeDopInfo->province,
+                                            "municipality" => $getHomeDopInfo->municipality,
+                                            "dropOffPoint" => $home_dop_name,
+                                            "transaction_code" => "web",
+                                            "dataSharing" => 1,
+                                            "is_representative" => $is_representative,
+                                            "rep_name" => $rep_name,
+                                            "rep_id" => $rep_id,
+                                            "rep_relation" => $rep_relationship,
+                                            "claimed_area" => 0,
+                                            "bags_claimed" => 0,
+                                            "seed_variety" => $variety,
+                                            "remarks" => $bags_claimed.' bags claimed intended for Parcel DOP '.$parcel_dop.' with area of '.$claimed_area,
+                                            "recipient_ls" => "-",
+                                            "planted_rcvd_seeds_ls" => "-",
+                                            "reason_not_planted_rcvd_seeds_ls" => "-",
+                                            "yield_area_harvested_ls" => $request->yield_area,
+                                            "yield_no_of_bags_ls" => $request->yield_bags,
+                                            "yield_wt_per_bag" => $request->yield_weight,
+                                            "crop_establishment_cs" => $crop_est,
+                                            "seedling_age" => 0,
+                                            "ecosystem_cs" => $eco_system,
+                                            "ecosystem_source_cs" => $water_source,
+                                            "planting_week" => $planting_date,
+                                            "has_kp_kit" => $kp_kit,
+                                            "other_benefits_received" => $ayuda,
+                                            "date_released" => date("Y-m-d"),
+                                            "released_by" => Auth::user()->username,
+                                            "time_start" => "-",
+                                            "time_end" => "-",
+                                            "app_version" => "web",
+                                            "distribution_type" => "Regular",
+                                            "mode" => "search",
+                                            "farmer_id_address" => $db_ref,
+                                            "content_rsbsa" => $rsbsa_control_no,
+                                            "yield_last_season_details" => $yield_last_season,
+                                            "category" => $category,
+                                            "birthdate"=> $birthdate,
+                                            "final_area" => $final_area,
+                                            "sex" => $sex,
+                                            "list_version" => $list_version,
+                                            "status" => $status_vs,
+                                            "process_report_status" => "not process",
+                                            "is_replacement" => $releaseReplacement
+                                        ]);
+                                    }
+                                }
+                               
     
-                                            DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".new_released_virtual")
-                                                ->insert($vs_release_ins);
     
-                                            DB::connection('delivery_inspection_db')->table('tbl_actual_delivery_virtual')
-                                            ->insert($vs_stock_ins);
+    
+                                    if($status_vs == 3){
+    
+                                        //GET THE 
+                                        
+                                        
+                                        // $prv_location = DB::connection('delivery_inspection_db')->table('lib_prv')
+                                        //     ->where("prv", $code_parcel)
+                                        //     ->first();
+                                        // $vs_lib_drop_off = "";
+                                        // $vs_lib_dop_name = "";
+                                        
+                                        
+                                        // if($prv_location != null){
+                                        //     $vs_province = $prv_location->province;
+                                        //     $vs_municipality = $prv_location->municipality;
+                                        //     $vs_region = $prv_location->region;
+                                        //    $vs_dop =  DB::connection('delivery_inspection_db')->table('lib_dropoff_point')
+                                        //         ->where("municipality", $vs_municipality)
+                                        //         ->where("province", $vs_province)
+                                        //         ->first();
+                                        //     if($vs_dop != null){
+                                        //         $vs_lib_drop_off = $vs_dop->prv_dropoff_id;
+                                        //         $vs_lib_dop_name = $vs_dop->dropOffPoint;
+                                        //     }   
+                                        // }else{
+                                        //     return json_encode("Server Unreachable");
+                                        // }
+    
+                                        // //GET STOCKS DETAILS
+    
+                                        // $act_batch = "";
+                                        // $act_prv = "";
+                                        // $act_region = "";
+                                        // $act_province = "";
+                                        // $act_municipality = "";
+                                        // $act_dop_name = "";
+
+                                        // $seed_actual =  DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
+                                        //     ->where("prv_dropoff_id", $prv_dropoff_id)
+                                        //     ->where("seedVariety", $variety)
+                                        //     ->first();
+                                        // if($seed_actual != null ){
+                                        //     $act_batch = $seed_actual->batchTicketNumber;
+                                        //     $act_prv = $seed_actual->prv;
+                                        //     $act_region = $seed_actual->region;
+                                        //     $act_province = $seed_actual->province;
+                                        //     $act_municipality = $seed_actual->municipality;
+                                        //     $act_dop_name = $seed_actual->dropOffPoint;
+                                        // }
+    
+    
+                                        // $vs_stock_ins = array(
+                                        //     "batchTicketNumber_ref" => $act_batch,
+                                        //     "prv_ref" => $act_prv,
+                                        //     "region_ref" => $act_region,
+                                        //     "province_ref" => $act_province,
+                                        //     "municipality_ref" => $act_municipality,
+                                        //     "dropOffPoint_ref" => $act_dop_name,
+                                        //     "seedVariety_ref" => $variety,
+                                        //     "prv" => $code_parcel,
+                                        //     "prv_dropoff_id" =>$vs_lib_drop_off ,
+                                        //     "dropOffPoint" =>$vs_lib_dop_name ,
+                                        //     "region" =>$vs_region ,
+                                        //     "province" => $vs_province,
+                                        //     "municipality" => $vs_municipality,
+                                        //     "totalBagCount" => $bags_claimed,
+                                        //     "virtual_release_ref" => $release_ref_id
+                                        // );
+    
+    
+    
+                                        // $vs_release_ins = array(
+                                        //     // "new_released_id_ref" => $release_ref_id,
+                                        //     "id" =>  "111111111",
+                                        //     "rcef_id" => $rcef_id_vs,
+                                        //     "db_ref" => $db_ref_vs,
+                                        //     "prv_dropoff_id" => $vs_lib_drop_off,
+                                        //     "province" => $vs_province,
+                                        //     "municipality" => $vs_municipality,
+                                        //     "dropOffPoint" => $vs_lib_dop_name,
+                                        //     "transaction_code" => "web",
+                                        //     "dataSharing" => 1,
+                                        //     "is_representative" => $is_representative,
+                                        //     "rep_name" => $rep_name,
+                                        //     "rep_id" => $rep_id,
+                                        //     "rep_relation" => $rep_relationship,
+                                        //     "claimed_area" => 0.00,
+                                        //     "bags_claimed" => 0,
+                                        //     "seed_variety" => $variety,
+                                        //     "remarks" => $bags_claimed.' bags claimed in home address DOP '.$request->dop_home.' with area of '.$claimed_area,
+                                        //     "recipient_ls" => "-",
+                                        //     "planted_rcvd_seeds_ls" => "-",
+                                        //     "reason_not_planted_rcvd_seeds_ls" => "-",
+                                        //     "yield_area_harvested_ls" => $request->yield_area,
+                                        //     "yield_no_of_bags_ls" => $request->yield_bags,
+                                        //     "yield_wt_per_bag" => $request->yield_weight,
+                                        //     "crop_establishment_cs" => $crop_est,
+                                        //     "seedling_age" => 0,
+                                        //     "ecosystem_cs" => $eco_system,
+                                        //     "ecosystem_source_cs" => $water_source,
+                                        //     "planting_week" => $planting_date,
+                                        //     "has_kp_kit" => $kp_kit,
+                                        //     "other_benefits_received" => $ayuda,
+                                        //     "date_released" => date("Y-m-d"),
+                                        //     "released_by" => Auth::user()->username,
+                                        //     "time_start" => "-",
+                                        //     "time_end" => "-",
+                                        //     "app_version" => "web",
+                                        //     "distribution_type" => "Regular",
+                                        //     "mode" => "search",
+                                        //     "farmer_id_address" => $db_ref,
+                                        //     "content_rsbsa" => $rsbsa_control_no,
+                                        //     "yield_last_season_details" => $yield_last_season,
+                                        //     "category" => $category,
+                                        //     "birthdate"=> $birthdate,
+                                        //     "final_area" => $final_area,
+                                        //     "sex" => $sex,
+                                        //     "list_version" => $list_version,
+                                        //     // "prv_ref" => $prv_code_released
+                                        //     );
+
+                                        //     $home_vs_release_ins = array(
+                                        //         // "new_released_id_ref" => $release_ref_id,
+                                        //         "id" =>  "111111111",
+                                        //         "rcef_id" => $rcef_id_vs,
+                                        //         "db_ref" => $db_ref_vs,
+                                        //         "prv_dropoff_id" => $vs_lib_drop_off,
+                                        //         "province" => $vs_province,
+                                        //         "municipality" => $vs_municipality,
+                                        //         "dropOffPoint" => $vs_lib_dop_name,
+                                        //         "transaction_code" => "web",
+                                        //         "dataSharing" => 1,
+                                        //         "is_representative" => $is_representative,
+                                        //         "rep_name" => $rep_name,
+                                        //         "rep_id" => $rep_id,
+                                        //         "rep_relation" => $rep_relationship,
+                                        //         "claimed_area" => 0.00,
+                                        //         "bags_claimed" => 0,
+                                        //         "seed_variety" => $variety,
+                                        //         "remarks" => $bags_claimed.' bags claimed in home address DOP '.$request->dop_home.' with area of '.$claimed_area,
+                                        //         "recipient_ls" => "-",
+                                        //         "planted_rcvd_seeds_ls" => "-",
+                                        //         "reason_not_planted_rcvd_seeds_ls" => "-",
+                                        //         "yield_area_harvested_ls" => $request->yield_area,
+                                        //         "yield_no_of_bags_ls" => $request->yield_bags,
+                                        //         "yield_wt_per_bag" => $request->yield_weight,
+                                        //         "crop_establishment_cs" => $crop_est,
+                                        //         "seedling_age" => 0,
+                                        //         "ecosystem_cs" => $eco_system,
+                                        //         "ecosystem_source_cs" => $water_source,
+                                        //         "planting_week" => $planting_date,
+                                        //         "has_kp_kit" => $kp_kit,
+                                        //         "other_benefits_received" => $ayuda,
+                                        //         "date_released" => date("Y-m-d"),
+                                        //         "released_by" => Auth::user()->username,
+                                        //         "time_start" => "-",
+                                        //         "time_end" => "-",
+                                        //         "app_version" => "web",
+                                        //         "distribution_type" => "Regular",
+                                        //         "mode" => "search",
+                                        //         "farmer_id_address" => $db_ref,
+                                        //         "content_rsbsa" => $rsbsa_control_no,
+                                        //         "yield_last_season_details" => $yield_last_season,
+                                        //         "category" => $category,
+                                        //         "birthdate"=> $birthdate,
+                                        //         "final_area" => $final_area,
+                                        //         "sex" => $sex,
+                                        //         "list_version" => $list_version,
+                                        //         // "prv_ref" => $prv_code_released
+                                        //         );
+    
+                                        //     DB::table($GLOBALS['season_prefix']."prv_".$prv_code_parcel.".new_released")
+                                        //         ->insert($vs_release_ins);
+                                        //     DB::table($GLOBALS['season_prefix']."prv_".$home_code_released.".new_released")
+                                        //         ->insert($home_vs_release_ins);
+    
+                                        //     DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
+                                        //     ->insert($vs_stock_ins);
     
                                     }
     
@@ -2766,7 +2994,35 @@ public function get_all_parcel2(Request $request){
                ->where("firstName", $ffrs_data->firstName)
                ->where("midName", $ffrs_data->midName)
                ->where("lastName", $ffrs_data->lastName)
-               ->first();                    
+               ->first();      
+               
+               if($ffrs_data->is_new==9){
+                $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
+                ->where("claiming_prv", $claiming_prv)
+                ->where("firstName", $ffrs_data->firstName)
+                ->where("midName", $ffrs_data->midName)
+                ->where("lastName", $ffrs_data->lastName)
+                ->where("is_new",9)
+                ->first(); 
+               }
+               else if($ffrs_data->is_new==7){
+                $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
+                ->where("claiming_prv", $claiming_prv)
+                ->where("firstName", $ffrs_data->firstName)
+                ->where("midName", $ffrs_data->midName)
+                ->where("lastName", $ffrs_data->lastName)
+                ->where("is_new",7)
+                ->first(); 
+               }
+               else{
+                $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
+               ->where("claiming_prv", $claiming_prv)
+               ->where("firstName", $ffrs_data->firstName)
+               ->where("midName", $ffrs_data->midName)
+               ->where("lastName", $ffrs_data->lastName)
+               ->first(); 
+               }  
+
                if($claiming_prv_undashed=="999902"){
                    $province = "Programmer Province";
                    $municipality = "Programmer Municipality";
@@ -2815,6 +3071,11 @@ public function get_all_parcel2(Request $request){
                    $birthdate  = $may_data->birthdate ;
                    $tel_no  = $may_data->tel_no ;
                    $fca_name = $may_data->fca_name;
+                   $is_replacement = $may_data->is_replacement;
+                   $replacement_area = $may_data->replacement_area;
+                   $replacement_bags = $may_data->replacement_bags;
+                   $replacement_bags_claimed = $may_data->replacement_bags_claimed;
+                   $replacement_area_claimed = $may_data->replacement_area_claimed;
 
 
                    $action =  "<button class='btn btn-success btn-sm'>Set Distribution</button>";
@@ -2853,28 +3114,33 @@ public function get_all_parcel2(Request $request){
                
 
 
-           array_push($parcel_list, array(
-               "province" => $province,
-               "municipality" => $municipality,
-               "final_area" => number_format($final_area,4),
-               "remaining" => $remaining,
-               "remaining_area" => number_format($remaining_area,4),
-               "prv" => $prv,
-               "id" => $id,
-               
-               "claiming_prv" => $claiming_prv,
-               "birthdate" => $birthdate,
-               "mother_lname" =>  $mother_lname,
-               "mother_fname" =>  $mother_fname,
-               "mother_mname" =>  $mother_mname,
-               "mother_suffix" => $mother_suffix,
-               "is_ip" => $is_ip,
-               "tribe_name" => $tribe_name,
-               "is_pwd" => $is_pwd,
-               "tel_no" => $tel_no,
-               "fca_name" => $fca_name,
-               "action" =>$action,
-           ));
+               array_push($parcel_list, array(
+                "province" => $province,
+                "municipality" => $municipality,
+                "final_area" => number_format($final_area,4),
+                "remaining" => $remaining,
+                "remaining_area" => number_format($remaining_area,4),
+                "prv" => $prv,
+                "id" => $id,
+                
+                "claiming_prv" => $claiming_prv,
+                "birthdate" => $birthdate,
+                "mother_lname" =>  $mother_lname,
+                "mother_fname" =>  $mother_fname,
+                "mother_mname" =>  $mother_mname,
+                "mother_suffix" => $mother_suffix,
+                 "is_replacement" => $is_replacement,
+                 "replacement_area" => $replacement_area,
+                 "replacement_bags" => $replacement_bags,
+                 "replacement_bags_claimed" => $replacement_bags_claimed,
+                 "replacement_area_claimed" => $replacement_area_claimed,
+                "is_ip" => $is_ip,
+                "tribe_name" => $tribe_name,
+                "is_pwd" => $is_pwd,
+                "tel_no" => $tel_no,
+                "fca_name" => $fca_name,
+                "action" =>$action,
+            ));
 
 
 
@@ -3406,5 +3672,52 @@ public function get_all_parcel2(Request $request){
         }
     }
 
+    public function getHomeDop(Request $request){
+
+        $prefix = $GLOBALS['season_prefix'];
+        $ffrs_data = DB::table($prefix."prv_".$request->prv.".farmer_information_final")
+       ->where("db_ref", $request->db_ref)
+       ->first();
+
+    //    dd(strlen($ffrs_data->geo_code));
+
+        $getCode = DB::table($prefix.'rcep_delivery_inspection.lib_prv')
+        ->where('province', 'LIKE', $ffrs_data->province)
+        ->where('municipality', 'LIKE', $ffrs_data->municipality)
+        ->first();
+        $homeAddress = $getCode->prv;
+        $claiming_prv = str_replace('-','',$ffrs_data->claiming_prv);
+        // dd($claiming_prv, $homeAddress);
+        if($claiming_prv != $homeAddress){
+            $getDop = DB::table($prefix.'rcep_delivery_inspection.lib_dropoff_point')
+            ->where('prv_dropoff_id','LIKE',$homeAddress.'%')
+            ->get();
+            // dd($getDop);
+            if($getDop){
+                return($getDop);
+            }
+            else{
+                return 0;
+            }
+        }
+        else{
+            return 0;
+        }
+    }
+
+    public function getHomeVariety(Request $request){
+        $getVarieties = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
+        ->where('prv_dropoff_id','LIKE',$request->prvDop)
+        ->groupBy('seedVariety')
+        ->get();
+
+        if($getVarieties){
+            return($getVarieties);
+        }
+        else{
+            return 0;
+        }
+
+    }
 
 }

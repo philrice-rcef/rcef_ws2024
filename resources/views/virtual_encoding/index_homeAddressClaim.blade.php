@@ -123,6 +123,7 @@
                         <input type="text" id="dop_selected_name" name="dop_selected_name" value="" placeholder="Drop Off POint" readonly="readonly" class="form-control">
                         
                         {{-- HIDDEN DATA FOR POSTING --}}
+                        <input type="hidden" id="dop_home" name="dop_home" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
                         <input type="hidden" id="dop_selected_vs" name="dop_selected_vs" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
                         <input type="hidden" id="virtual_final_area" name="virtual_final_area" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
                         <input type="hidden" id="virtual_remaining" name="virtual_remaining" value="" placeholder="DATA" readonly="readonly" class="form-control"> 
@@ -871,6 +872,7 @@
                     var float_id = $("#virtual_float_id").val();
 
                     var dop_selected_vs = $("#dop_selected_vs").val();
+                    var dop_home = $("#dop_home").val();
                     var virtual_final_area = $("#virtual_final_area").val();
                     var virtual_remaining = $("#virtual_remaining").val();
                     var virtual_claiming_prv = $("#virtual_claiming_prv").val(); //THIS IS PORVINCE MUNICIPALITY
@@ -1144,6 +1146,7 @@
                     $('#distribution_tbl').eq(0).find('tr').each((r,row) => arrays.push($(row).find('td,th').map((c,cell) => $(cell).text()).toArray()))
 
                     var dop_selected_vs = $("#dop_selected_vs").val();
+                    var dop_home = $("#dop_home").val();
                     var virtual_final_area = $("#virtual_final_area").val();
                     var virtual_remaining = $("#virtual_remaining").val();
                     var virtual_claiming_prv = $("#virtual_claiming_prv").val();
@@ -1234,6 +1237,7 @@
                         confirmButtonText: "Yes, Save It!"
                     }).then(function(result) {
                         if (result.value) {
+                            Swal.getConfirmButton().setAttribute('disabled', 'true');
                         //    AJAX AND SAVE HERE
                         HoldOn.open(holdon_options);
                         $.ajax({
@@ -1243,6 +1247,7 @@
                                 _token: "{{ csrf_token() }}",
                                 category: "INBRED",
                                 dop_selected_vs: dop_selected_vs,
+                                dop_home: dop_home,
                                 virtual_final_area: virtual_final_area,
                                 virtual_remaining: virtual_remaining,
                                 virtual_claiming_prv: virtual_claiming_prv,
@@ -1296,14 +1301,6 @@
                                     
                                     select_farmer(db_ref, prv);
                                 }
-
-                            
-
-
-                            
-
-
-
                                 // downloadData();
                                 HoldOn.close();
                             },
@@ -1583,7 +1580,7 @@
                     $("#virtual_bday").val(result.birthdate);
                     $("#virtual_sex").val(result.sex);
                     $("#virtual_home").val(result.home);
-                    
+                    HoldOn.open(holdon_options);
                     checkPreviousHomeClaim(db_ref, prv)
                     
                 }else{
@@ -1601,7 +1598,7 @@
         }
 
         function checkPreviousHomeClaim(db_ref, prv){
-           
+            HoldOn.open(holdon_options);
             $.ajax({
             type: 'POST',
             url: "{{route('checkPreviousHomeClaim')}}",
@@ -1615,10 +1612,10 @@
                 // console.log(result);
                 if(result == 0){
                     get_parcel_list(db_ref, prv)
-                    HoldOn.close();
+                    // HoldOn.close();
                 }
                 else{
-                    HoldOn.close();
+                    get_parcel_list(db_ref, prv)
                 }
             },
             error: function(result){
@@ -1627,8 +1624,64 @@
             });
 
         }
+
+        function getHomeDop(db_ref, prv){
+            $.ajax({
+            type: 'POST',
+            url: "{{route('getHomeDop')}}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                prv: prv,
+                db_ref: db_ref
+            },
+            dataType: 'json',
+            success: function(result){
+                if(result == 0){
+                    HoldOn.close();
+                }
+                else{
+                    $("#dop_home").val(result[0].dropOffPoint + "(" + result[0].prv_dropoff_id + ")");
+                //    $("#select_dop").append("<option value='"+result[0].prv_dropoff_id+"' >"+result[0].dropOffPoint+"</option>");
+                    getHomeVariety(result[0].prv_dropoff_id);
+                    HoldOn.close();
+                }
+            },
+            error: function(result){
+                HoldOn.close();
+            }
+            });
+        } 
+
+
+        function getHomeVariety(prvDop){
+            $.ajax({
+            type: 'POST',
+            url: "{{route('getHomeVariety')}}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                prvDop: prvDop
+            },
+            dataType: 'json',
+            success: function(result){
+                if(result == 0){
+                    HoldOn.close();
+                }
+                else{
+                    console.log(result);
+                    $.each(result, function (i, d) {
+                        $("#variety_select").append("<option value='"+d.seedVariety+"'>"+d.seedVariety+" ("+d.municipality+")"+"</option>");
+                    })
+                    HoldOn.close();
+                }
+            },
+            error: function(result){
+                HoldOn.close();
+            }
+            });
+        }
+
         function get_parcel_list(db_ref, prv){
-           
+            HoldOn.open(holdon_options);
             $.ajax({
             type: 'POST',
             url: "{{route('virtual.get.parcel')}}",
@@ -1640,14 +1693,14 @@
             dataType: 'json',
             success: function(result){
                 
-                
+                console.log(result);
                 if(result["status"] == 0){
                     Swal.fire({   icon: 'error',    title: 'Oops...',  text: 'Something went wrong!',footer: 'No Parcel'  });
                     return;
                 }
                 
-               
                 $("#select_dop").empty();        
+                getHomeDop(db_ref, prv);
                 $.each(result["dop_available"], function (i, d) {
                   
                     // console.log(i,d);

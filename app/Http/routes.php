@@ -1119,6 +1119,8 @@ Route::group(['middleware' => ['auth','logMw']], function() {
     Route::get('encoding_vs_homeAddressClaim', ['as' => 'encoding_vs_homeAddressClaim', 'uses' => 'virtual_encodingController@index_homeAddressClaim']);
     Route::post('virtual_search_homeAddressClaim', ['as' => 'virtual_search_homeAddressClaim', 'uses' => 'virtual_encodingController@searchFarmer_homeAddressClaim']);
     Route::post('checkPreviousHomeClaim', ['as' => 'checkPreviousHomeClaim', 'uses' => 'virtual_encodingController@checkPreviousHomeClaim']);
+    Route::post('getHomeDop', ['as' => 'getHomeDop', 'uses' => 'virtual_encodingController@getHomeDop']);
+    Route::post('getHomeVariety', ['as' => 'getHomeVariety', 'uses' => 'virtual_encodingController@getHomeVariety']);
     Route::post('virtual_save_distribution_homeClaim', ['as' => 'virtual.save.distribution_homeClaim', 'uses' => 'virtual_encodingController@save_distribution_homeClaim']);
 
     Route::get('export/excel/ui', ['as' => 'ui.export.municipal', 'uses' => 'reportExportController@exportMunicipalUI']);
