@@ -9,8 +9,9 @@ from xlsxwriter import Workbook
 
 
 os.chdir("report/home/")
+# os.chdir("D:\\Jannah Marie Althea R. Cortez\\Downloads")
 api_url = "https://asia-southeast1-rcef-ims.cloudfunctions.net/api/rsms/getIarData?apikey=rc3f1m5-XApiKey"
-uri ="mysql://json:%s@192.168.10.44:3306/information_schema" % quote('Zeijan@13')
+uri = "mysql://json:%s@192.168.10.44:3306/information_schema" % quote('Zeijan@13')
 
 
 _last_s = "ds2024" # change to last season in production
@@ -47,7 +48,7 @@ def load_iar_details():
     iar_details = pl.from_dict(json_string)
 def load_view_coop_deliveries():
     global _view_coop_deliveries
-    _view_coop_deliveries = pl.read_database_uri(f"select a.batchTicketNumber AS'batchTicketNumber', a.coopAccreditation AS'coopAccreditation', a.seedVariety AS'seedVariety', a.deliveryDate AS'deliveryDate', a.dropOffPoint AS'dropOffPoint', a.region AS'region', a.province AS'province', a.municipality AS'municipality', a.seedTag AS'seedTag', a.isBuffer AS'isBuffer', a.sg_id AS'sg_id',( select b.seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery_transaction b where a.coopAccreditation = b.accreditation_no and a.region = b.region limit 1 ) AS seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery a where a.is_cancelled = 0 and a.isBuffer = 0 and a.coopAccreditation ='{_coop_a}' group by a.batchTicketNumber, a.seedVariety, a.seedTag order by a.deliveryDate desc", uri)
+    _view_coop_deliveries = pl.read_database_uri(f"select a.batchTicketNumber AS'batchTicketNumber', a.coopAccreditation AS'coopAccreditation', a.seedVariety AS'seedVariety', a.deliveryDate AS'deliveryDate', a.dropOffPoint AS'dropOffPoint', a.region AS'region', a.province AS'province', a.municipality AS'municipality', a.seedTag AS'seedTag', a.isBuffer AS'isBuffer', a.sg_id AS'sg_id',( select b.seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery_transaction b where a.coopAccreditation = b.accreditation_no and a.batchTicketNumber = b.batchTicketNumber and a.region = b.region limit 1 ) AS seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery a where a.is_cancelled = 0 and a.isBuffer = 0 and a.coopAccreditation ='{_coop_a}'group by a.batchTicketNumber, a.seedVariety, a.seedTag order by a.deliveryDate desc;", uri)
     # print(_view_coop_deliveries)
 def load_cooperatives():
     global tbl_cooperatives
@@ -600,7 +601,8 @@ def get_replacement_list(coop_accreditation):
         "deliveryDate": "",
         "batch_status": "",
     })
-    replacement_arr = pl.DataFrame(return_arr)
+    temp_df = pl.DataFrame(return_arr)
+    replacement_arr = temp_df.join(iar_details, on=['iar_number'], how='left')
 
 def get_buffer_list(coop_accreditation):
     global buffer_arr
@@ -971,7 +973,8 @@ def get_buffer_list(coop_accreditation):
         "deliveryDate": "",
         "batch_status": "",
     })
-    buffer_arr = pl.DataFrame(return_arr)
+    temp_df = pl.DataFrame(return_arr)
+    buffer_arr = temp_df.join(iar_details, on=['iar_number'], how='left')
 
 def get_bep_list(coop_accreditation):
     global bep_arr
@@ -1273,8 +1276,9 @@ def get_bep_list(coop_accreditation):
         "deliveryDate": "",
         "batch_status": "",
     })
-    bep_arr = pl.DataFrame(return_arr)
-
+    temp_df = pl.DataFrame(return_arr)
+    bep_arr = temp_df.join(iar_details, on="iar_number", how="left")
+    
 def get_coop_name(coop_accreditation):
     name = tbl_cooperatives.filter(
         pl.col("accreditation_no").eq(coop_accreditation)
@@ -1300,12 +1304,14 @@ if __name__ == "__main__":
         threading.Thread(target=load_breakdown_buffer).start()
         threading.Thread(target=load_tbl_actual_delivery_breakdown).start()
         threading.Thread(target=load_lib_prv).start()
-        # threading.Thread(target=load_iar_details).start()
+        threading.Thread(target=load_iar_details).start()
 
         while threading.active_count() > 1:
             time.sleep(0.005)
             pass
         
+        # iar_details.write_csv("iar_details.csv")
+        # raise Exception("HARD_STOP")
         # end timer
         _view_coop_delivery = _view_coop_deliveries.filter(pl.col("coopAccreditation").eq(_coop_a)).with_columns(pl.col("deliveryDate").str.strptime(pl.Datetime(time_unit="ms", time_zone=None), format='%Y-%m-%d %H:%M:%S', strict=False).alias("deliveryDate"))
         
@@ -1929,14 +1935,20 @@ if __name__ == "__main__":
         def to_dl_df():
             global return_df
             return_df = pl.DataFrame(return_arr_dl)
+            if not return_df.is_empty():
+                return_df = return_df.join(iar_details, on=['iar_number'], how='left')
 
         def to_nrp_df():
             global return_df_nrp
             return_df_nrp = pl.DataFrame(return_arr_nrp)
+            if not return_df_nrp.is_empty():
+                return_df_nrp = return_df_nrp.join(iar_details, on=['iar_number'], how='left')
 
         def to_qgs_df():
             global return_df_qgs
             return_df_qgs = pl.DataFrame(return_arr_qgs)
+            if not return_df_qgs.is_empty():
+                return_df_qgs = return_df_qgs.join(iar_details, on=['iar_number'], how='left')
 
 
         threading.Thread(target=get_replacement_list, args=[coop_accred]).start()
@@ -1949,7 +1961,7 @@ if __name__ == "__main__":
         while threading.active_count() > 1:
             time.sleep(0.005)
             pass
-        
+
         coopName = get_coop_name(coop_accred)
         
         # get current date and time
