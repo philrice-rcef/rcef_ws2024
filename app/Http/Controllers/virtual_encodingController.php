@@ -257,7 +257,7 @@ class virtual_encodingController extends Controller
     }
 
     public function index_homeAddressClaim(){
-        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+        if(Auth::user()->roles->first()->name != "rcef-programmer" || Auth::user()->username == "negrosoccidental_coordinator"){
             $mss = "Under Development";
                 return view("utility.pageClosed")
             ->with("mss",$mss);
