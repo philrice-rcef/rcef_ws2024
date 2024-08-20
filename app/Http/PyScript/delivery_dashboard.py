@@ -4,14 +4,14 @@ import polars as pl
 from urllib.parse import quote
 import threading, time
 import datetime
+import requests
 from xlsxwriter import Workbook
 import subprocess
 
 def install_package(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-install_package("requests")
-raise Exception("Please install the required packages: requests")
+# install_package("requests")
 
 os.chdir("report/home/")
 # os.chdir("D:\\Jannah Marie Althea R. Cortez\\Downloads")
