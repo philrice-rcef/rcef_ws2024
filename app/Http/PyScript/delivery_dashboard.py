@@ -4,7 +4,6 @@ import polars as pl
 from urllib.parse import quote
 import threading, time
 import datetime
-import requests
 from xlsxwriter import Workbook
 import subprocess
 
