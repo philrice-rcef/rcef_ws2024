@@ -9354,10 +9354,10 @@ public function generateLiveMunicipalReportDataPy(Request $request){
         ->first();
 
         //uncomment for development
-        //$pythonPath = 'C://Users//bmsdelossantos//AppData//Local//Programs//Python//Python311//python.exe';
+        $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
 
         //production
-        $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
+        //$pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';
 
         $scriptPath = base_path('app/Http/PyScript/load_live_data.py');
 
@@ -9388,7 +9388,7 @@ public function generateLiveMunicipalReportDataPy(Request $request){
             {
                 $municipality = $data['t3_municipality'];
                 $yield = number_format($data['t8_municipality_yield'],2);
-                $claimed_area =number_format($data['total_final_area'],2)." (ha)";
+                $claimed_area =number_format($data['claimed_area'],2)." (ha)";//total_final_area
                 $accepted_transfer = "<b> Total Accepted: ".number_format($data['totalBagCount_sum'])."</b><br>";
                 $accepted_transfer .= "Accepted: ".number_format($data['totalBagCount_sum_a'])."<br>";
                 $accepted_transfer .= "Re-Transfer: ".number_format($data['totalBagCount_sum_t'])."<br>";
@@ -9432,7 +9432,7 @@ public function generateLiveMunicipalReportDataPy(Request $request){
                     "total_female_count" => $female_text,
                     "total_registered_area" => $area_text,
                     "total_yield" => $yield,
-                    "total_area_claimed" => $claimed_area,
+                    "total_area_claimed" => $claimed_area,//mark
                     "action" => $btn
                 ));
             }

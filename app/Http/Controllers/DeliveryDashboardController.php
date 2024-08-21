@@ -3243,7 +3243,6 @@ class DeliveryDashboardController extends Controller
             ->orderBy('deliveryDate', 'DESC')
             ->get();
 
-
         $total_confirmed = 0;
         $total_inspected = 0;
 
@@ -3259,12 +3258,7 @@ class DeliveryDashboardController extends Controller
             ->first();
             if($binhi_padala != null){
                     continue;
-
-                
-
-
             }
-
 
             //get seed grower profile
             //1. clean seed tag to link RLA details
@@ -3342,10 +3336,6 @@ class DeliveryDashboardController extends Controller
             }else{
                 $label = "";
             }
-
-
-
-            
 
              $is_transfer_W = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
                 ->select('transferCategory')
@@ -3427,9 +3417,6 @@ class DeliveryDashboardController extends Controller
                             $or_municipality = "N/A";
                             $or_dropoff = "N/A";
                         }
-
-                            
-
 
                         $batch_data = array(
                             'iar_number' => $iar_number_str,
@@ -3586,8 +3573,6 @@ class DeliveryDashboardController extends Controller
                     //array_push($return_arr, $batch_data);   
                     $inspected_bags += $bg;
 
-
-
                         $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
                             if(count($retransferred)>0){
                                 foreach ($retransferred as $in => $par) {
@@ -3631,30 +3616,10 @@ class DeliveryDashboardController extends Controller
                                     $inspected_bags += $bg;
                                 }
 
-
-
-
-
-
-                            
-
-
-
-
-
                             }
-
-
-
-
-
-
                     
              }
          } //PARTIAL COUNT
-
-
-
 
           if($nxt_season > 0){
                     $arr = $this->getNextSeasonData($batch_row->batchTicketNumber,$batch_row->seedVariety,$batch_row->seedTag);
@@ -3740,47 +3705,10 @@ class DeliveryDashboardController extends Controller
              }
          } //NEXT SEASON COUNT
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             $total_confirmed += $confirmed_bags;
             $total_inspected += $inspected_bags;
+
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
          //PREVIOUS SEASON 
     $prevBatch = DB::table($GLOBALS['season_prefix'].'rcep_transfers_ps.transfer_logs')
@@ -4095,33 +4023,7 @@ class DeliveryDashboardController extends Controller
                                                 //array_push($return_arr, $batch_data);   
                                                 $inspected_bags += $bg;
                                             }
-
-
                                         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                  }
                                 }
 

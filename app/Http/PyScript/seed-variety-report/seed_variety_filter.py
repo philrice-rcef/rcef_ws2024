@@ -58,7 +58,7 @@ combined_results = {
 combined_results_json = json.dumps(combined_results, indent=4)
 
 print(combined_results_json)
-# # end_time = time.time()
-# # elapsed_time = end_time - start_time
+# end_time = time.time()
+# elapsed_time = end_time - start_time
 
-# # print(f"Benchmark Time: {elapsed_time:.2f} seconds")
+# print(f"Benchmark Time: {elapsed_time:.2f} seconds")
