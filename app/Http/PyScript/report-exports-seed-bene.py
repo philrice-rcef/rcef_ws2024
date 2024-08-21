@@ -19,7 +19,8 @@ def main(ssn, prv, mun, cat, province):
         polar_df = pl.from_pandas(merged_df)
         iters = len(polar_df.columns)
         polar_df = polar_df.with_columns(pl.when(pl.col('yield_last_season_details').str.len_chars() < 8).then(None).otherwise(pl.col('yield_last_season_details')).name.keep())
-        polar_df = polar_df.with_columns(pl.col("yield_last_season_details").fill_null('[{"variety": "","area": 0,"bags": 0,"weight": 0,"type": "","class": "","yield": 0,"low_yield_cause": "","season": "","year": 0,"other_variety_name": ""}]'))
+        polar_df = polar_df.with_columns(pl.col("yield_last_season_details").str.replace_all(r"\\", "").alias("yield_last_season_details"))
+        polar_df = polar_df.with_columns(pl.col("yield_last_season_details").fill_null('[{"variety": "","area": "0","bags": "0","weight": "0","type": "","class": "","yield": "0","low_yield_cause": "","season": "","year": "0","other_variety_name": ""}]'))
         polar_df = polar_df.with_columns(pl.col("yield_last_season_details").str.json_decode().alias("decoded"))
         if len(polar_df.select("decoded")) > 0:
             polar_df = polar_df.with_columns(pl.col("decoded").list.to_struct("max_width")).unnest("decoded")
