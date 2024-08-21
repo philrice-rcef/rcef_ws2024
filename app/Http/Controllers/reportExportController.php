@@ -3216,7 +3216,7 @@ $excel_array = array();
         ->where('municipality', $request->mun)
         ->first();
         //uncomment for development
-        $pythonPath = 'C://Users//Admin//AppData//Local//Programs//Python//Python312//python.exe';
+        // $pythonPath = 'C://Python312//python.exe';
 
         //production
         $pythonPath = 'C://Users//Administrator//AppData//Local//Programs//Python//Python312//python.exe';

@@ -21,10 +21,11 @@ def main(ssn, prv, mun, cat, province):
         polar_df = polar_df.with_columns(pl.when(pl.col('yield_last_season_details').str.len_chars() < 8).then(None).otherwise(pl.col('yield_last_season_details')).name.keep())
         polar_df = polar_df.with_columns(pl.col("yield_last_season_details").fill_null('[{"variety": "","area": 0,"bags": 0,"weight": 0,"type": "","class": "","yield": 0,"low_yield_cause": "","season": "","year": 0,"other_variety_name": ""}]'))
         polar_df = polar_df.with_columns(pl.col("yield_last_season_details").str.json_decode().alias("decoded"))
-        polar_df = polar_df.with_columns(pl.col("decoded").list.to_struct("max_width")).unnest("decoded")
-        iters = len(polar_df.columns) - iters
-        for i in range(iters):
-            polar_df = polar_df.with_columns(pl.col(f"field_{i}").struct.rename_fields([f"variety_{i}", f"area_{i}", f"bags_{i}", f"weight_{i}", f"type_{i}", f"class_{i}", f"yield_{i}", f"low_yield_cause_{i}", f"season_{i}", f"year_{i}", f"other_variety_name_{i}"]).alias(f"field_{i}")).unnest(f"field_{i}")
+        if len(polar_df.select("decoded")) > 0:
+            polar_df = polar_df.with_columns(pl.col("decoded").list.to_struct("max_width")).unnest("decoded")
+            iters = len(polar_df.columns) - iters
+            for i in range(iters):
+                polar_df = polar_df.with_columns(pl.col(f"field_{i}").struct.rename_fields([f"variety_{i}", f"area_{i}", f"bags_{i}", f"weight_{i}", f"type_{i}", f"class_{i}", f"yield_{i}", f"low_yield_cause_{i}", f"season_{i}", f"year_{i}", f"other_variety_name_{i}"]).alias(f"field_{i}")).unnest(f"field_{i}")
         polar_df = polar_df.rename({"db_ref": "DBREF", "rcef_id_x": "RCEF ID", "rsbsa_control_no": "RSBSA Control No", "firstName": "First Name", "midName": "Middle Name", "lastName": "Last Name", "extName": "Extension Name", "sex_y": "Sex", "birthdate_y": "Birthdate", "tel_no": "Contact Number", "province_x": "Province", "municipality_x": "Municipality", "mother_lname": "Mother Name", "final_area_y": "Final Area", "claimed_area": "Claimed Area", "bags_claimed": "Bags Claimed", "seed_variety": "Seed Variety", "remarks": "Remarks", "crop_establishment_cs_x": "Crop Establishment", "seedling_age": "Seedling Age", "ecosystem_cs_x": "Ecosystem", "planting_week_x": "Planting Week", "kp_kit_count": "KP Kit Count", "other_benefits_received": "Other Benefits Received", "date_released": "Date Released", "released_by": "Released By", "server_date_received": "Sync Date", "category": "Category", "app_version": "App Version"})
         polar_df = polar_df.drop(["yield_last_season_details"])
         merged_dfs = polar_df.to_pandas()
