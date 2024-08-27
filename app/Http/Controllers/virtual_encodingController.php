@@ -1983,7 +1983,7 @@ class virtual_encodingController extends Controller
                                             $insertCloneProfile = DB::table($GLOBALS['season_prefix']."prv_".$home_code_released.".farmer_information_final")
                                             ->insert([
                                                 "id" => NULL,
-                                                "is_new" => $getParcelProfile->is_new,
+                                                "is_new" => 10,
                                                 "is_dq" => $getParcelProfile->is_dq,
                                                 "claiming_prv" => $getParcelProfile->claiming_prv,
                                                 "claiming_brgy" => $getParcelProfile->claiming_brgy,
