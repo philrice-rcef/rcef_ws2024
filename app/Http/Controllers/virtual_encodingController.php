@@ -1967,8 +1967,88 @@ class virtual_encodingController extends Controller
                                     
                                     
                                     // dd($getHomeDopInfo);
-                                    // dd($checkParcelDop);
                                     if($checkParcelDop !=''){
+                                        if($prv_code_released!=$home_code_released)
+                                        {
+                                            $getParcelProfile = DB::table($GLOBALS['season_prefix']."prv_".$prv_code_released.".farmer_information_final")
+                                            ->where('db_ref',$db_ref)
+                                            ->first();
+                                            
+                                            $getMaxDbRef = DB::table($GLOBALS['season_prefix']."prv_".$home_code_released.".farmer_information_final")
+                                            ->max('db_ref');
+
+                                            $cloneDbRef = $getMaxDbRef + 1;
+                                            $db_ref = $cloneDbRef;
+
+                                            $insertCloneProfile = DB::table($GLOBALS['season_prefix']."prv_".$home_code_released.".farmer_information_final")
+                                            ->insert([
+                                                "id" => NULL,
+                                                "is_new" => $getParcelProfile->is_new,
+                                                "is_dq" => $getParcelProfile->is_dq,
+                                                "claiming_prv" => $getParcelProfile->claiming_prv,
+                                                "claiming_brgy" => $getParcelProfile->claiming_brgy,
+                                                "no_of_parcels" => $getParcelProfile->no_of_parcels,
+                                                "parcel_brgy_info" => $getParcelProfile->parcel_brgy_info,
+                                                "rsbsa_control_no" => $getParcelProfile->rsbsa_control_no,
+                                                "db_ref" => $db_ref,
+                                                "rcef_id" => $getParcelProfile->rcef_id,
+                                                "new_rcef_id" => $getParcelProfile->new_rcef_id,
+                                                "assigned_rsbsa" => $getParcelProfile->assigned_rsbsa,
+                                                "farmer_id" => $getParcelProfile->farmer_id,
+                                                "distributionID" => $getParcelProfile->distributionID,
+                                                "da_intervention_card" => $getParcelProfile->da_intervention_card,
+                                                "lastName" => $getParcelProfile->lastName,
+                                                "firstName" => $getParcelProfile->firstName,
+                                                "midName" => $getParcelProfile->midName,
+                                                "extName" => $getParcelProfile->extName,
+                                                "fullName" => $getParcelProfile->fullName,
+                                                "sex" => $getParcelProfile->sex,
+                                                "birthdate" => $getParcelProfile->birthdate,
+                                                "province" => $getParcelProfile->province,
+                                                "municipality" => $getParcelProfile->municipality,
+                                                "brgy_name" => $getParcelProfile->brgy_name,
+                                                "mother_lname" => $getParcelProfile->mother_lname,
+                                                "mother_fname" => $getParcelProfile->mother_fname,
+                                                "mother_mname" => $getParcelProfile->mother_mname,
+                                                "mother_suffix" => $getParcelProfile->mother_suffix,
+                                                "tel_no" => $getParcelProfile->tel_no,
+                                                "geo_code" => $getParcelProfile->geo_code,
+                                                "civil_status" => $getParcelProfile->civil_status,
+                                                "fca_name" => $getParcelProfile->fca_name,
+                                                "is_pwd" => $getParcelProfile->is_pwd,
+                                                "is_arb" => $getParcelProfile->is_arb,
+                                                "is_ip" => $getParcelProfile->is_ip,
+                                                "tribe_name" => $getParcelProfile->tribe_name,
+                                                "ben_4ps" => $getParcelProfile->ben_4ps,
+                                                "data_source" => $getParcelProfile->data_source,
+                                                "sync_date" => $getParcelProfile->sync_date,
+                                                "crop_establishment_cs" => $getParcelProfile->crop_establishment_cs,
+                                                "ecosystem_cs" => $getParcelProfile->ecosystem_cs,
+                                                "ecosystem_source_cs" => $getParcelProfile->ecosystem_source_cs,
+                                                "planting_week" => $getParcelProfile->planting_week,
+                                                "final_area" => $getParcelProfile->final_area,
+                                                "final_claimable" => $getParcelProfile->final_claimable,
+                                                "is_claimed" => $getParcelProfile->is_claimed,
+                                                "total_claimed" => $getParcelProfile->total_claimed,
+                                                "total_claimed_area" => $getParcelProfile->total_claimed_area,
+                                                "is_replacement" => $getParcelProfile->is_replacement,
+                                                "replacement_area" => $getParcelProfile->replacement_area,
+                                                "replacement_bags" => $getParcelProfile->replacement_bags,
+                                                "replacement_bags_claimed" => $getParcelProfile->replacement_bags_claimed,
+                                                "replacement_area_claimed" => $getParcelProfile->replacement_area_claimed,
+                                                "replacement_reason" => $getParcelProfile->replacement_reason,
+                                                "prev_claimable" => $getParcelProfile->prev_claimable,
+                                                "prev_final_area" => $getParcelProfile->prev_final_area,
+                                                "prev_claimed" => $getParcelProfile->prev_claimed,
+                                                "prev_claimed_area" => $getParcelProfile->prev_claimed_area,
+                                                "dq_reason" => $getParcelProfile->dq_reason,
+                                                "is_ebinhi" => $getParcelProfile->is_ebinhi,
+                                                "print_count" => $getParcelProfile->print_count,
+                                                "to_prv_code" => $getParcelProfile->to_prv_code
+                                            ]);
+
+                                            
+                                        }
                                         $home_release_ref_id =  DB::table($GLOBALS['season_prefix']."prv_".$home_code_released.".new_released")
                                         ->insertGetId([
                                             "id" =>  "111111111",
@@ -3674,17 +3754,20 @@ public function get_all_parcel2(Request $request){
 
     public function getHomeDop(Request $request){
 
+        
         $prefix = $GLOBALS['season_prefix'];
         $ffrs_data = DB::table($prefix."prv_".$request->prv.".farmer_information_final")
        ->where("db_ref", $request->db_ref)
        ->first();
-
+    //    dd($ffrs_data);
     //    dd(strlen($ffrs_data->geo_code));
 
         $getCode = DB::table($prefix.'rcep_delivery_inspection.lib_prv')
         ->where('province', 'LIKE', $ffrs_data->province)
         ->where('municipality', 'LIKE', $ffrs_data->municipality)
         ->first();
+
+        // dd($getCode);
         $homeAddress = $getCode->prv;
         $claiming_prv = str_replace('-','',$ffrs_data->claiming_prv);
         // dd($claiming_prv, $homeAddress);
