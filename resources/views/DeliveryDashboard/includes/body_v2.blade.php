@@ -1,6 +1,16 @@
 <table class="header-info" cellspacing="0">
     <tr>
-        <td class="header-titles" style="width:110px">Code for CS</td>
+        <td class="header-titles" style="width:110px">
+        @if ($seedType ==='Regular')
+            Code for CS
+        @elseif ($seedType === 'NRP')
+            Code for NRP
+        @elseif ($seedType === 'Good Quality Seeds')
+            Code for GQS
+        @else
+            <!-- Optional: You can put a default value or leave it empty if needed -->
+        @endif
+        </td>
         <td class="header-titles" style="width:230px">Item Description</td>
         <td class="header-titles" style="width:60px;">Unit</td>
         <td class="header-titles" style="width:40px">Qty</td>

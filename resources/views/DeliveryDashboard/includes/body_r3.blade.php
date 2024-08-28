@@ -1,6 +1,16 @@
 <table class="header-info" cellspacing="0">
     <tr>
-        <td class="header-titles" style="width:110px">Code for CS</td>
+        <td class="header-titles" style="width:110px">
+        @if ($seedType ==='Regular')
+            Code for CS
+        @elseif ($seedType === 'NRP')
+            Code for NRP
+        @elseif ($seedType === 'Good Quality Seeds')
+            Code for GQS
+        @else
+            <!-- Optional: You can put a default value or leave it empty if needed -->
+        @endif
+        </td>
         <td class="header-titles" style="width:230px">Item Description</td>
         <td class="header-titles" style="width:60px;">Unit</td>
         <td class="header-titles" style="width:40px">Qty</td>
@@ -12,7 +22,17 @@
 <table class="header-info" cellspacing="0" style="margin-top:3px;">
     <!--by variety -->
     <tr>
-        <td class="header-data" style="width:110px">CS SEED</td>
+        <td class="header-data" style="width:110px">
+        @if ($seedType ==='Regular')
+            CS SEED
+        @elseif ($seedType === 'NRP')
+            SEED RESERVE
+        @elseif ($seedType === 'Good Quality Seeds')
+            GQS SEED
+        @else
+            <!-- Optional: You can put a default value or leave it empty if needed -->
+        @endif
+        </td>
         <td class="header-data" style="width:230px">
             <div class="">Variety 1:</div>
         </td>
