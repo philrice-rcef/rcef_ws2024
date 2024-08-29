@@ -2879,366 +2879,200 @@ class virtual_encodingController extends Controller
 
 
 
-    public function get_all_parcel2(Request $request)
-    {
 
-<<<<<<< HEAD
-public function get_all_parcel2(Request $request){
-    
-    $conn = ($request->connection == "1") ? "farmer_information_final" : (($request->connection == "2") ? "farmer_information_final_nrp" : "farmer_information_final");
+    public function get_all_parcel2(Request $request){
         
-    $prefix = $GLOBALS['season_prefix'];
-   $ffrs_data = DB::table($prefix."prv_".$request->prv.".".$conn)
-       ->where("db_ref", $request->db_ref)
-       ->first();
-       
-   $return_arr = array(
-       "status" => 0,
-       "parcel_list" => "",
-       "variety_list" => "",
-       "dop_available" => "",
-   );
+        $conn = ($request->connection == "1") ? "farmer_information_final" : (($request->connection == "2") ? "farmer_information_final_nrp" : "farmer_information_final");
+            
+        $prefix = $GLOBALS['season_prefix'];
+    $ffrs_data = DB::table($prefix."prv_".$request->prv.".".$conn)
+        ->where("db_ref", $request->db_ref)
+        ->first();
+        
+    $return_arr = array(
+        "status" => 0,
+        "parcel_list" => "",
+        "variety_list" => "",
+        "dop_available" => "",
+    );
 
-   if($ffrs_data != null){
-       $region_number = substr($ffrs_data->rsbsa_control_no,0,2);
+    if($ffrs_data != null){
+        $region_number = substr($ffrs_data->rsbsa_control_no,0,2);
 
-       $home_prv_undashed = str_replace("-", "",substr($ffrs_data->rsbsa_control_no, 0 ,8));
-       $add_home_dop = 1;
+        $home_prv_undashed = str_replace("-", "",substr($ffrs_data->rsbsa_control_no, 0 ,8));
+        $add_home_dop = 1;
 
 
-   /*   return   $parcel_data = DB::table("ffrs_may_2023.region_".$region_number)
-           ->where("rsbsa_no", $ffrs_data->rsbsa_control_no)
-           ->get(); */
+    /*   return   $parcel_data = DB::table("ffrs_may_2023.region_".$region_number)
+            ->where("rsbsa_no", $ffrs_data->rsbsa_control_no)
+            ->get(); */
 
-        //    dd($request->all());
-       if($request->state==0){
-           $parcel_data =DB::table($prefix."prv_".$request->prv.".".$conn)
-           ->where("rsbsa_control_no", $ffrs_data->rsbsa_control_no)
-           ->where(function ($query) use ($request) {
-                if($request->connection == "1"){
-                    $query->whereIn("is_new", [2, 8]); 
-                } else if($request->connection == "2"){
-                    $query->where("is_new", 0);
-                }
-                else{
-                    $query->whereIn("is_new", [4, 7]); 
-                }
-            })
-        //    ->where(function ($query) {
-        //     $query ->where("is_new", 2)
-        //             ->orwhere("is_new", 8);
-        // })
-           ->get();
-       }else{
-           $parcel_data =DB::table($prefix."prv_".$request->prv.".".$conn)
-           ->where("db_ref", $request->db_ref)
-           ->where(function ($query) use ($request) {
-                if($request->connection == "1"){
-                    $query->whereIn("is_new", [2, 8]); 
-                } else if($request->connection == "2"){
-                    $query->where("is_new", 0);
-                }
-                else{
-                    $query->whereIn("is_new", [4,7]); 
-                }
-            })
-        //    ->whereIn("is_new", [2, 8])
-        //    ->where(function ($query) {
-        //     $query ->where("is_new", 2)
-        //             ->orwhere("is_new", 8);
-        // })
-           ->get();
-       }
-
-       
-       $parcel_list =  array();
-       foreach($parcel_data as $pd){
-           $prv_claiming = str_replace("-", "",substr($pd->claiming_prv, 0 ,5));
-           $claiming_prv = $pd->claiming_prv;
-           $claiming_prv_undashed = str_replace("-", "",substr($pd->claiming_prv, 0 ,8));
-           if($claiming_prv_undashed == $home_prv_undashed)
-           {
-               $add_home_dop = 0;
-           }
-
-           $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
-               ->where("claiming_prv", $claiming_prv)
-               ->where("rsbsa_control_no", $pd->rsbsa_control_no)
-               
-               ->where("firstName", $pd->firstName)
-               ->where("midName", $pd->midName)
-               ->where("lastName", $pd->lastName)
-               ->where(function ($query) use ($request) {
+            //    dd($request->all());
+        if($request->state==0){
+            $parcel_data =DB::table($prefix."prv_".$request->prv.".".$conn)
+            ->where("rsbsa_control_no", $ffrs_data->rsbsa_control_no)
+            ->where(function ($query) use ($request) {
                     if($request->connection == "1"){
                         $query->whereIn("is_new", [2, 8]); 
-                    } else {
-                        // $query->where("is_new", 0);
-                        $query->whereIn("is_new", [0, 4, 7]); 
+                    } else if($request->connection == "2"){
+                        $query->where("is_new", 0);
+                    }
+                    else{
+                        $query->whereIn("is_new", [4, 7]); 
                     }
                 })
-            
+            //    ->where(function ($query) {
+            //     $query ->where("is_new", 2)
+            //             ->orwhere("is_new", 8);
+            // })
+            ->get();
+        }else{
+            $parcel_data =DB::table($prefix."prv_".$request->prv.".".$conn)
+            ->where("db_ref", $request->db_ref)
+            ->where(function ($query) use ($request) {
+                    if($request->connection == "1"){
+                        $query->whereIn("is_new", [2, 8]); 
+                    } else if($request->connection == "2"){
+                        $query->where("is_new", 0);
+                    }
+                    else{
+                        $query->whereIn("is_new", [4,7]); 
+                    }
+                })
             //    ->whereIn("is_new", [2, 8])
             //    ->where(function ($query) {
             //     $query ->where("is_new", 2)
             //             ->orwhere("is_new", 8);
             // })
-               ->first();    
-               
-            
-               $lib_prv_no =   DB::table($prefix."rcep_delivery_inspection.lib_prv")
-               ->where("prv", $claiming_prv_undashed)
-               ->first();                  
-               if($claiming_prv_undashed=="999902"){
+            ->get();
+        }
 
-                    $province = "Programmer Province";
-                   $municipality = "Programmer Municipality";
-               }else{
-                   $lib_prv_no =   DB::table($prefix."rcep_delivery_inspection.lib_prv")
-                   ->where("prv", $claiming_prv_undashed)
-                   ->first();
-                   if($lib_prv_no != null){
-                       $province = $lib_prv_no->province;
-                       $municipality = $lib_prv_no->municipality;
-                   }else{
-                       $province = "N/A";
-                       $municipality = "N/A";
-                   }
-               }
-               $final_area = $pd->final_area;
-
-
-
-               $prv = $prv_claiming;
-               $id = "0";
-
-               $mother_lname = "";
-               $mother_fname = "";
-               $mother_mname = "";
-               $mother_suffix = "";
-               $is_ip = "";
-               $tribe_name = "";
-               $is_pwd   = "";
-               $birthdate  = "";
-               $tel_no = "";
-               $fca_name = "";
-
-               $remaining = 0;
-               $remaining_area = 0;
-               if($may_data != null){
-                   $id = $may_data->db_ref;
-
-                   $mother_lname = $may_data->mother_lname;
-                   $mother_fname = $may_data->mother_fname;
-                   $mother_mname = $may_data->mother_mname;
-                   $mother_suffix = $may_data->mother_suffix;
-                   $is_ip = $may_data->is_ip;
-                   $tribe_name = $may_data->tribe_name;
-                   $is_pwd   = $may_data->is_pwd  ;
-                   $birthdate  = $may_data->birthdate ;
-                   $tel_no  = $may_data->tel_no ;
-                   $fca_name = $may_data->fca_name;
-
-
-                   $action =  "<button class='btn btn-success btn-sm'>Set Distribution</button>";
-                   // $release = DB::table($prefix."prv_".$prv_claiming.".new_released")
-                   //     ->where("db_ref", $may_data->db_ref)
-                   //     ->sum("bags_claimed");
-
-                   // $release_area = DB::table($prefix."prv_".$prv_claiming.".new_released")
-                   //     ->where("db_ref", $may_data->db_ref)
-                   //     ->sum("claimed_area");
-
-                   $release = $may_data->total_claimed;
-                   $release_area = $may_data->total_claimed_area;
-
-                   $final_area = $may_data->final_area;
-                   $remaining = ceil($final_area * 2) - $release;
-                   $remaining_area = $final_area - $release_area;
-
-                   if($remaining <= 0){
-                       
-                       $action = "<label class='badge badge-warning'>Claimed</label>";
-                   }else{
-                           $action = "<label class='badge badge-success'>Available</label>";
-
-                   }
-
-                 
-                   
-                   
-
-               }else{
-                   $action = "<label class='badge badge-dark'>-</label>";
-
-               }
-           
-               
-
-
-           array_push($parcel_list, array(
-               "province" => $province,
-               "municipality" => $municipality,
-               "final_area" => number_format($final_area,4),
-               "remaining" => $remaining,
-               "remaining_area" => number_format($remaining_area,4),
-               "prv" => $prv,
-               "id" => $id,
-               
-               "claiming_prv" => $claiming_prv,
-               "birthdate" => $birthdate,
-               "mother_lname" =>  $mother_lname,
-               "mother_fname" =>  $mother_fname,
-               "mother_mname" =>  $mother_mname,
-               "mother_suffix" => $mother_suffix,
-               "is_ip" => $is_ip,
-               "tribe_name" => $tribe_name,
-               "is_pwd" => $is_pwd,
-               "tel_no" => $tel_no,
-               "fca_name" => $fca_name,
-               "action" =>$action,
-           ));
-
-        //    dd($parcel_list);
-
-       }   
-
-       
-       if(count($parcel_list) <= 0){
         
-           $prv_claiming = str_replace("-", "",substr($ffrs_data->claiming_prv, 0 ,5));
-           $claiming_prv = $ffrs_data->claiming_prv;
-           $claiming_prv_undashed = str_replace("-", "",substr($ffrs_data->claiming_prv, 0 ,8));
-           if($claiming_prv_undashed == $home_prv_undashed)
-           {
-               $add_home_dop = 0;
-           }
+        $parcel_list =  array();
+        foreach($parcel_data as $pd){
+            $prv_claiming = str_replace("-", "",substr($pd->claiming_prv, 0 ,5));
+            $claiming_prv = $pd->claiming_prv;
+            $claiming_prv_undashed = str_replace("-", "",substr($pd->claiming_prv, 0 ,8));
+            if($claiming_prv_undashed == $home_prv_undashed)
+            {
+                $add_home_dop = 0;
+            }
 
-           $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
-               ->where("claiming_prv", $claiming_prv)
-               ->where("firstName", $ffrs_data->firstName)
-               ->where("midName", $ffrs_data->midName)
-               ->where("lastName", $ffrs_data->lastName)
-               ->first();      
-               
-               if($ffrs_data->is_new==9){
-                $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
+            $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
                 ->where("claiming_prv", $claiming_prv)
-                ->where("firstName", $ffrs_data->firstName)
-                ->where("midName", $ffrs_data->midName)
-                ->where("lastName", $ffrs_data->lastName)
-                ->where("is_new",9)
-                ->first(); 
-               }
-               else if($ffrs_data->is_new==7){
-                $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
-                ->where("claiming_prv", $claiming_prv)
-                ->where("firstName", $ffrs_data->firstName)
-                ->where("midName", $ffrs_data->midName)
-                ->where("lastName", $ffrs_data->lastName)
-                ->where("is_new",7)
-                ->first(); 
-               }
-               else{
-                $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
-               ->where("claiming_prv", $claiming_prv)
-               ->where("firstName", $ffrs_data->firstName)
-               ->where("midName", $ffrs_data->midName)
-               ->where("lastName", $ffrs_data->lastName)
-               ->first(); 
-               }  
+                ->where("rsbsa_control_no", $pd->rsbsa_control_no)
+                
+                ->where("firstName", $pd->firstName)
+                ->where("midName", $pd->midName)
+                ->where("lastName", $pd->lastName)
+                ->where(function ($query) use ($request) {
+                        if($request->connection == "1"){
+                            $query->whereIn("is_new", [2, 8]); 
+                        } else {
+                            // $query->where("is_new", 0);
+                            $query->whereIn("is_new", [0, 4, 7]); 
+                        }
+                    })
+                
+                //    ->whereIn("is_new", [2, 8])
+                //    ->where(function ($query) {
+                //     $query ->where("is_new", 2)
+                //             ->orwhere("is_new", 8);
+                // })
+                ->first();    
+                
+                
+                $lib_prv_no =   DB::table($prefix."rcep_delivery_inspection.lib_prv")
+                ->where("prv", $claiming_prv_undashed)
+                ->first();                  
+                if($claiming_prv_undashed=="999902"){
 
-               if($claiming_prv_undashed=="999902"){
-                   $province = "Programmer Province";
-                   $municipality = "Programmer Municipality";
-               }else{
-                   $lib_prv_no =   DB::table($prefix."rcep_delivery_inspection.lib_prv")
-                   ->where("prv", $claiming_prv_undashed)
-                   ->first();
-                   if($lib_prv_no != null){
-                       $province = $lib_prv_no->province;
-                       $municipality = $lib_prv_no->municipality;
-                   }else{
-                       $province = "N/A";
-                       $municipality = "N/A";
-                   }
-               }
-              
-               
-               $final_area = $ffrs_data->final_area;
-               
-               $prv = $prv_claiming;
-               $id = "0";
-
-               $mother_lname = "";
-               $mother_fname = "";
-               $mother_mname = "";
-               $mother_suffix = "";
-               $is_ip = "";
-               $tribe_name = "";
-               $is_pwd   = "";
-               $birthdate  = "";
-               $tel_no = "";
-               $fca_name = "";
-
-               $remaining = 0;
-               $remaining_area = 0;
-               if($may_data != null){
-                   $id = $may_data->db_ref;
-
-                   $mother_lname = $may_data->mother_lname;
-                   $mother_fname = $may_data->mother_fname;
-                   $mother_mname = $may_data->mother_mname;
-                   $mother_suffix = $may_data->mother_suffix;
-                   $is_ip = $may_data->is_ip;
-                   $tribe_name = $may_data->tribe_name;
-                   $is_pwd   = $may_data->is_pwd  ;
-                   $birthdate  = $may_data->birthdate ;
-                   $tel_no  = $may_data->tel_no ;
-                   $fca_name = $may_data->fca_name;
-                   $is_replacement = $may_data->is_replacement;
-                   $replacement_area = $may_data->replacement_area;
-                   $replacement_bags = $may_data->replacement_bags;
-                   $replacement_bags_claimed = $may_data->replacement_bags_claimed;
-                   $replacement_area_claimed = $may_data->replacement_area_claimed;
+                        $province = "Programmer Province";
+                    $municipality = "Programmer Municipality";
+                }else{
+                    $lib_prv_no =   DB::table($prefix."rcep_delivery_inspection.lib_prv")
+                    ->where("prv", $claiming_prv_undashed)
+                    ->first();
+                    if($lib_prv_no != null){
+                        $province = $lib_prv_no->province;
+                        $municipality = $lib_prv_no->municipality;
+                    }else{
+                        $province = "N/A";
+                        $municipality = "N/A";
+                    }
+                }
+                $final_area = $pd->final_area;
 
 
-                   $action =  "<button class='btn btn-success btn-sm'>Set Distribution</button>";
-                   // $release = DB::table($prefix."prv_".$prv_claiming.".new_released")
-                   //     ->where("db_ref", $may_data->db_ref)
-                   //     ->sum("bags_claimed");
 
-                   // $release_area = DB::table($prefix."prv_".$prv_claiming.".new_released")
-                   //     ->where("db_ref", $may_data->db_ref)
-                   //     ->sum("claimed_area");
+                $prv = $prv_claiming;
+                $id = "0";
 
-                   $release = $may_data->total_claimed;
-                   $release_area = $may_data->total_claimed_area;
+                $mother_lname = "";
+                $mother_fname = "";
+                $mother_mname = "";
+                $mother_suffix = "";
+                $is_ip = "";
+                $tribe_name = "";
+                $is_pwd   = "";
+                $birthdate  = "";
+                $tel_no = "";
+                $fca_name = "";
 
-                   $final_area = $may_data->final_area;
-                   $remaining = ceil($final_area * 2) - $release;
-                   $remaining_area = $final_area - $release_area;
+                $remaining = 0;
+                $remaining_area = 0;
+                if($may_data != null){
+                    $id = $may_data->db_ref;
 
-                   if($remaining <= 0){
-                       
-                       $action = "<label class='badge badge-warning'>Claimed</label>";
-                   }else{
-                           $action = "<label class='badge badge-success'>Available</label>";
-
-                   }
-
-               
-                   
-                   
-
-               }else{
-                   $action = "<label class='badge badge-dark'>-</label>";
-
-               }
-           
-               
+                    $mother_lname = $may_data->mother_lname;
+                    $mother_fname = $may_data->mother_fname;
+                    $mother_mname = $may_data->mother_mname;
+                    $mother_suffix = $may_data->mother_suffix;
+                    $is_ip = $may_data->is_ip;
+                    $tribe_name = $may_data->tribe_name;
+                    $is_pwd   = $may_data->is_pwd  ;
+                    $birthdate  = $may_data->birthdate ;
+                    $tel_no  = $may_data->tel_no ;
+                    $fca_name = $may_data->fca_name;
 
 
-               array_push($parcel_list, array(
+                    $action =  "<button class='btn btn-success btn-sm'>Set Distribution</button>";
+                    // $release = DB::table($prefix."prv_".$prv_claiming.".new_released")
+                    //     ->where("db_ref", $may_data->db_ref)
+                    //     ->sum("bags_claimed");
+
+                    // $release_area = DB::table($prefix."prv_".$prv_claiming.".new_released")
+                    //     ->where("db_ref", $may_data->db_ref)
+                    //     ->sum("claimed_area");
+
+                    $release = $may_data->total_claimed;
+                    $release_area = $may_data->total_claimed_area;
+
+                    $final_area = $may_data->final_area;
+                    $remaining = ceil($final_area * 2) - $release;
+                    $remaining_area = $final_area - $release_area;
+
+                    if($remaining <= 0){
+                        
+                        $action = "<label class='badge badge-warning'>Claimed</label>";
+                    }else{
+                            $action = "<label class='badge badge-success'>Available</label>";
+
+                    }
+
+                    
+                    
+                    
+
+                }else{
+                    $action = "<label class='badge badge-dark'>-</label>";
+
+                }
+            
+                
+
+
+            array_push($parcel_list, array(
                 "province" => $province,
                 "municipality" => $municipality,
                 "final_area" => number_format($final_area,4),
@@ -3253,11 +3087,6 @@ public function get_all_parcel2(Request $request){
                 "mother_fname" =>  $mother_fname,
                 "mother_mname" =>  $mother_mname,
                 "mother_suffix" => $mother_suffix,
-                 "is_replacement" => $is_replacement,
-                 "replacement_area" => $replacement_area,
-                 "replacement_bags" => $replacement_bags,
-                 "replacement_bags_claimed" => $replacement_bags_claimed,
-                 "replacement_area_claimed" => $replacement_area_claimed,
                 "is_ip" => $is_ip,
                 "tribe_name" => $tribe_name,
                 "is_pwd" => $is_pwd,
@@ -3266,67 +3095,232 @@ public function get_all_parcel2(Request $request){
                 "action" =>$action,
             ));
 
+            //    dd($parcel_list);
 
+        }   
 
-       }
-
-
-
-       $variety_list = array();
-       $dop_available = array();
-     
-       foreach($parcel_list as $parcel){
-            $hybrid = $this->getVariety($parcel["province"],$parcel["municipality"]);
-      
-           foreach($hybrid as $bred){
-               $release_data ="soon";
-               array_push($variety_list, array(
-                   "prv_id" => "bred->prv",
-                   "province" => $parcel["province"],
-                   "municipality" => $parcel["municipality"],
-                   "seedVariety" => $bred['variety'],
-                   "totalBag" => '####',
-                   "release" => $release_data,
-                   "balance" => $bred['remaining_balance'],
-                   "category" => "Inbred"
-               ));
-
-           }
-
-           $raw_dop = DB::table($GLOBALS["season_prefix"]."rcep_delivery_inspection.tbl_actual_delivery")
-            ->select(
-                'dropOffPoint','prv_dropoff_id'
-            )
-            ->where("province",$parcel["province"])
-            ->where("municipality", $parcel["municipality"])
-            ->groupBy("prv_dropoff_id")
-            ->get();
-            // dd($raw_dop);
-            foreach($raw_dop as $dop){
-                array_push($dop_available, array(
-                    'dropOffPoint' => $dop->dropOffPoint,
-                    'prv_dropoff_id' => $dop->prv_dropoff_id
-                ));
+        
+        if(count($parcel_list) <= 0){
+            
+            $prv_claiming = str_replace("-", "",substr($ffrs_data->claiming_prv, 0 ,5));
+            $claiming_prv = $ffrs_data->claiming_prv;
+            $claiming_prv_undashed = str_replace("-", "",substr($ffrs_data->claiming_prv, 0 ,8));
+            if($claiming_prv_undashed == $home_prv_undashed)
+            {
+                $add_home_dop = 0;
             }
-       }
-    //    dd($variety_list);
-       $return_arr["status"] = 1;
-       $return_arr["parcel_list"] = $parcel_list;
-       $return_arr["variety_list"] = $variety_list;
-       $return_arr["dop_available"] = $dop_available;
 
-   }
+            $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
+                ->where("claiming_prv", $claiming_prv)
+                ->where("firstName", $ffrs_data->firstName)
+                ->where("midName", $ffrs_data->midName)
+                ->where("lastName", $ffrs_data->lastName)
+                ->first();      
+                
+                if($ffrs_data->is_new==9){
+                    $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
+                    ->where("claiming_prv", $claiming_prv)
+                    ->where("firstName", $ffrs_data->firstName)
+                    ->where("midName", $ffrs_data->midName)
+                    ->where("lastName", $ffrs_data->lastName)
+                    ->where("is_new",9)
+                    ->first(); 
+                }
+                else if($ffrs_data->is_new==7){
+                    $may_data = DB::table($prefix."prv_".$prv_claiming.".farmer_information_final")
+                    ->where("claiming_prv", $claiming_prv)
+                    ->where("firstName", $ffrs_data->firstName)
+                    ->where("midName", $ffrs_data->midName)
+                    ->where("lastName", $ffrs_data->lastName)
+                    ->where("is_new",7)
+                    ->first(); 
+                }
+                else{
+                    $may_data = DB::table($prefix."prv_".$prv_claiming.".".$conn)
+                ->where("claiming_prv", $claiming_prv)
+                ->where("firstName", $ffrs_data->firstName)
+                ->where("midName", $ffrs_data->midName)
+                ->where("lastName", $ffrs_data->lastName)
+                ->first(); 
+                }  
 
-   return json_encode($return_arr);
-}
+                if($claiming_prv_undashed=="999902"){
+                    $province = "Programmer Province";
+                    $municipality = "Programmer Municipality";
+                }else{
+                    $lib_prv_no =   DB::table($prefix."rcep_delivery_inspection.lib_prv")
+                    ->where("prv", $claiming_prv_undashed)
+                    ->first();
+                    if($lib_prv_no != null){
+                        $province = $lib_prv_no->province;
+                        $municipality = $lib_prv_no->municipality;
+                    }else{
+                        $province = "N/A";
+                        $municipality = "N/A";
+                    }
+                }
+                
+                
+                $final_area = $ffrs_data->final_area;
+                
+                $prv = $prv_claiming;
+                $id = "0";
+
+                $mother_lname = "";
+                $mother_fname = "";
+                $mother_mname = "";
+                $mother_suffix = "";
+                $is_ip = "";
+                $tribe_name = "";
+                $is_pwd   = "";
+                $birthdate  = "";
+                $tel_no = "";
+                $fca_name = "";
+
+                $remaining = 0;
+                $remaining_area = 0;
+                if($may_data != null){
+                    $id = $may_data->db_ref;
+
+                    $mother_lname = $may_data->mother_lname;
+                    $mother_fname = $may_data->mother_fname;
+                    $mother_mname = $may_data->mother_mname;
+                    $mother_suffix = $may_data->mother_suffix;
+                    $is_ip = $may_data->is_ip;
+                    $tribe_name = $may_data->tribe_name;
+                    $is_pwd   = $may_data->is_pwd  ;
+                    $birthdate  = $may_data->birthdate ;
+                    $tel_no  = $may_data->tel_no ;
+                    $fca_name = $may_data->fca_name;
+                    $is_replacement = $may_data->is_replacement;
+                    $replacement_area = $may_data->replacement_area;
+                    $replacement_bags = $may_data->replacement_bags;
+                    $replacement_bags_claimed = $may_data->replacement_bags_claimed;
+                    $replacement_area_claimed = $may_data->replacement_area_claimed;
+
+
+                    $action =  "<button class='btn btn-success btn-sm'>Set Distribution</button>";
+                    // $release = DB::table($prefix."prv_".$prv_claiming.".new_released")
+                    //     ->where("db_ref", $may_data->db_ref)
+                    //     ->sum("bags_claimed");
+
+                    // $release_area = DB::table($prefix."prv_".$prv_claiming.".new_released")
+                    //     ->where("db_ref", $may_data->db_ref)
+                    //     ->sum("claimed_area");
+
+                    $release = $may_data->total_claimed;
+                    $release_area = $may_data->total_claimed_area;
+
+                    $final_area = $may_data->final_area;
+                    $remaining = ceil($final_area * 2) - $release;
+                    $remaining_area = $final_area - $release_area;
+
+                    if($remaining <= 0){
+                        
+                        $action = "<label class='badge badge-warning'>Claimed</label>";
+                    }else{
+                            $action = "<label class='badge badge-success'>Available</label>";
+
+                    }
+
+                
+                    
+                    
+
+                }else{
+                    $action = "<label class='badge badge-dark'>-</label>";
+
+                }
+            
+                
+
+
+                array_push($parcel_list, array(
+                    "province" => $province,
+                    "municipality" => $municipality,
+                    "final_area" => number_format($final_area,4),
+                    "remaining" => $remaining,
+                    "remaining_area" => number_format($remaining_area,4),
+                    "prv" => $prv,
+                    "id" => $id,
+                    
+                    "claiming_prv" => $claiming_prv,
+                    "birthdate" => $birthdate,
+                    "mother_lname" =>  $mother_lname,
+                    "mother_fname" =>  $mother_fname,
+                    "mother_mname" =>  $mother_mname,
+                    "mother_suffix" => $mother_suffix,
+                    "is_replacement" => $is_replacement,
+                    "replacement_area" => $replacement_area,
+                    "replacement_bags" => $replacement_bags,
+                    "replacement_bags_claimed" => $replacement_bags_claimed,
+                    "replacement_area_claimed" => $replacement_area_claimed,
+                    "is_ip" => $is_ip,
+                    "tribe_name" => $tribe_name,
+                    "is_pwd" => $is_pwd,
+                    "tel_no" => $tel_no,
+                    "fca_name" => $fca_name,
+                    "action" =>$action,
+                ));
+
+
+
+        }
+
+
+
+        $variety_list = array();
+        $dop_available = array();
+        
+        foreach($parcel_list as $parcel){
+                $hybrid = $this->getVariety($parcel["province"],$parcel["municipality"]);
+        
+            foreach($hybrid as $bred){
+                $release_data ="soon";
+                array_push($variety_list, array(
+                    "prv_id" => "bred->prv",
+                    "province" => $parcel["province"],
+                    "municipality" => $parcel["municipality"],
+                    "seedVariety" => $bred['variety'],
+                    "totalBag" => '####',
+                    "release" => $release_data,
+                    "balance" => $bred['remaining_balance'],
+                    "category" => "Inbred"
+                ));
+
+            }
+
+            $raw_dop = DB::table($GLOBALS["season_prefix"]."rcep_delivery_inspection.tbl_actual_delivery")
+                ->select(
+                    'dropOffPoint','prv_dropoff_id'
+                )
+                ->where("province",$parcel["province"])
+                ->where("municipality", $parcel["municipality"])
+                ->groupBy("prv_dropoff_id")
+                ->get();
+                // dd($raw_dop);
+                foreach($raw_dop as $dop){
+                    array_push($dop_available, array(
+                        'dropOffPoint' => $dop->dropOffPoint,
+                        'prv_dropoff_id' => $dop->prv_dropoff_id
+                    ));
+                }
+        }
+        //    dd($variety_list);
+        $return_arr["status"] = 1;
+        $return_arr["parcel_list"] = $parcel_list;
+        $return_arr["variety_list"] = $variety_list;
+        $return_arr["dop_available"] = $dop_available;
+
+    }
+
+    return json_encode($return_arr);
+    }
 
 
 
     public function get_all_parcel(Request $request){
     
-=======
-        $conn = ($request->connection == "1") ? "farmer_information_final" : (($request->connection == "2") ? "farmer_information_final_nrp" : "farmer_information_final");
->>>>>>> a4ea99bc606d9d05d0343241ba93ee6cbc3ad45c
 
         $prefix = $GLOBALS['season_prefix'];
         $ffrs_data = DB::table($prefix . "prv_" . $request->prv . "." . $conn)
