@@ -621,6 +621,7 @@
                         success: function(data) {
                             Swal.fire('Success', 'Profile now submitted for further verification.', 'success');
                             onLoadIndex = 0;
+                            tempProfile = 0;
                             findCluster = '';
                             $('#beginButton').click();
                         }
@@ -632,6 +633,9 @@
 
 
         $('#prevButton').on('click', () =>{
+            all_profiles = [];
+            console.log(tempProfile, all_profiles);
+            
             var options = {
                 theme:"custom",
                 content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
@@ -921,6 +925,8 @@
             });
         });
         $('#nextButton').on('click', () =>{
+            all_profiles = [];
+            console.log(tempProfile, all_profiles);
             var options = {
                 theme:"custom",
                 content:'<img style="width:8em; transform:translateY(-1em) translateX(-1.5em)" src="{{ asset('public/images/farmerLoading.gif') }}" class="center-block">',
@@ -1203,6 +1209,7 @@
         });
         
         $('#beginButton').on('click', () =>{
+            
             $prv = $('#provinces').val();
             $mun = $('#municipality').val();
             onLoadIndex = 0;

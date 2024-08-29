@@ -305,11 +305,18 @@ class farmerVerificationController extends Controller
 
     public function skipProfile(Request $request)
     {
-        // dd($request->skipReason);
+        // dd($request->all_profiles, $request->all());
+
+        $profiles = [];
+        array_push($profiles,$request->tempProfile);
+        foreach($request->all_profiles as $profile)
+        {
+            array_push($profiles,$profile);
+        }
         $code = substr(str_replace('-','',$request->mun),0,4);
         $skipReason = $request->skipReason;
         $skipProfiles = DB::table('mongodb_data.prv_'.$code.'_ai')
-        ->whereIn('id',$request->all_profiles)
+        ->whereIn('id',$profiles)
         ->where('profile_status','FOR VERIFICATION')
         ->update([
             "profile_status" => "FOR RCEF CHECKING",
