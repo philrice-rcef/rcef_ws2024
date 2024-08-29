@@ -2853,7 +2853,7 @@ public function get_all_parcel2(Request $request){
    $ffrs_data = DB::table($prefix."prv_".$request->prv.".".$conn)
        ->where("db_ref", $request->db_ref)
        ->first();
-   
+       
    $return_arr = array(
        "status" => 0,
        "parcel_list" => "",
@@ -2872,7 +2872,7 @@ public function get_all_parcel2(Request $request){
            ->where("rsbsa_no", $ffrs_data->rsbsa_control_no)
            ->get(); */
 
-      
+        //    dd($request->all());
        if($request->state==0){
            $parcel_data =DB::table($prefix."prv_".$request->prv.".".$conn)
            ->where("rsbsa_control_no", $ffrs_data->rsbsa_control_no)
@@ -2883,7 +2883,7 @@ public function get_all_parcel2(Request $request){
                     $query->where("is_new", 0);
                 }
                 else{
-                    $query->whereIn("is_new", [2, 8]); 
+                    $query->whereIn("is_new", [4, 7]); 
                 }
             })
         //    ->where(function ($query) {
@@ -2901,7 +2901,7 @@ public function get_all_parcel2(Request $request){
                     $query->where("is_new", 0);
                 }
                 else{
-                    $query->whereIn("is_new", [2, 8]); 
+                    $query->whereIn("is_new", [4,7]); 
                 }
             })
         //    ->whereIn("is_new", [2, 8])
@@ -2911,6 +2911,8 @@ public function get_all_parcel2(Request $request){
         // })
            ->get();
        }
+
+       
        $parcel_list =  array();
        foreach($parcel_data as $pd){
            $prv_claiming = str_replace("-", "",substr($pd->claiming_prv, 0 ,5));
@@ -2932,15 +2934,19 @@ public function get_all_parcel2(Request $request){
                     if($request->connection == "1"){
                         $query->whereIn("is_new", [2, 8]); 
                     } else {
-                        $query->where("is_new", 0);
+                        // $query->where("is_new", 0);
+                        $query->whereIn("is_new", [0, 4, 7]); 
                     }
                 })
+            
             //    ->whereIn("is_new", [2, 8])
             //    ->where(function ($query) {
             //     $query ->where("is_new", 2)
             //             ->orwhere("is_new", 8);
             // })
-               ->first();       
+               ->first();    
+               
+            
                $lib_prv_no =   DB::table($prefix."rcep_delivery_inspection.lib_prv")
                ->where("prv", $claiming_prv_undashed)
                ->first();                  
@@ -3054,7 +3060,7 @@ public function get_all_parcel2(Request $request){
                "action" =>$action,
            ));
 
-    
+        //    dd($parcel_list);
 
        }   
 
