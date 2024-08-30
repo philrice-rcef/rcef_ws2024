@@ -110,7 +110,15 @@
     <tr>
         <td class="header-titles">Purpose</td>
         <td class="header-data" colspan="6">
-            For the CS delivery in
+        @if ($seedType ==='Regular')
+            For the CS
+        @elseif ($seedType === 'NRP')
+            For the NRP
+        @elseif ($seedType === 'Good Quality Seeds')
+            For the GQS
+        @else
+            <!-- Optional: You can put a default value or leave it empty if needed -->
+        @endif delivery in
             {{ $province }} , {{ $municipality }} , {{ $drop_off_point }}
         </div>
     </tr>
