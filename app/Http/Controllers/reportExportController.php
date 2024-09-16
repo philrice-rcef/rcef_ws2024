@@ -1670,8 +1670,13 @@ public function exportMunicipalStatistics($date_from, $date_to, $region){
 
             $prv = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_dropoff_point")->where("province", $value->province)->where("municipality", $value->municipality)->value('prv');
             if($prv != null){$psa_code = "PH".$prv."000";}else{$psa_code = "";}
-                
-        
+
+
+            $distributed = $total_bags + $eBinhi_claim +$total_bags_home;
+            if($distributed == 0 && $transferred_curr > 0)
+            {
+                $total_bags = $transferred;
+            }
         
             array_push($a, array(
                 "Region" => $value->region,
