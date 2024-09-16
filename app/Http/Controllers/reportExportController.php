@@ -1368,7 +1368,6 @@ public function exportMunicipalStatistics($date_from, $date_to, $region){
         ->groupBy("province")
         ->groupBy("municipality")
         ->where("region", $region->region)
-        ->where('prv_dropoff_id','LIKE', '012925%')
         // ->skip(0)
         // ->take(2)
         ->orderBy("prv")
