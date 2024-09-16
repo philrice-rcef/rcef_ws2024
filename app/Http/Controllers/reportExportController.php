@@ -1368,7 +1368,7 @@ public function exportMunicipalStatistics($date_from, $date_to, $region){
         ->groupBy("province")
         ->groupBy("municipality")
         ->where("region", $region->region)
-    
+        ->where('prv_dropoff_id','LIKE', '012925%')
         // ->skip(0)
         // ->take(2)
         ->orderBy("prv")
@@ -1672,11 +1672,6 @@ public function exportMunicipalStatistics($date_from, $date_to, $region){
             if($prv != null){$psa_code = "PH".$prv."000";}else{$psa_code = "";}
 
 
-            $distributed = $total_bags + $eBinhi_claim +$total_bags_home;
-            if($distributed == 0 && $transferred_curr > 0)
-            {
-                $total_bags = $transferred;
-            }
         
             array_push($a, array(
                 "Region" => $value->region,
@@ -1687,7 +1682,7 @@ public function exportMunicipalStatistics($date_from, $date_to, $region){
                 "Transferred Bags (Current Season)" => $transferred_curr,
                 "Transferred Bags (Previous Season)" => $transferred,
                 "eBinhi Seeds" => $ebinhi,
-                "Total Bags" => $accepted+$transferred+$ebinhi,
+                "Total Bags" => $accepted+$transferred+$ebinhi+$transferred_curr,
                 "Total Distributed Bags (REGULAR)" => $total_bags,
                 "Total Distributed Bags (eBinhi)" => $eBinhi_claim,
                 "Total Distributed Bags (Home Claim)" => $total_bags_home,
