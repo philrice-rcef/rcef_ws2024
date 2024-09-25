@@ -613,7 +613,6 @@
         }
     });
 
-
     function getInitialProvinces(){
         $.ajax({
             type: 'GET',
