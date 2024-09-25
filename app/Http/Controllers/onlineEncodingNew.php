@@ -15,13 +15,10 @@ use DateTime;
 
 class onlineEncodingNew extends Controller {
     public function index(){
-
         // if(Auth::user()->roles->first()->name != "rcef-programmer"){
-        //     $mss = "Under Development";
-        //         return view("utility.pageClosed")
-        //     ->with("mss",$mss);
+        //     return view("utility.pageClosed")
+        //     ->with("mss", "Closed temporarily. But we'll be back!");
         // }
-        
         return view('onlineEncodingNew.index');
     }
 
@@ -244,13 +241,11 @@ class onlineEncodingNew extends Controller {
         if(!$seed){
             $seed = "";
         }
-        return DB::table($GLOBALS['season_prefix']."seed_seed.tbl_varieties")
+        return DB::table($GLOBALS['season_prefix']."seed_seed.seed_characteristics")
             ->select(
                 'variety as seedItem',
                 'variety as seedName'
             )
-            ->where('variety', 'LIKE', "%".$seed."%")
-            ->limit(10)
             ->get();
     }
 }
