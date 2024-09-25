@@ -13,8 +13,10 @@ use Excel;
 use Hash;
 use DateTime;
 
-class onlineEncodingNew extends Controller {
-    public function index(){
+class onlineEncodingNew extends Controller
+{
+    public function index()
+    {
         // if(Auth::user()->roles->first()->name != "rcef-programmer"){
         //     return view("utility.pageClosed")
         //     ->with("mss", "Closed temporarily. But we'll be back!");
@@ -22,25 +24,28 @@ class onlineEncodingNew extends Controller {
         return view('onlineEncodingNew.index');
     }
 
-    public function getProvinces(){
-        return DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
+    public function getProvinces()
+    {
+        return DB::table($GLOBALS['season_prefix'] . "rcep_delivery_inspection.lib_prv")
             ->select('prv_code', 'province')
             ->groupBy('province')
             ->get();
     }
 
-    public function getMunicipalities(Request $request){
+    public function getMunicipalities(Request $request)
+    {
         $prv = $request["prv"];
-        return DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
+        return DB::table($GLOBALS['season_prefix'] . "rcep_delivery_inspection.lib_prv")
             ->select('temp_prv', 'municipality')
             ->groupBy('municipality')
             ->where("prv_code", $prv)
             ->get();
     }
 
-    public function getDropoff(Request $request){
+    public function getDropoff(Request $request)
+    {
         $mun = str_replace('-', '', $request["mun"]);
-        return DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
+        return DB::table($GLOBALS['season_prefix'] . "rcep_delivery_inspection.tbl_actual_delivery")
             ->select('dropOffPoint', 'prv_dropoff_id')
             ->groupBy('prv_dropoff_id')
             ->where("prv", $mun)
@@ -48,29 +53,29 @@ class onlineEncodingNew extends Controller {
             ->get();
     }
 
-    public function getBalance(Request $request){
+    public function getBalance(Request $request)
+    {
         $dropoff = $request["dop"];
-        $totalStocks = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
+        $totalStocks = DB::table($GLOBALS['season_prefix'] . "rcep_delivery_inspection.tbl_actual_delivery")
             ->select("prv_dropoff_id", "dropOffPoint", "prv", "province", "municipality", "seedVariety", DB::raw("SUM(totalBagCount) as totalBag"))
             ->where('prv_dropoff_id', $dropoff)
             ->where('qrStart', 0)
             ->groupBy('seedVariety')
             ->get();
 
-        foreach($totalStocks as $stock)
-        {
-            $prv = substr($stock->prv_dropoff_id,0,4);
-            $downloadedStocks = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_stocks_download_transaction')
-            ->where('prv_dropoff_id', $stock->prv_dropoff_id)
-            ->where('is_cleared',0)
-            ->where('seed_variety','like', '%'.$stock->seedVariety.'%')
-            ->sum('number_of_bag');
+        foreach ($totalStocks as $stock) {
+            $prv = substr($stock->prv_dropoff_id, 0, 4);
+            $downloadedStocks = DB::table($GLOBALS['season_prefix'] . 'rcep_delivery_inspection.tbl_stocks_download_transaction')
+                ->where('prv_dropoff_id', $stock->prv_dropoff_id)
+                ->where('is_cleared', 0)
+                ->where('seed_variety', 'like', '%' . $stock->seedVariety . '%')
+                ->sum('number_of_bag');
 
-            $new_released = DB::table($GLOBALS['season_prefix'].'prv_'.$prv.'.new_released')
-                    ->where('prv_dropoff_id', $stock->prv_dropoff_id)
-                    ->where('seed_variety','like', '%'.$stock->seedVariety.'%')
-                    ->where('category',"INBRED")
-                    ->sum('bags_claimed');
+            $new_released = DB::table($GLOBALS['season_prefix'] . 'prv_' . $prv . '.new_released')
+                ->where('prv_dropoff_id', $stock->prv_dropoff_id)
+                ->where('seed_variety', 'like', '%' . $stock->seedVariety . '%')
+                ->where('category', "INBRED")
+                ->sum('bags_claimed');
 
             $stock->totalBag = $stock->totalBag - ($downloadedStocks + $new_released);
         }
@@ -79,7 +84,8 @@ class onlineEncodingNew extends Controller {
         return $totalStocks;
     }
 
-    public function verifyFarmerFromList(Request $request){
+    public function verifyFarmerFromList(Request $request)
+    {
         $rsbsa_control_no = $request->rsbsa_control_no;
         $firstName = $request->firstName;
         $midName = $request->midName;
@@ -94,26 +100,26 @@ class onlineEncodingNew extends Controller {
         $prv = str_replace('-', '', substr($rsbsa_control_no, 0, 5));
 
         // dd($prv);
-        $first_pass = DB::table($GLOBALS['season_prefix']."prv_".$prv.".farmer_information_final")
+        $first_pass = DB::table($GLOBALS['season_prefix'] . "prv_" . $prv . ".farmer_information_final")
             ->where("rsbsa_control_no", $rsbsa_control_no)
             ->first();
-        
-        if(!$first_pass){
-            $second_pass = DB::table($GLOBALS['season_prefix']."prv_".$prv.".farmer_information_final")
-                ->where("lastName", "LIKE", "%".$lastName."%")
-                ->where("firstName", "LIKE", "%".$firstName."%")
-                ->where("midName", "LIKE", "%".$midName."%")
-                ->where("extName", "LIKE", "%".$extName."%")
-                ->where("birthdate", "LIKE", "%".$birthdate_parsed."%")
+
+        if (!$first_pass) {
+            $second_pass = DB::table($GLOBALS['season_prefix'] . "prv_" . $prv . ".farmer_information_final")
+                ->where("lastName", "LIKE", "%" . $lastName . "%")
+                ->where("firstName", "LIKE", "%" . $firstName . "%")
+                ->where("midName", "LIKE", "%" . $midName . "%")
+                ->where("extName", "LIKE", "%" . $extName . "%")
+                ->where("birthdate", "LIKE", "%" . $birthdate_parsed . "%")
                 ->where("sex", "LIKE", $sex)
                 ->first();
 
-            if(!$second_pass){
+            if (!$second_pass) {
                 return array(
                     "status" => "PASS",
                     "message" => "RSMS 2-stage verification passed. No exact match found."
                 );
-            }else{
+            } else {
                 return array(
                     "status" => "FAIL",
                     "message" => "Profile found under a different RSBSA Control No.:",
@@ -124,7 +130,7 @@ class onlineEncodingNew extends Controller {
                     )
                 );
             }
-        }else{
+        } else {
             return array(
                 "status" => "FAIL",
                 "message" => "Profile found with the RSBSA Control No.:",
@@ -137,8 +143,9 @@ class onlineEncodingNew extends Controller {
         }
     }
 
-    public function getAddrProvinces(Request $request){
-        return DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
+    public function getAddrProvinces(Request $request)
+    {
+        return DB::table($GLOBALS['season_prefix'] . "rcep_delivery_inspection.lib_prv")
             ->select(
                 "province",
                 "prv_code"
@@ -148,9 +155,10 @@ class onlineEncodingNew extends Controller {
             ->get();
     }
 
-    public function getAddrMunicipalities(Request $request){
+    public function getAddrMunicipalities(Request $request)
+    {
         $prv = $request->prv;
-        return DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
+        return DB::table($GLOBALS['season_prefix'] . "rcep_delivery_inspection.lib_prv")
             ->select(
                 "municipality",
                 "prv"
@@ -160,9 +168,10 @@ class onlineEncodingNew extends Controller {
             ->get();
     }
 
-    public function getAddrBarangays(Request $request){
+    public function getAddrBarangays(Request $request)
+    {
         $geo = $request->geo;
-        return DB::table($GLOBALS['season_prefix']."sdms_db_dev.lib_geocodes")
+        return DB::table($GLOBALS['season_prefix'] . "sdms_db_dev.lib_geocodes")
             ->select(
                 'geocode_brgy',
                 'name'
@@ -171,7 +180,8 @@ class onlineEncodingNew extends Controller {
             ->get();
     }
 
-    public function saveDistribution(Request $request){
+    public function saveDistribution(Request $request)
+    {
         $profile = $request->profile;
         $release = $request->release;
         $working_prv = $profile["claiming_prv"];
@@ -180,7 +190,7 @@ class onlineEncodingNew extends Controller {
         $release["released_by"] = Auth::user()->username;
 
         //generate db_ref
-        $max_dbref = DB::table($GLOBALS['season_prefix']."prv_".$working_prv.".farmer_information_final")
+        $max_dbref = DB::table($GLOBALS['season_prefix'] . "prv_" . $working_prv . ".farmer_information_final")
             ->select(
                 DB::raw("MAX(db_ref) as maxd")
             )
@@ -193,17 +203,18 @@ class onlineEncodingNew extends Controller {
         //generate rcef_id
         $existing = true;
         $generated = null;
-        while($existing){
+        while ($existing) {
             $generated = str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
 
-            $check = DB::table($GLOBALS['season_prefix']."prv_".$working_prv.".farmer_information_final")
+            $check = DB::table($GLOBALS['season_prefix'] . "prv_" . $working_prv . ".farmer_information_final")
                 ->where("rcef_id", "LIKE", $generated)
                 ->first();
 
-            if(!$check) $existing = false;
+            if (!$check)
+                $existing = false;
         }
-        $profile["rcef_id"] = $working_prv.$generated;
-        $release["rcef_id"] = $working_prv.$generated;
+        $profile["rcef_id"] = $working_prv . $generated;
+        $release["rcef_id"] = $working_prv . $generated;
 
         // return array(
         //     "profile" => $profile,
@@ -213,10 +224,10 @@ class onlineEncodingNew extends Controller {
         DB::beginTransaction();
 
         try {
-            $profileId = DB::table($GLOBALS['season_prefix']."prv_".$working_prv.".farmer_information_final")
+            $profileId = DB::table($GLOBALS['season_prefix'] . "prv_" . $working_prv . ".farmer_information_final")
                 ->insert([$profile]);
 
-            $releaseId = DB::table($GLOBALS['season_prefix']."prv_".$working_prv.".new_released")
+            $releaseId = DB::table($GLOBALS['season_prefix'] . "prv_" . $working_prv . ".new_released")
                 ->insert([$release]);
 
             DB::commit();
@@ -236,12 +247,13 @@ class onlineEncodingNew extends Controller {
         );
     }
 
-    public function getSeedVars(Request $request){
+    public function getSeedVars(Request $request)
+    {
         $seed = $request["term"];
-        if(!$seed){
+        if (!$seed) {
             $seed = "";
         }
-        return DB::table($GLOBALS['season_prefix']."seed_seed.seed_characteristics")
+        return DB::table($GLOBALS['season_prefix'] . "seed_seed.seed_characteristics")
             ->select(
                 'variety as seedItem',
                 'variety as seedName'
