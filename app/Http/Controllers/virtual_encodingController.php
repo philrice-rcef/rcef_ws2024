@@ -3795,8 +3795,10 @@ public function get_all_parcel2(Request $request){
     }
 
     public function getHomeVariety(Request $request){
+
+        $home_dop = substr($request->prvDop,0,6);
         $getVarieties = DB::connection("delivery_inspection_db")->table("tbl_actual_delivery")
-        ->where('prv_dropoff_id','LIKE',$request->prvDop)
+        ->where('prv_dropoff_id','LIKE',$home_dop.'%')
         ->groupBy('seedVariety')
         ->get();
 
