@@ -61,11 +61,11 @@ def load_cooperatives():
 
 def load_delivery():
     global tbl_delivery
-    tbl_delivery = pl.read_database_uri(f"SELECT `deliveryId`,`ticketNumber`,`batchTicketNumber`,`coopAccreditation`,`sgAccreditation`,`seedTag`,`seedVariety`,`seedClass`,`totalWeight`,`weightPerBag`,`totalBagCount`,`deliverTo`,coordinates,status,`inspectorAllocated`,`userId`, deliveryDate, `oldTicketNumber`,region,province,municipality,`dropOffPoint`,prv_dropoff_id,prv,moa_number,app_version,`batchSeries`,is_cancelled,cancelled_by,reason,sg_id,`isBuffer`,transpo_cost_per_bag FROM {_season}_rcep_delivery_inspection.tbl_delivery WHERE coopAccreditation = '{_coop_a}'", uri)
+    tbl_delivery = pl.read_database_uri(f"SELECT `deliveryId`,`ticketNumber`,`batchTicketNumber`,`coopAccreditation`,`sgAccreditation`,`seedTag`,`seedVariety`,`seedClass`,`totalWeight`,`weightPerBag`,`totalBagCount`,`deliverTo`,coordinates,status,`inspectorAllocated`,`userId`, TIMESTAMP(DATE(deliveryDate)) as deliveryDate, `oldTicketNumber`,region,province,municipality,`dropOffPoint`,prv_dropoff_id,prv,moa_number,app_version,`batchSeries`,is_cancelled,cancelled_by,reason,sg_id,`isBuffer`,transpo_cost_per_bag FROM {_season}_rcep_delivery_inspection.tbl_delivery WHERE coopAccreditation = '{_coop_a}'", uri)
 
 def load_actual_delivery():
     global tbl_actual_delivery
-    tbl_actual_delivery = pl.read_database_uri(f"SELECT * FROM {_season}_rcep_delivery_inspection.tbl_actual_delivery", uri)
+    tbl_actual_delivery = pl.read_database_uri(f"SELECT actualDeliveryId, batchTicketNumber, region, province, municipality, dropOffPoint, seedVariety, totalBagCount, TIMESTAMP(DATE(dateCreated)) as dateCreated, send, seedTag, prv_dropoff_id, prv, moa_number, app_version, batchSeries, date_modified, remarks, isRejected, is_transferred, seedType, transferCategory, has_rla, sack_code, isBuffer, qrValStart, qrValEnd, qrStart, qrEnd, is_sync, is_hold, is_dv_tag, dv_control_no, sync_date FROM {_season}_rcep_delivery_inspection.tbl_actual_delivery", uri)
 
 def load_rla_details():
     global tbl_rla_details
