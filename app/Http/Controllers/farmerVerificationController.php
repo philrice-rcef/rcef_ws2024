@@ -13,6 +13,13 @@ use Carbon\Carbon;
 class farmerVerificationController extends Controller
 {
     public function index(){
+
+        if(Auth::user()->username != "bm.delossantos"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
+
         $user = Auth::user()->username;
         $dateNow = Carbon::now();
         $formattedDate = $dateNow->format('Y-m-d H:i:s');
