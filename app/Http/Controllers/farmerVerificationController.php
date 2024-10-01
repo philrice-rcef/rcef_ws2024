@@ -9,9 +9,14 @@ use App\Http\Controllers\Controller;
 use DB;
 use Datatables;
 use Auth;
+use Carbon\Carbon;
 class farmerVerificationController extends Controller
 {
     public function index(){
+        $user = Auth::user()->username;
+        $dateNow = Carbon::now();
+        $formattedDate = $dateNow->format('Y-m-d H:i:s');
+
         $getPrvs = DB::table('information_schema.TABLES')
         ->select('TABLE_NAME')
         ->where('TABLE_SCHEMA','LIKE','mongodb_data%')
@@ -42,7 +47,7 @@ class farmerVerificationController extends Controller
         }
 
         if(Auth::user()->roles->first()->name == "rcef-programmer"){
-            $provinces = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+            $provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                 ->select('regionName','province')
                 ->whereIn('prv_code',$prvCodes)
                 ->groupBy('province')
@@ -68,7 +73,7 @@ class farmerVerificationController extends Controller
                     array_push($prvs,$provinces->province);
                 }
 
-                $provinces = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+                $provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
                 ->select('regionName','province')
                 ->whereIn('prv_code',$prvCodes)
                 ->whereIn('province',$prvs)
@@ -85,7 +90,7 @@ class farmerVerificationController extends Controller
 
     public function getMuni(Request $request)
     {
-        $getPrvCode = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+        $getPrvCode = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('prv_code')
         ->where('province',$request->prov)
         ->first();
@@ -106,7 +111,7 @@ class farmerVerificationController extends Controller
         }
 
         
-        $getMuni = DB::table('ws2024_rcep_delivery_inspection.lib_prv')
+        $getMuni = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.lib_prv')
         ->select('municipality','prv',DB::raw("CONCAT(regCode,'-',provCode,'-',munCode) as geocode"))
         ->where('province',$request->prov)
         ->whereIn('prv',$muniCodes)
@@ -279,6 +284,9 @@ class farmerVerificationController extends Controller
 
     public function getSuggestions(Request $request)
     {
+        $userName = Auth::user()->username;
+        $dateNow = Carbon::now();
+        $formattedDate = $dateNow->format('Y-m-d H:i:s');
         // dd($request->all());
         $code = substr(str_replace('-','',$request->mun),0,4);
         $getSuggestedProfile = DB::table('mongodb_data.prv_'.$code.'_ai')
@@ -292,7 +300,9 @@ class farmerVerificationController extends Controller
             ->where('profile_status','FOR VERIFICATION')
             ->where('cluster_id',$request->cluster)
             ->update([
-                "profile_status" => "FOR APPROVAL"
+                "profile_status" => "FOR APPROVAL",
+                "updatedBy" => $userName,
+                "dateUpdated" => $formattedDate
             ]);
             return "No suggested data.";
         }
@@ -306,7 +316,9 @@ class farmerVerificationController extends Controller
     public function skipProfile(Request $request)
     {
         // dd($request->all_profiles, $request->all());
-
+        $userName = Auth::user()->username;
+        $dateNow = Carbon::now();
+        $formattedDate = $dateNow->format('Y-m-d H:i:s');
         $profiles = [];
         array_push($profiles,$request->tempProfile);
         foreach($request->all_profiles as $profile)
@@ -320,7 +332,9 @@ class farmerVerificationController extends Controller
         ->where('profile_status','FOR VERIFICATION')
         ->update([
             "profile_status" => "FOR RCEF CHECKING",
-            "skipReason" => $skipReason
+            "skipReason" => $skipReason,
+            "updatedBy" => $userName,
+            "dateUpdated" => $formattedDate
         ]);
 
         return 1;
@@ -329,6 +343,9 @@ class farmerVerificationController extends Controller
 
     public function updateProfiles(Request $request)
     {
+        $userName = Auth::user()->username;
+        $dateNow = Carbon::now();
+        $formattedDate = $dateNow->format('Y-m-d H:i:s');
         // dd($request->all());
         $code = substr(str_replace('-','',$request->mun),0,4);
         $getSub = [];
@@ -358,7 +375,9 @@ class farmerVerificationController extends Controller
                 ->where('id',$profileId)
                 ->update([
                     "new_cluster_id" => $newCluster,
-                    "profile_status" => "FOR APPROVAL"
+                    "profile_status" => "FOR APPROVAL",
+                    "updatedBy" => $userName,
+                    "dateUpdated" => $formattedDate
                 ]);
             }
             else
@@ -380,7 +399,9 @@ class farmerVerificationController extends Controller
                 ->where('id',$profileId)
                 ->update([
                     "profile_link_id" => $selectedId,
-                    "profile_status" => "FOR APPROVAL"
+                    "profile_status" => "FOR APPROVAL",
+                    "updatedBy" => $userName,
+                    "dateUpdated" => $formattedDate
                 ]);
             }
         }
@@ -390,7 +411,9 @@ class farmerVerificationController extends Controller
             ->where('id',$request->main_profile)
             ->update([
                 "main_profile" => 1,
-                "profile_status" => "FOR APPROVAL"
+                "profile_status" => "FOR APPROVAL",
+                "updatedBy" => $userName,
+                "dateUpdated" => $formattedDate
             ]);
 
             if($request->sub_profiles)
@@ -399,7 +422,9 @@ class farmerVerificationController extends Controller
                 ->whereIn('id',$request->sub_profiles)
                 ->update([
                     "profile_link_id" => $request->main_profile,
-                    "profile_status" => "FOR APPROVAL"
+                    "profile_status" => "FOR APPROVAL",
+                    "updatedBy" => $userName,
+                    "dateUpdated" => $formattedDate
                 ]);
             }
             if($request->new_profiles)
@@ -423,7 +448,9 @@ class farmerVerificationController extends Controller
                 $getNew = DB::table('mongodb_data.prv_'.$code.'_ai')
                 ->whereIn('id',$request->new_profiles)
                 ->update([
-                    "new_cluster_id" => $newCluster
+                    "new_cluster_id" => $newCluster,
+                    "updatedBy" => $userName,
+                    "dateUpdated" => $formattedDate
                 ]);
 
             }
