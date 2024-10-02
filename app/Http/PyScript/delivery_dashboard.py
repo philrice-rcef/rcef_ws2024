@@ -7,6 +7,7 @@ import datetime
 import requests
 from xlsxwriter import Workbook
 import subprocess
+import pandas as pd
 
 def install_package(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -15,14 +16,14 @@ def install_package(package):
 
 os.chdir("report/home/")
 # os.chdir("D:\\Jannah Marie Althea R. Cortez\\Downloads")
-api_url = "https://asia-southeast1-rcef-ims.cloudfunctions.net/api/rsms/getIarData?apikey=rc3f1m5-XApiKey"
+# api_url = "https://asia-southeast1-rcef-ims.cloudfunctions.net/api/rsms/getIarData"
 uri = "mysql://json:%s@192.168.10.44:3306/information_schema" % quote('Zeijan@13')
 
 
 _last_s = "ds2024" # change to last season in production
-_season = sys.argv[1] if len(sys.argv) > 1 else None
+_season = sys.argv[1] if len(sys.argv) > 1 else "ws2024"
 _next_s = "ds2025" # change to next season in production
-_coop_a = sys.argv[2] if len(sys.argv) > 1 else None
+_coop_a = sys.argv[2] if len(sys.argv) > 1 else "03-N-7/20-Rcl-25560"
 
 # globals 
 _view_coop_deliveries = pl.DataFrame()
@@ -46,11 +47,26 @@ replacement_arr = pl.DataFrame()
 buffer_arr = pl.DataFrame()
 bep_arr = pl.DataFrame()
 
+return_df = pl.DataFrame()
+return_df_nrp = pl.DataFrame()
+return_df_qgs = pl.DataFrame()
+
 
 def load_iar_details():
     global iar_details
-    json_string = requests.get(api_url).json()
-    iar_details = pl.from_dict(json_string)
+    coop_name = get_coop_name(_coop_a);
+    startIdx = 0
+    size = 500
+    data = []
+    while True:
+        json_string = requests.get(f"https://asia-southeast1-rcef-ims.cloudfunctions.net/api/rsms/getIarData?apikey={"rc3f1m5-XApiKey"}&startIdx={startIdx}&size={size}&coop={coop_name}").json()
+        temp_df = pl.from_dict(json_string, schema_overrides={"iar_number": pl.Utf8})
+        data.append(temp_df)
+        startIdx += size
+        if len(temp_df) < (size - 2):
+            break
+    for df in data:
+        iar_details = iar_details.vstack(df)
 def load_view_coop_deliveries():
     global _view_coop_deliveries
     _view_coop_deliveries = pl.read_database_uri(f"select a.batchTicketNumber AS'batchTicketNumber', a.coopAccreditation AS'coopAccreditation', a.seedVariety AS'seedVariety', a.deliveryDate AS'deliveryDate', a.dropOffPoint AS'dropOffPoint', a.region AS'region', a.province AS'province', a.municipality AS'municipality', a.seedTag AS'seedTag', a.isBuffer AS'isBuffer', a.sg_id AS'sg_id',( select b.seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery_transaction b where a.coopAccreditation = b.accreditation_no and a.batchTicketNumber = b.batchTicketNumber and a.region = b.region limit 1 ) AS seed_distribution_mode from {_season}_rcep_delivery_inspection.tbl_delivery a where a.is_cancelled = 0 and a.isBuffer = 0 and a.coopAccreditation ='{_coop_a}'group by a.batchTicketNumber, a.seedVariety, a.seedTag order by a.deliveryDate desc;", uri)
@@ -1183,7 +1199,7 @@ def get_bep_list(coop_accreditation):
                     "seed_grower": "N/A" if seed_grower == "" else seed_grower,
                     "confirmed": int(confirmed_bags),
                     "inspected": int(inspected_bags),
-                    "deliveryDate": datetime.datetime.strptime(batch_row["deliveryDate"], "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                    "deliveryDate": batch_row["deliveryDate"].strftime("%Y-%m-%d"),
                     "batch_status": batch_status,
                     "remarks": label
                 })
@@ -1256,7 +1272,7 @@ def get_bep_list(coop_accreditation):
                             "seed_grower": "N/A" if seed_grower == "" else seed_grower,
                             "confirmed": 0,
                             "inspected": int(bg.replace("bag(s)", "")),
-                            "deliveryDate": dc,
+                            "deliveryDate": f"{dc}",
                             "batch_status": tt,
                             "remarks": label
                         })
@@ -1266,25 +1282,26 @@ def get_bep_list(coop_accreditation):
             total_inspected += inspected_bags    
 
     return_arr.append({
-        "iar_number": "",
-        "batchTicketNumber": "",
-        "coopAccreditation": "",
-        "seedVariety": "",
-        "dropOffPoint": "",
-        "region": "",
-        "province": "",
-        "municipality": "",
-        "seedTag": "",
+        "iar_number": "-",
+        "batchTicketNumber": "-",
+        "coopAccreditation": "-",
+        "seedVariety": "-",
+        "dropOffPoint": "-",
+        "region": "-",
+        "province": "-",
+        "municipality": "-",
+        "seedTag": "-",
         "seed_grower": "TOTAL:",
         "confirmed": total_confirmed,
         "inspected": total_inspected,
-        "deliveryDate": "",
-        "batch_status": "",
+        "deliveryDate": "-",
+        "batch_status": "-",
+        "remarks": "-"
     })
-    temp_df = pl.DataFrame(return_arr)
+    temp_df = pl.DataFrame(return_arr, schema_overrides={"iar_number": pl.Utf8})
     bep_arr = temp_df.join(iar_details, on="iar_number", how="left")
     
-def get_coop_name(coop_accreditation):
+def get_coop_name(coop_accreditation) -> str:
     name = tbl_cooperatives.filter(
         pl.col("accreditation_no").eq(coop_accreditation)
     ).select(pl.col("coopName").first().alias("coopName"))[0].item()
@@ -1309,12 +1326,15 @@ if __name__ == "__main__":
         threading.Thread(target=load_breakdown_buffer).start()
         threading.Thread(target=load_tbl_actual_delivery_breakdown).start()
         threading.Thread(target=load_lib_prv).start()
-        threading.Thread(target=load_iar_details).start()
 
         while threading.active_count() > 1:
             time.sleep(0.005)
             pass
         
+        threading.Thread(target=load_iar_details).start()
+        while threading.active_count() > 1:
+            time.sleep(0.005)
+            pass
         # iar_details.write_csv("iar_details.csv")
         # raise Exception("HARD_STOP")
         # end timer
@@ -1451,7 +1471,7 @@ if __name__ == "__main__":
                             "seed_grower": seed_grower if seed_grower else "N/A",
                             "confirmed": confirmed_bags,
                             "inspected": int(bg.replace("bag(s)", "")),
-                            "deliveryDate": datetime.datetime.strptime(dc, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                            "deliveryDate": dc,
                             "batchStatus": tt,
                             "remarks": label,
                             "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1479,7 +1499,7 @@ if __name__ == "__main__":
                     "seed_grower": seed_grower if seed_grower else "N/A",
                     "confirmed": confirmed_bags,
                     "inspected": int(inspected_bags),
-                    "deliveryDate": datetime.datetime.strptime(deliveryDate.strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                    "deliveryDate": deliveryDate,
                     "batchStatus": batch_status,
                     "remarks": label,
                     "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1554,7 +1574,7 @@ if __name__ == "__main__":
                         "seed_grower": seed_grower if seed_grower else "N/A",
                         "confirmed": 0,
                         "inspected": int(bg.replace("bag(s)", "")),
-                        "deliveryDate": datetime.datetime.strptime(f"{dc} 00:00:00" if len(dc) <= 10 else f"{dc}", "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                        "deliveryDate": dc,
                         "batchStatus": tt,
                         "remarks": label,
                         "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1593,7 +1613,7 @@ if __name__ == "__main__":
                                 "seed_grower": "N/A",
                                 "confirmed": 0,
                                 "inspected": par_row['totalBagCount'],
-                                "deliveryDate": datetime.datetime.strptime(f"{par_row['dateCreated']} 00:00:00", "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                                "deliveryDate": par_row['dateCreated'],
                                 "batchStatus": tt,
                                 "remarks": "",
                                 "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1665,7 +1685,7 @@ if __name__ == "__main__":
                         "seed_grower": seed_grower if seed_grower else "N/A",
                         "confirmed": confirmed_bags,
                         "inspected": int(bg.replace("bag(s)", "")),
-                        "deliveryDate": datetime.datetime.strptime(dc, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                        "deliveryDate": dc,
                         "batchStatus": tt,
                         "remarks": label,
                         "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1725,7 +1745,7 @@ if __name__ == "__main__":
                     "seed_grower": sg,
                     "confirmed": 0,
                     "inspected": inspected,
-                    "deliveryDate": datetime.datetime.strptime(f"{deliveryDate}", "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                    "deliveryDate": deliveryDate,
                     "batchStatus": "",
                     "remarks": "Transferred from Previous Season",
                     "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1792,7 +1812,7 @@ if __name__ == "__main__":
                             "seed_grower": "N/A",
                             "confirmed": 0,
                             "inspected": int(bg.replace("bag(s)", "")),
-                            "deliveryDate": datetime.datetime.strptime(f"{dc}", "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                            "deliveryDate": dc,
                             "batchStatus": tt,
                             "remarks": "Transferred from Previous Season",
                             "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1860,7 +1880,7 @@ if __name__ == "__main__":
                             "seed_grower": "N/A",
                             "confirmed": 0,
                             "inspected": int(bg.replace("bag(s)", "")),
-                            "deliveryDate": datetime.datetime.strptime(f"{dc}", "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                            "deliveryDate": dc,
                             "batchStatus": tt,
                             "remarks": "Transferred from Previous Season",
                             "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
@@ -1903,7 +1923,7 @@ if __name__ == "__main__":
                                     "seed_grower": "N/A",
                                     "confirmed": "0",
                                     "inspected": int(bg.replace("bag(s)", "")),
-                                    "deliveryDate": datetime.datetime.strptime(re_row["dateCreated"], "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
+                                    "deliveryDate": re_row["dateCreated"],
                                     "batchStatus": tt,
                                     "remarks": "Transferred from Previous Season",
                                     "category": 'SEED RESERVE' if seed_distribution_mode == 'NRP' else seed_distribution_mode
