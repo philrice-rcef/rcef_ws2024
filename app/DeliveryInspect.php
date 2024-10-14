@@ -197,6 +197,7 @@ class DeliveryInspect
     function gad_total($batch){
         $ad = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery as ad')
         ->where('ad.batchTicketNumber', "=", $batch)
+        ->where('isRejected',0)
         ->sum('totalBagCount');
 
         return $ad;

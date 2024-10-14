@@ -104,6 +104,7 @@ class DeliveryDashboardController extends Controller
                         // ->select('batchTicketNumber')
                         ->where('remarks','like', '%'.$batch_row->batchTicketNumber.'%')
                         ->where('is_transferred', 1)
+                        ->where('isRejected', 0)
                         ->where('transferCategory', 'T')
                         ->sum('totalBagCount');
                 $total_inspected += $is_transfer_T;
@@ -112,6 +113,7 @@ class DeliveryDashboardController extends Controller
                     $t_of_t =  DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
                         ->select('batchTicketNumber')
                         ->where('remarks','like', '%'.$batch_row->batchTicketNumber.'%')
+                        ->where('isRejected', 0)
                         ->where('transferCategory', 'T')
                         ->groupby("batchTicketNumber")
                         ->get();
@@ -121,6 +123,7 @@ class DeliveryDashboardController extends Controller
                         // ->select('batchTicketNumber')
                         ->where('remarks','like', '%'.$trans->batchTicketNumber.'%')
                         ->where('is_transferred', 1)
+                        ->where('isRejected', 0)
                         ->where('transferCategory', 'T')
                         ->sum('totalBagCount');
 
@@ -173,6 +176,7 @@ class DeliveryDashboardController extends Controller
                         ->select('batchTicketNumber')
                         ->where('remarks','like', '%'.$batch_row_replacement->batchTicketNumber.'%')
                         ->where('is_transferred', 1)
+                        ->where('isRejected', 0)
                         //->where('transferCategory', 'T')
                         ->sum('totalBagCount');
                 $total_inspected_replacement += $is_transfer_T;
@@ -191,7 +195,10 @@ class DeliveryDashboardController extends Controller
 
 
 
-
+            if($row->accreditation_no == '06-N-9/22-RcI-26716')
+            {
+                dd($total_inspected);
+            }
             $coop_arr = array(
                 "cop_id" => $row->coopId,
                 "coop_name" => $row->coopName,
