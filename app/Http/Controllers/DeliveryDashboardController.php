@@ -194,11 +194,6 @@ class DeliveryDashboardController extends Controller
             }
 
 
-
-            if($row->accreditation_no == '06-N-9/22-RcI-26716')
-            {
-                dd($total_inspected);
-            }
             $coop_arr = array(
                 "cop_id" => $row->coopId,
                 "coop_name" => $row->coopName,
