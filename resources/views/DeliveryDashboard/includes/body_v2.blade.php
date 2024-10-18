@@ -170,16 +170,16 @@
                             );
 
                             $designation = array(
-                                "ABRA" => "GASS Coordinator",
-                                "APAYAO" => "GASS Coordinator",
-                                "BENGUET" => "GASS Coordinator",
-                                "IFUGAO" => "GASS Coordinator",
-                                "KALINGA" => "GASS Coordinator",
-                                "MOUNTAIN PROVINCE" => "GASS Coordinator",
-                                "ISABELA" => "GASS Coordinator",
-                                "CAGAYAN" => "GASS Coordinator",
-                                "QUIRINO" => "GASS Coordinator",
-                                "NUEVA VIZCAYA" => "GASS Coordinator"
+                                "ABRA" => "Administrative Officer II",
+                                "APAYAO" => "Administrative Officer II",
+                                "BENGUET" => "Accountant II",
+                                "IFUGAO" => "Accountant II",
+                                "KALINGA" => "Administrative Officer III",
+                                "MOUNTAIN PROVINCE" => "Administrative Officer IIIr",
+                                "ISABELA" => "Administrative Officer III",
+                                "CAGAYAN" => "Administrative Officer III",
+                                "QUIRINO" => "Administrative Officer II",
+                                "NUEVA VIZCAYA" => "Administrative Officer II"
                             );
                             $result_name = 'Name and Signature';
                             $result_desg = 'Designation and Office';
