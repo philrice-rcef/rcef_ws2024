@@ -2416,7 +2416,8 @@ class DeliveryDashboardController extends Controller
                     array_push($return_arr, $batch_data);   
                     $inspected_bags += $bg;
 
-                        $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                        // $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                        $retransferred = [];
                             if(count($retransferred)>0){
                                 foreach ($retransferred as $in => $par) {
 
@@ -2831,7 +2832,8 @@ class DeliveryDashboardController extends Controller
 
 
 
-                                    $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                                    // $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                                    $retransferred = [];
                                         if(count($retransferred)>0){
                                             foreach ($retransferred as $in => $par) {
 
@@ -3575,7 +3577,8 @@ class DeliveryDashboardController extends Controller
                     //array_push($return_arr, $batch_data);   
                     $inspected_bags += $bg;
 
-                        $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                        // $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                        $retransferred = [];
                             if(count($retransferred)>0){
                                 foreach ($retransferred as $in => $par) {
 
@@ -3983,7 +3986,8 @@ class DeliveryDashboardController extends Controller
 
 
 
-                                    $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                                    // $retransferred = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')->where("remarks", "LIKE", "%".$bt."%")->where("seedTag", $st)->get();
+                                    $retransferred = [];
                                         if(count($retransferred)>0){
                                             foreach ($retransferred as $in => $par) {
 
