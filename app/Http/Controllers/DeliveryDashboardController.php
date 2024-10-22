@@ -3259,6 +3259,7 @@ class DeliveryDashboardController extends Controller
             ->where('seedVariety', $batch_row->seedVariety)
             ->where('seedTag', $batch_row->seedTag)
             ->where("qrValStart", "!=", "")
+            ->where("isRejected", "!=", 1)
             ->first();
             if($binhi_padala != null){
                     continue;
@@ -3285,6 +3286,7 @@ class DeliveryDashboardController extends Controller
 
             $check_inspected = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
                 ->where('batchTicketNumber', $batch_row->batchTicketNumber)
+                ->where("isRejected", "!=", 1)
                 ->first();
 
 
@@ -3294,6 +3296,7 @@ class DeliveryDashboardController extends Controller
                     ->where('seedVariety', $batch_row->seedVariety)
                     ->where('seedTag', $batch_row->seedTag)
                     ->where("qrValStart", "=", "")
+                    ->where("isRejected", "!=", 1)
                     ->sum('totalBagCount');
                 
 
@@ -3334,6 +3337,7 @@ class DeliveryDashboardController extends Controller
                 $is_replacement = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
                     ->where("batchTicketNumber", $batch_row->batchTicketNumber)
                     ->where("isBuffer", 0)
+                    ->where("isRejected", "!=", 1)
                     ->first();
 
                 $label = "Replacement";
@@ -3346,6 +3350,7 @@ class DeliveryDashboardController extends Controller
                 ->where('batchTicketNumber', $batch_row->batchTicketNumber)
                 ->where('is_transferred', 1)
                 ->where('transferCategory', 'W')
+                ->where("isRejected", "!=", 1)
                 ->first();
 
             $is_transfer_T = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
@@ -3353,6 +3358,7 @@ class DeliveryDashboardController extends Controller
                 ->where('remarks','like', '%'.$batch_row->batchTicketNumber.'%')
                 ->where('is_transferred', 1)
                 ->where('transferCategory', 'T')
+                ->where("isRejected", "!=", 1)
                 ->first();
                 
 
@@ -3540,6 +3546,7 @@ class DeliveryDashboardController extends Controller
                             $is_replacement = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
                                 ->where("remarks", 'transferred from batch: '.$batch_row->batchTicketNumber)
                                 ->where("isBuffer", 0)
+                                ->where("isRejected", "!=", 1)
                                 ->first();
 
                             $label = "Replacement";
@@ -3727,6 +3734,7 @@ class DeliveryDashboardController extends Controller
                     $actualList = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
                             ->where("batchTicketNumber", $prevBatch->new_batch_number)
                             ->where('remarks', 'like', '%transferred from previous season batch: '.$ls_batchNumber.'%')
+                            ->where("isRejected", "!=", 1)
                             ->get();
 
                             foreach ($actualList as $actualRow) {
@@ -3737,6 +3745,7 @@ class DeliveryDashboardController extends Controller
                                         ->where('seedTag', $actualRow->seedTag)
                                         ->where('transferCategory', 'P')
                                         ->where('is_transferred', 1)
+                                        ->where("isRejected", "!=", 1)
                                         ->sum('totalBagCount');
 
 
@@ -3745,6 +3754,7 @@ class DeliveryDashboardController extends Controller
                                     ->where('seedTag', $actualRow->seedTag)
                                     ->where('transferCategory', "T")
                                     ->where('is_transferred', 1)
+                                    ->where("isRejected", "!=", 1)
                                     ->first();
 
                                  $checkIfWhole = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')
@@ -3753,6 +3763,7 @@ class DeliveryDashboardController extends Controller
                                             ->where('seedTag', $actualRow->seedTag)
                                             ->where('transferCategory', "W")
                                             ->where('is_transferred', 1)
+                                            ->where("isRejected", "!=", 1)
                                             ->first();
 
                                if(count($checkIfWhole)>0){
@@ -3763,6 +3774,7 @@ class DeliveryDashboardController extends Controller
                                             ->where('seedTag', $actualRow->seedTag)
                                             ->where('transferCategory', "W")
                                             ->where('is_transferred', 1)
+                                            ->where("isRejected", "!=", 1)
                                             ->sum('totalBagCount');
                                     }
                                 
@@ -3773,6 +3785,7 @@ class DeliveryDashboardController extends Controller
                                     ->where('seedTag', $actualRow->seedTag)
                                     ->where('transferCategory', "T")
                                     ->where('is_transferred', 1)
+                                    ->where("isRejected", "!=", 1)
                                     ->sum('totalBagCount');
                                 }
 
