@@ -30,6 +30,12 @@ class DopRegularMakerController extends Controller
 {
 
   public function index(){
+
+    if(Auth::user()->roles->first()->name != "rcef-programmer"){
+        $mss = "Under Development";
+            return view("utility.pageClosed")
+        ->with("mss",$mss);
+    }
      // dd(Auth::user()->province);
     $region = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
             // ->where("prv", "LIKE", Auth::user()->province."%")

@@ -20,6 +20,12 @@ class DistMonitoringController extends Controller
 
 
 	public function stocks_seedType(){
+
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         $provinces = DB::table($GLOBALS['season_prefix'].'rcep_delivery_inspection.tbl_actual_delivery')->groupBy('province')->get();
         return view('app_monitoring.stocks.home_seedType')
             ->with('provinces', $provinces);

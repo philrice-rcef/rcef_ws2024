@@ -1561,6 +1561,12 @@ class CoopController extends Controller
      */
 	 
 	public function coop_rla_bpi(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
+
         $coop_list = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->get();
         $variety_list = DB::table('seed_seed.seed_characteristics')->groupBy('variety')->get();
         return view('coop.rla.bpi_form')
@@ -1620,6 +1626,12 @@ class CoopController extends Controller
     }
 	
 	public function coop_rla_manual_home(){
+
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         $coop_list = DB::table($GLOBALS['season_prefix'].'rcep_seed_cooperatives.tbl_cooperatives')->get();
         $variety_list = DB::table('seed_seed.seed_characteristics')->groupBy('variety')->get();
         return view('coop.rla.manual_home')

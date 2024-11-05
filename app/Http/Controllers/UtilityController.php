@@ -683,6 +683,12 @@ class UtilityController extends Controller
     }
 
     public function released_data_index(){
+
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         
             if(Auth::user()->roles->first()->name == "rcef-programmer"){
                 // $mss = "Temporary Close";

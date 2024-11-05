@@ -2400,6 +2400,7 @@ class APIController extends Controller
 
 
 	public function API_fetch_farmerProfile($code, $start_index){
+		dd('stop');
 		$lib_prv = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
 			->where("prv", $code)
 			->first();

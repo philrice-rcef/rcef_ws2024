@@ -342,6 +342,12 @@ class InspectionController extends Controller
     }
 
     public function InspectorScheduleView(){
+
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         $inspectors = DB::connection('mysql')->table('users')
             ->select('users.userId', 'firstName', 'middleName', 'lastName', 'extName')
             ->join('role_user', 'users.userId', '=', 'role_user.userId')

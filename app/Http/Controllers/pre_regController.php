@@ -341,6 +341,11 @@ class pre_regController extends Controller {
     }
 
     public function view_farmer(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         $province = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.lib_prv")
              ->where("municipality", "CANDABA")
             ->groupBy("province")
