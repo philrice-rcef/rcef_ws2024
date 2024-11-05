@@ -315,6 +315,11 @@ class rlaMonitoring extends Controller
     }
 
     public function home(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         $coop_list = DB::table($GLOBALS['season_prefix']."rcep_seed_cooperatives.tbl_cooperatives")
             ->select("coopName", "accreditation_no", "current_moa")
             ->orderBy("coopName", "ASC")
