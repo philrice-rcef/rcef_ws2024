@@ -28,6 +28,11 @@ class HistoryMonitoringController extends Controller
 {
       public function index()
     {
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         $provinces_list = DB::connection('delivery_inspection_db')->table('tbl_actual_delivery')
             ->select('*')
             ->where('send', '1')

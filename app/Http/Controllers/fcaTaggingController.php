@@ -23,6 +23,12 @@ use App\utility;
 class fcaTaggingController extends Controller
 {
         public function home_ui(){
+
+            if(Auth::user()->roles->first()->name != "rcef-programmer"){
+                $mss = "Under Development";
+                    return view("utility.pageClosed")
+                ->with("mss",$mss);
+            }
         $regionNames = array();
         $regionCodes = array();
         $regionsArray = array();

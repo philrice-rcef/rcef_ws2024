@@ -197,6 +197,11 @@ class ImportController extends Controller
 
 
     public function release_uploader(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
 
         $provinces = DB::table($GLOBALS['season_prefix']."rcep_delivery_inspection.tbl_actual_delivery")
                 ->select("province")
@@ -313,21 +318,41 @@ class ImportController extends Controller
     ];
     
     public function seed_growers(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         return view('import.seed_growers')
         ->with('col_data', $this->seed_growers);
     }
 
     public function rla(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         return view('import.rla')
         ->with('col_data', $this->rla);
     }
 
     public function ebinhi(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         return view('import.ebinhi')
         ->with('col_data', $this->ebinhi);
     }
 
     public function ebinhi_update_status(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         return view('import.ebinhi-update-status')
         ->with('col_data', $this->ebinhi_update_status);
     }

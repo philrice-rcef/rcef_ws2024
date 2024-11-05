@@ -15,6 +15,11 @@ use Auth;
 class CancelDeliveryController extends Controller
 {
     public function cancel_home(){
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         return view('delivery.cancel_home');
     }
     

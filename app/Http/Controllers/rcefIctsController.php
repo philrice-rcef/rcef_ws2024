@@ -702,6 +702,12 @@ $prv_code = $request->prov_code;
 
 
     public function select_area_index(){
+
+        if(Auth::user()->roles->first()->name != "rcef-programmer"){
+            $mss = "Under Development";
+                return view("utility.pageClosed")
+            ->with("mss",$mss);
+        }
         
         $provinces = DB::table($GLOBALS['season_prefix']."rcep_reports_view.rcef_provinces")
             ->orderby("region_sort")
